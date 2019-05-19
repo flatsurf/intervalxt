@@ -36,32 +36,34 @@
 //          renf_elem_class or RealNumber)
 //    Tmat: the integral type used for the circumference coordinates (typically
 //          unsigned long or mpz_class)
- 
+
 // floor division (needed for Zorich acceleration)
-template <typename Tlen, typename Tmat> Tmat fdiv(Tlen& a, Tlen &b);
+template <typename Tlen, typename Tmat>
+Tmat fdiv(Tlen &a, Tlen &b);
 
 // forward declarations
-template <typename Tlen, typename Tmat> class Label;
-template <typename Tlen, typename Tmat> struct Interval;
-template <typename Tlen, typename Tmat> class IntervalExchangeTransformation;
+template <typename Tlen, typename Tmat>
+class Label;
+template <typename Tlen, typename Tmat>
+struct Interval;
+template <typename Tlen, typename Tmat>
+class IntervalExchangeTransformation;
 
 // A Label is the data attached to a pair of matched intervals on the top
 // and bottom
 template <typename Tlen, typename Tmat>
-class Label
-{
-public:
+class Label {
+ public:
+  Tlen length;          // length of the subinterval (real part, >= 0)
+  std::vector<Tmat> v;  // Kontsevich-Zorich cocycle (= coordinate of core curves)
+  size_t index;         // index in the iet (a number in {0, 1, ..., nb label - 1}
 
-    Tlen length;             // length of the subinterval (real part, >= 0)
-    std::vector<Tmat> v;     // Kontsevich-Zorich cocycle (= coordinate of core curves)
-    size_t index;            // index in the iet (a number in {0, 1, ..., nb label - 1}
+  Interval<Tlen, Tmat> i1, i2;  // top and bot subintervals
 
-    Interval<Tlen, Tmat> i1, i2;  // top and bot subintervals
+  Label();
 
-    Label();
-
-    friend class IntervalExchangeTransformation<Tlen,Tmat>;
-    friend class Interval<Tlen,Tmat>;
+  friend class IntervalExchangeTransformation<Tlen, Tmat>;
+  friend class Interval<Tlen, Tmat>;
 };
 
 typedef std::vector<unsigned int> Permutation;
@@ -71,77 +73,75 @@ typedef std::vector<unsigned int> Permutation;
 // and its twin. It is implemented as a doubled chained list so that Rauzy
 // induction can be efficiently done
 template <typename Tlen, typename Tmat>
-class Interval
-{
-public:
-    struct Interval *prev;    // interval on the left
-    struct Interval *next;    // interval on the right
-    struct Interval *twin;    // the twin interval
-    Label<Tlen, Tmat> * lab;  // the label
+class Interval {
+ public:
+  struct Interval *prev;   // interval on the left
+  struct Interval *next;   // interval on the right
+  struct Interval *twin;   // the twin interval
+  Label<Tlen, Tmat> *lab;  // the label
 
-    friend class IntervalExchangeTransformation<Tlen, Tmat>;
-    friend class Label<Tlen, Tmat>;
+  friend class IntervalExchangeTransformation<Tlen, Tmat>;
+  friend class Label<Tlen, Tmat>;
 };
 
 template <typename Tlen, typename Tmat>
-class IntervalExchangeTransformation
-{
-    size_t n;                // number of intervals (= pairs of Label)
+class IntervalExchangeTransformation {
+  size_t n;  // number of intervals (= pairs of Label)
 
-    Interval<Tlen,Tmat> * top;       // pointer to the first interval on top
-    Interval<Tlen,Tmat> * bot;       // pointer to the first interval on bottom
+  Interval<Tlen, Tmat> *top;  // pointer to the first interval on top
+  Interval<Tlen, Tmat> *bot;  // pointer to the first interval on bottom
 
-    std::vector<Label<Tlen,Tmat>> labels;          // the labels
+  std::vector<Label<Tlen, Tmat>> labels;  // the labels
 
-    void reset(size_t nintervals);
-public:
-    IntervalExchangeTransformation(size_t n);
-    IntervalExchangeTransformation(const Permutation& topperm, const Permutation& botperm);
+  void reset(size_t nintervals);
 
-    // check whether data is consistent
-    void check();
+ public:
+  IntervalExchangeTransformation(size_t n);
+  IntervalExchangeTransformation(const Permutation &topperm, const Permutation &botperm);
 
-    // data access
-    Permutation topPermutation() const;
-    Permutation botPermutation() const;
-    std::vector<Tlen> lengths() const;
-    std::vector<std::vector<Tmat>> KontsevichZorichCocycle() const;
+  // check whether data is consistent
+  void check();
 
-    // set or reset data
-    void setIdentityPermutation();
-    void setTop(const Permutation &p);
-    void setBot(const Permutation &p);
-    void setLengths(const std::vector<Tlen>& lengths);
+  // data access
+  Permutation topPermutation() const;
+  Permutation botPermutation() const;
+  std::vector<Tlen> lengths() const;
+  std::vector<std::vector<Tmat>> KontsevichZorichCocycle() const;
 
-    // test whether the permutation is irreducible. If it is reducible
-    // return true and set argument to the labels on top and bot
-    // after which we cut. Otherwise returns fals.
-    bool isReducible() const;
-    bool isReducible(Label<Tlen,Tmat> *&, Label<Tlen,Tmat> *&) const;
+  // set or reset data
+  void setIdentityPermutation();
+  void setTop(const Permutation &p);
+  void setBot(const Permutation &p);
+  void setLengths(const std::vector<Tlen> &lengths);
 
-    // check for periodic trajectory via Boshernitzan's algorithm
-    bool hasNoPeriodicTrajectory() const;
+  // test whether the permutation is irreducible. If it is reducible
+  // return true and set argument to the labels on top and bot
+  // after which we cut. Otherwise returns fals.
+  bool isReducible() const;
+  bool isReducible(Label<Tlen, Tmat> *&, Label<Tlen, Tmat> *&) const;
 
-    // assuming that top[0] > bot[0] and perform one step of Zorich induction
-    // (if top[0] <= bot[0] the iet is left unchanged)
-    void zorichInductionStep();
-    void zorichInductions(size_t n);
+  // check for periodic trajectory via Boshernitzan's algorithm
+  bool hasNoPeriodicTrajectory() const;
 
-    // swap the top and bottom intervals
-    void swapTopBot();
+  // assuming that top[0] > bot[0] and perform one step of Zorich induction
+  // (if top[0] <= bot[0] the iet is left unchanged)
+  void zorichInductionStep();
+  void zorichInductions(size_t n);
 
-    // remove the first pair of intervals (assuming that it corresponds to
-    // a cylinder, that is the leftmost singularity is a connection of length
-    // one). After such cylinder is removed the permutation could be reducible.
-    void dropSaddleConnection();
+  // swap the top and bottom intervals
+  void swapTopBot();
 
-    // Warning: destructive!
-    // each component found is put as a vector component
-    std::vector<IntervalExchangeTransformation<Tlen,Tmat>> periodicNonPeriodicDecomposition();
+  // remove the first pair of intervals (assuming that it corresponds to
+  // a cylinder, that is the leftmost singularity is a connection of length
+  // one). After such cylinder is removed the permutation could be reducible.
+  void dropSaddleConnection();
 
-    template <typename TTlen, typename TTmat>
-    friend std::ostream& operator << (std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat>&);
+  // Warning: destructive!
+  // each component found is put as a vector component
+  std::vector<IntervalExchangeTransformation<Tlen, Tmat>> periodicNonPeriodicDecomposition();
+
+  template <typename TTlen, typename TTmat>
+  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
 };
-
 
 #endif

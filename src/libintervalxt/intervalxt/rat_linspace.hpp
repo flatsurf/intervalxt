@@ -18,29 +18,29 @@
 // - hasPositiveVector()
 
 class RationalLinearSubspace {
-public:
-    // sadly FLINT imposes matrix dimension
-    // (no resize available)
-    RatLinSpace();
-    RatLinSpace(int dim);
+ public:
+  // sadly FLINT imposes matrix dimension
+  // (no resize available)
+  RatLinSpace();
+  RatLinSpace(int dim);
 
-    // action by the elementary matrix on R^d
-    //   ei -> ei + x ej
-    void elementaryTransformation(size_t i, size_t j, Coeff x);
+  // action by the elementary matrix on R^d
+  //   ei -> ei + x ej
+  void elementaryTransformation(size_t i, size_t j, Coeff x);
 
-    // swap action on R^d
-    //   ei <-> ej
-    void swap(size_t i, size_t j);
+  // swap action on R^d
+  //   ei <-> ej
+  void swap(size_t i, size_t j);
 
-    // canonical form
-    // This provides canonical generators (or equations) for the subspace
-    // so that we can use 
-    void canonicalize();
+  // canonical form
+  // This provides canonical generators (or equations) for the subspace
+  // so that we can use
+  void canonicalize();
 
-    // test for non-negative or positive vectors
-    // (NOTE: this can be done via linear programming, eg call to PPL)
-    bool hasNonZeroNonNegativeVector();
-    bool hasPositiveVector();
+  // test for non-negative or positive vectors
+  // (NOTE: this can be done via linear programming, eg call to PPL)
+  bool hasNonZeroNonNegativeVector();
+  bool hasPositiveVector();
 }
 
 #endif
