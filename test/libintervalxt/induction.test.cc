@@ -25,136 +25,81 @@
 
 using namespace intervalxt;
 
+namespace {
+
+using v = std::vector<int>;
+
 TEST(InductionTest, Induction2) {
-  IntervalExchangeTransformation<unsigned long, unsigned long> iet(2);
-  Permutation topperm(2);
-  Permutation botperm(2);
-
-  botperm[1] = 0;
-  botperm[0] = 1;
-  iet.setBot(botperm);
-
-  std::vector<unsigned long> l0(2);
-  l0[0] = 23;
-  l0[1] = 5;
-  iet.setLengths(l0);
-
-  std::vector<unsigned long> l1(2);
-  l1[0] = 23 - 4 * 5;
-  l1[1] = 5;
+  IntervalExchangeTransformation<int, int> iet(2);
+  iet.setBot({1, 0});
+  iet.setLengths({23, 5});
 
   iet.check();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l1);
+  EXPECT_EQ(iet.lengths(), (v{23 - 4 * 5, 5}));
 }
 
 TEST(InductionTest, Induction5) {
-  IntervalExchangeTransformation<unsigned long, unsigned long> iet(5);
+  IntervalExchangeTransformation<int, int> iet(5);
   Permutation botperm(5);
   Permutation topperm(5);
 
-  // 0 1 2 3 4   lengths = 977 351 143 321 12
-  // 3 2 0 4 1
-  botperm[0] = 3;
-  botperm[1] = 2;
-  botperm[2] = 0;
-  botperm[3] = 4;
-  botperm[4] = 1;
-  topperm[0] = 0;
-  topperm[1] = 1;
-  topperm[2] = 2;
-  topperm[3] = 3;
-  topperm[4] = 4;
-  iet.setTop(topperm);
-  iet.setBot(botperm);
+  iet.setTop({0, 1, 2, 3, 4});
+  iet.setBot({3, 2, 0, 4, 1});
 
-  std::vector<unsigned long> l0(5);
-  l0[0] = 977;
-  l0[1] = 351;
-  l0[2] = 143;
-  l0[3] = 321;
-  l0[4] = 12;
-  iet.setLengths(l0);
-
-  std::vector<unsigned long> l(l0);
-
-  l[0] = 49;
+  iet.setLengths({977, 351, 143, 321, 12});
 
   iet.check();
   iet.zorichInductionStep();
   iet.check();
 
-  std::cout << iet << std::endl;
-
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), botperm);
-  EXPECT_EQ(iet.topPermutation(), topperm);
-
-  l[3] = 272;
-  topperm[0] = 1;
-  topperm[1] = 2;
-  topperm[2] = 0;
+  EXPECT_EQ(iet.lengths(), (v{49, 351, 143, 321, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{3, 2, 0, 4, 1}));
+  EXPECT_EQ(iet.topPermutation(), (v{0, 1, 2, 3, 4}));
 
   iet.swapTopBot();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), topperm);
-  EXPECT_EQ(iet.topPermutation(), botperm);
-
-  l[1] = 79;
-  botperm[0] = 2;
-  botperm[1] = 0;
-  botperm[2] = 4;
-  botperm[3] = 3;
+  EXPECT_EQ(iet.lengths(), (v{49, 351, 143, 272, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{1, 2, 0, 3, 4}));
+  EXPECT_EQ(iet.topPermutation(), (v{3, 2, 0, 4, 1}));
 
   iet.swapTopBot();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), botperm);
-  EXPECT_EQ(iet.topPermutation(), topperm);
-
-  l[2] = 64;
+  EXPECT_EQ(iet.lengths(), (v{49, 79, 143, 272, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{2, 0, 4, 3, 1}));
+  EXPECT_EQ(iet.topPermutation(), (v{1, 2, 0, 3, 4}));
 
   iet.swapTopBot();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), topperm);
-  EXPECT_EQ(iet.topPermutation(), botperm);
-
-  l[1] = 15;
-
-  botperm[0] = 0;
-  botperm[1] = 4;
-  botperm[2] = 3;
-  botperm[3] = 2;
+  EXPECT_EQ(iet.lengths(), (v{49, 79, 64, 272, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{1, 2, 0, 3, 4}));
+  EXPECT_EQ(iet.topPermutation(), (v{2, 0, 4, 3, 1}));
 
   iet.swapTopBot();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), botperm);
-  EXPECT_EQ(iet.topPermutation(), topperm);
-
-  l[0] = 34;
-  topperm[0] = 2;
-  topperm[1] = 1;
+  EXPECT_EQ(iet.lengths(), (v{49, 15, 64, 272, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{0, 4, 3, 2, 1}));
+  EXPECT_EQ(iet.topPermutation(), (v{1, 2, 0, 3, 4}));
 
   iet.swapTopBot();
   iet.zorichInductionStep();
   iet.check();
 
-  EXPECT_EQ(iet.lengths(), l);
-  EXPECT_EQ(iet.botPermutation(), topperm);
-  EXPECT_EQ(iet.topPermutation(), botperm);
+  EXPECT_EQ(iet.lengths(), (v{34, 15, 64, 272, 12}));
+  EXPECT_EQ(iet.botPermutation(), (v{2, 1, 0, 3, 4}));
+  EXPECT_EQ(iet.topPermutation(), (v{0, 4, 3, 2, 1}));
 }
+
+}  // namespace
 
 #include "main.hpp"

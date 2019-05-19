@@ -25,7 +25,7 @@ import pytest
 
 from pyintervalxt import intervalxt
 
-IET = intervalxt.IntervalExchangeTransformation['ulong', 'ulong']
+IET = intervalxt.IntervalExchangeTransformation[int, int]
 
 expected="""01
 01

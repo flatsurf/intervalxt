@@ -320,11 +320,11 @@ void IntervalExchangeTransformation<Tlen, Tmat>::swapTopBot() {
 }  // namespace intervalxt
 
 // Explicit instantiations of templates so that code is generated for the linker.
-template class intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>;
-template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>&);
+template class intervalxt::IntervalExchangeTransformation<int, int>;
+template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<int, int>&);
 
 template class intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>;
 template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>&);
 
-template class intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>;
-template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>&);
+template class intervalxt::IntervalExchangeTransformation<mpz_class, int>;
+template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, int>&);

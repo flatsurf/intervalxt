@@ -32,6 +32,6 @@ template <typename TTlen, typename TTmat>
 std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
 }
 
-extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<unsigned long, unsigned long> &);
+extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<int, int> &);
 
 #endif

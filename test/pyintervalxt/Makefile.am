@@ -1,9 +1,9 @@
-TESTS = iet.py
+TESTS = interval_exchange_transformation.py
 EXTRA_DIST = $(TESTS)
 
 AM_TESTS_ENVIRONMENT = . $(builddir)/test-env.sh;
 
-iet.py: test-env.sh
+interval_exchange_transformation.py: test-env.sh
 
 @VALGRIND_CHECK_RULES@
 
