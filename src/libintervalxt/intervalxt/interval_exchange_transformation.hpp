@@ -31,7 +31,7 @@
 
 namespace intervalxt {
 
-using Permutation = std::vector<unsigned int>;
+using Permutation = std::vector<int>;
 
 template <typename Tlen, typename Tmat>
 class IntervalExchangeTransformation {

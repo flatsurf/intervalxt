@@ -25,17 +25,17 @@
 namespace intervalxt {
 
 template <>
-unsigned long IntervalExchangeTransformation<unsigned long, unsigned long>::fdiv(unsigned long& a, unsigned long& b) {
+int IntervalExchangeTransformation<int, int>::fdiv(int& a, int& b) {
   return a / b;
 }
 
 template <>
-unsigned long IntervalExchangeTransformation<mpz_class, unsigned long>::fdiv(mpz_class& a, mpz_class& b) {
+int IntervalExchangeTransformation<mpz_class, int>::fdiv(mpz_class& a, mpz_class& b) {
   mpz_class r;
   mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_ulong_p(r.__get_mp()))
+  if (!mpz_fits_sint_p(r.__get_mp()))
     throw std::runtime_error("overflow");
-  return mpz_get_ui(r.__get_mp());
+  return mpz_get_si(r.__get_mp());
 }
 
 template <>
