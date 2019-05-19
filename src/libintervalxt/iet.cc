@@ -1,7 +1,7 @@
 #include <gmpxx.h>
+#include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
 #include <stdexcept>
-#include <boost/numeric/conversion/cast.hpp>
 
 #include "intervalxt/iet.hpp"
 
