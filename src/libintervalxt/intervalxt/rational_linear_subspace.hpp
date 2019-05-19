@@ -1,10 +1,5 @@
-/*****************************************************************************/
-/* Rational linear subspaces                                                 */
-/*                                                                           */
-/*****************************************************************************/
-
-#ifndef FLATSURF_RAT_LINSPACE
-#define FLATSURF_RAT_LINSPACE
+#ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
+#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_PP
 
 #include "intervalxt/intervalxt.hpp"
 

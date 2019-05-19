@@ -8,7 +8,7 @@ libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
 nobase_include_HEADERS =                                  \
     intervalxt/iet.hpp                                    \
-    intervalxt/rat_linspace.hpp                           \
+    intervalxt/rational_linear_subspace.hpp               \
     intervalxt/cppyy.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
