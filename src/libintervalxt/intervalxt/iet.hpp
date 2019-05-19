@@ -144,5 +144,5 @@ class IntervalExchangeTransformation {
   template <typename TTlen, typename TTmat>
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
 };
-}
+}  // namespace intervalxt
 #endif

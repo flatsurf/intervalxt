@@ -43,6 +43,6 @@ class RationalLinearSubspace {
   bool hasNonZeroNonNegativeVector();
   bool hasPositiveVector();
 }
-}
+}  // namespace intervalxt
 
 #endif

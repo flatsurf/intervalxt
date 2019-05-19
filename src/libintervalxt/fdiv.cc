@@ -26,4 +26,4 @@ mpz_class fdiv<mpz_class, mpz_class>(mpz_class& a, mpz_class& b) {
   mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
   return res;
 }
-}
+}  // namespace intervalxt

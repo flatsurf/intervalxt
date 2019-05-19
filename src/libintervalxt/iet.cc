@@ -1,7 +1,6 @@
+#include <gmpxx.h>
 #include <iostream>
 #include <stdexcept>
-#include <gmpxx.h>
-
 
 #include "intervalxt/iet.hpp"
 
@@ -303,7 +302,7 @@ void IntervalExchangeTransformation<Tlen, Tmat>::swapTopBot() {
   top = bot;
   bot = tmp;
 }
-}
+}  // namespace intervalxt
 
 // template instantiations
 template class intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>;
