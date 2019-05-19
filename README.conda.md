@@ -3,7 +3,7 @@ About libintervalxt
 
 Home: https://github.com/flatsurf/intervalxt
 
-Package license: GPL2
+Package license: GPL3
 
 Feedstock license: BSD 3-Clause
 
