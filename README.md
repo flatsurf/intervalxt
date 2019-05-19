@@ -57,7 +57,7 @@ pip install cppyy
 
 You can try out the projects in this repository in a very limited environment online by clicking the following links:
 
-* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/master?filepath=binder%2FSample.ipynb)
+* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/master?filepath=binder%2FSample.libintervalxt.ipynb)
 * **pyintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/master?filepath=binder%2FSample.pyintervalxt.ipynb)
 
 ## Build from the Source Code Repository
