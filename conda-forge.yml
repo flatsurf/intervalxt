@@ -1,0 +1,13 @@
+# We need to define the channel here and in conda_build_config.yaml, see https://github.com/conda-forge/conda-smithy/issues/996
+channels:
+  targets:
+  - [flatsurf, main]
+  sources: [flatsurf, conda-forge, defaults]
+azure:
+  user_or_org: flatsurf
+  project_name: conda
+  flavours:
+    - build
+    - valgrind
+    - coverage
+channel_name: flatsurf
