@@ -41,6 +41,7 @@ requirements:
     - boost-cpp
     - e-antic 1.*
     - gmp
+    - ppl
     # requirement of make check which also runs benchmarks
     - gtest
     - benchmark
@@ -61,8 +62,6 @@ outputs:
         - {{ compiler('cxx') }}
       host:
         - boost-cpp
-        - e-antic 1.*
-        - gmp
       run:
         - libintervalxt =={{ version }}
         # cppyy, not packaged in conda-forge yet
