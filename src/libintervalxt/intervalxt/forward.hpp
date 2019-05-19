@@ -18,20 +18,24 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-/*
- * This file is included by all headers that are shipped with this library.
- * It should therefore contain global definitions but only those that can
- * be safely shipped to the client, i.e., not the ones in config.h
- */
+// This file forward declares all the types in the intervalxt namespace.
 
-#ifndef LIBINTERVALXT_INTERVALXT_HPP
-#define LIBINTERVALXT_INTERVALXT_HPP
+#ifndef LIBINTERVALXT_FORWARD_HPP
+#define LIBINTERVALXT_FORWARD_HPP
 
-#ifdef __CLING__
+#include "intervalxt/intervalxt.hpp"
 
-#pragma cling add_library_path("@libdir@")
-#pragma cling load("libintervalxt")
+namespace intervalxt {
 
-#endif  // __CLING__
+template <typename Tlen, typename Tmat>
+class IntervalExchangeTransformation;
+
+template <typename Tlen, typename Tmat>
+class Interval;
+
+template <typename Tlen, typename Tmat>
+class Label;
+
+}  // namespace intervalxt
 
 #endif

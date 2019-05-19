@@ -18,20 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-/*
- * This file is included by all headers that are shipped with this library.
- * It should therefore contain global definitions but only those that can
- * be safely shipped to the client, i.e., not the ones in config.h
- */
+#ifndef LIBINTERVALXT_INTERVAL_HPP
+#define LIBINTERVALXT_INTERVAL_HPP
 
-#ifndef LIBINTERVALXT_INTERVALXT_HPP
-#define LIBINTERVALXT_INTERVALXT_HPP
+#include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
-#ifdef __CLING__
+namespace intervalxt {
 
-#pragma cling add_library_path("@libdir@")
-#pragma cling load("libintervalxt")
+// An Interval models either a subinterval of the bottom or the top.
+// It keeps pointers to the subinterval on the left, on the right
+// and its twin. It is implemented as a doubled chained list so that Rauzy
+// induction can be efficiently done
+template <typename Tlen, typename Tmat>
+class Interval {
+ public:
+  Interval *prev;          // interval on the left
+  Interval *next;          // interval on the right
+  Interval *twin;          // the twin interval
+  Label<Tlen, Tmat> *lab;  // the label
+};
 
-#endif  // __CLING__
+}  // namespace intervalxt
 
 #endif

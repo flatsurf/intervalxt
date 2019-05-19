@@ -74,7 +74,7 @@ outputs:
 
 about:
   home: https://github.com/flatsurf/intervalxt
-  license: GPL2
+  license: GPL3
   license_file: COPYING
   summary: Interval Exchange Transformations
 

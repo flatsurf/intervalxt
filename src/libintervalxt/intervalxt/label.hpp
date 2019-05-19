@@ -18,20 +18,32 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-/*
- * This file is included by all headers that are shipped with this library.
- * It should therefore contain global definitions but only those that can
- * be safely shipped to the client, i.e., not the ones in config.h
- */
+#ifndef LIBINTERVALXT_LABEL_HPP
+#define LIBINTERVALXT_LABEL_HPP
 
-#ifndef LIBINTERVALXT_INTERVALXT_HPP
-#define LIBINTERVALXT_INTERVALXT_HPP
+#include <vector>
 
-#ifdef __CLING__
+#include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
-#pragma cling add_library_path("@libdir@")
-#pragma cling load("libintervalxt")
+#include "intervalxt/interval.hpp"
 
-#endif  // __CLING__
+namespace intervalxt {
+
+// A Label is the data attached to a pair of matched intervals on the top
+// and bottom
+template <typename Tlen, typename Tmat>
+class Label {
+ public:
+  Tlen length;          // length of the subinterval (real part, >= 0)
+  std::vector<Tmat> v;  // Kontsevich-Zorich cocycle (= coordinate of core curves)
+  size_t index;         // index in the iet (a number in {0, 1, ..., nb label - 1}
+
+  Interval<Tlen, Tmat> i1, i2;  // top and bot subintervals
+
+  Label();
+};
+
+}  // namespace intervalxt
 
 #endif

@@ -18,20 +18,24 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-/*
- * This file is included by all headers that are shipped with this library.
- * It should therefore contain global definitions but only those that can
- * be safely shipped to the client, i.e., not the ones in config.h
- */
+#include "intervalxt/label.hpp"
 
-#ifndef LIBINTERVALXT_INTERVALXT_HPP
-#define LIBINTERVALXT_INTERVALXT_HPP
+namespace intervalxt {
+template <typename Tlen, typename Tmat>
+Label<Tlen, Tmat>::Label() {
+  i1.twin = &i2;
+  i2.twin = &i1;
+  i1.prev = i1.next = nullptr;
+  i2.prev = i2.next = nullptr;
+  i1.lab = this;
+  i2.lab = this;
+  length = 0;
+}
+}  // namespace intervalxt
 
-#ifdef __CLING__
+// Explicit instantiations of templates so that code is generated for the linker.
+#include <gmpxx.h>
 
-#pragma cling add_library_path("@libdir@")
-#pragma cling load("libintervalxt")
-
-#endif  // __CLING__
-
-#endif
+template class intervalxt::Label<unsigned long, unsigned long>;
+template class intervalxt::Label<mpz_class, mpz_class>;
+template class intervalxt::Label<mpz_class, unsigned long>;
