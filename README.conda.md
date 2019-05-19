@@ -15,14 +15,7 @@ Current build status
 ====================
 
 
-<table><tr>
-    <td>CircleCI</td>
-    <td>
-      <a href="https://circleci.com/gh/conda-forge/intervalxt-feedstock">
-        <img alt="Linux" src="https://img.shields.io/circleci/project/github/conda-forge/intervalxt-feedstock/master.svg?label=Linux">
-      </a>
-    </td>
-  </tr>
+<table>
     
   <tr>
     <td>Azure</td>
@@ -60,6 +53,7 @@ Current build status
       <img src="https://img.shields.io/badge/Windows-disabled-lightgrey.svg" alt="Windows disabled">
     </td>
   </tr>
+![ppc64le disabled](https://img.shields.io/badge/ppc64le-disabled-lightgrey.svg)
 </table>
 
 Current release info
