@@ -18,30 +18,34 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
+#ifndef LIBINTERVALXT_LABEL_HPP
+#define LIBINTERVALXT_LABEL_HPP
 
-#include "intervalxt/interval_exchange_transformation.hpp"
+#include <vector>
+
+#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
+
+#include "intervalxt/interval.hpp"
 
 namespace intervalxt {
 
-template <>
-unsigned long IntervalExchangeTransformation<unsigned long, unsigned long>::fdiv(unsigned long& a, unsigned long& b) {
-  return a / b;
+// A Label is the data attached to a pair of matched intervals on the top
+// and bottom
+template <typename Tlen, typename Tmat>
+class Label {
+ public:
+  Tlen length;          // length of the subinterval (real part, >= 0)
+  std::vector<Tmat> v;  // Kontsevich-Zorich cocycle (= coordinate of core curves)
+  size_t index;         // index in the iet (a number in {0, 1, ..., nb label - 1}
+
+  Interval<Tlen, Tmat> i1, i2;  // top and bot subintervals
+
+  Label();
+};
+
 }
 
-template <>
-unsigned long IntervalExchangeTransformation<mpz_class, unsigned long>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class r;
-  mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_ulong_p(r.__get_mp()))
-    throw std::runtime_error("overflow");
-  return mpz_get_ui(r.__get_mp());
-}
+#endif
 
-template <>
-mpz_class IntervalExchangeTransformation<mpz_class, mpz_class>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class res;
-  mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
-  return res;
-}
-}  // namespace intervalxt
+

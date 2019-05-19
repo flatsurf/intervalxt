@@ -18,30 +18,25 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
-
-#include "intervalxt/interval_exchange_transformation.hpp"
+#include "intervalxt/label.hpp"
 
 namespace intervalxt {
-
-template <>
-unsigned long IntervalExchangeTransformation<unsigned long, unsigned long>::fdiv(unsigned long& a, unsigned long& b) {
-  return a / b;
+template <typename Tlen, typename Tmat>
+Label<Tlen, Tmat>::Label() {
+  i1.twin = &i2;
+  i2.twin = &i1;
+  i1.prev = i1.next = nullptr;
+  i2.prev = i2.next = nullptr;
+  i1.lab = this;
+  i2.lab = this;
+  length = 0;
+}
 }
 
-template <>
-unsigned long IntervalExchangeTransformation<mpz_class, unsigned long>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class r;
-  mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_ulong_p(r.__get_mp()))
-    throw std::runtime_error("overflow");
-  return mpz_get_ui(r.__get_mp());
-}
+// Explicit instantiations of templates so that code is generated for the linker.
+#include <gmpxx.h>
 
-template <>
-mpz_class IntervalExchangeTransformation<mpz_class, mpz_class>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class res;
-  mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
-  return res;
-}
-}  // namespace intervalxt
+template class intervalxt::Label<unsigned long, unsigned long>;
+template class intervalxt::Label<mpz_class, mpz_class>;
+template class intervalxt::Label<mpz_class, unsigned long>;
+

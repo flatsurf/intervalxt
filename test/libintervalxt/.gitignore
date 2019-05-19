@@ -33,7 +33,7 @@
 *.app
 induction
 induction_benchmark
-iet
+interval_exchange_transformation
 
 ### Autotools Generated Files
 /.deps

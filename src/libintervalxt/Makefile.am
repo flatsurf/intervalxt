@@ -2,12 +2,15 @@ lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =               \
     fdiv.cc                              \
-    iet.cc
+    interval_exchange_transformation.cc \
+		label.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
 nobase_include_HEADERS =                                  \
-    intervalxt/iet.hpp                                    \
+    intervalxt/interval_exchange_transformation.hpp       \
+    intervalxt/label.hpp                                  \
+    intervalxt/interval.hpp                               \
     intervalxt/rat_linspace.hpp                           \
     intervalxt/cppyy.hpp
 

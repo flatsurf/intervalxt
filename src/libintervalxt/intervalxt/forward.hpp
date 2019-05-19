@@ -18,30 +18,24 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
+// This file forward declares all the types in the intervalxt namespace.
 
-#include "intervalxt/interval_exchange_transformation.hpp"
+#ifndef LIBINTERVALXT_FORWARD_HPP
+#define LIBINTERVALXT_FORWARD_HPP
+
+#include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
 
-template <>
-unsigned long IntervalExchangeTransformation<unsigned long, unsigned long>::fdiv(unsigned long& a, unsigned long& b) {
-  return a / b;
+template <typename Tlen, typename Tmat>
+class IntervalExchangeTransformation;
+
+template <typename Tlen, typename Tmat>
+class Interval;
+
+template <typename Tlen, typename Tmat>
+class Label;
+
 }
 
-template <>
-unsigned long IntervalExchangeTransformation<mpz_class, unsigned long>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class r;
-  mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_ulong_p(r.__get_mp()))
-    throw std::runtime_error("overflow");
-  return mpz_get_ui(r.__get_mp());
-}
-
-template <>
-mpz_class IntervalExchangeTransformation<mpz_class, mpz_class>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class res;
-  mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
-  return res;
-}
-}  // namespace intervalxt
+#endif
