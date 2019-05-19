@@ -154,8 +154,8 @@ conda activate intervalxt-test
 `make check` runs all tests and benchmarks. During development `make check TESTS=module`
 only runs the tests for `module`. For randomized tests, you might want to add
 `GTEST_REPEAT=1024` to run such tests repeatedly. Note that the environment
-variable `EXACTREAL_CHECK` is passed on to the tests and benchmarks, i.e., you
-could add `EXACTREAL_CHECK="--benchmark_min_time=.02"` to not let the
+variable `INTERVALXT_CHECK` is passed on to the tests and benchmarks, i.e., you
+could add `INTERVALXT_CHECK="--benchmark_min_time=.02"` to not let the
 benchmarks run as long as they would usually.
 
 ## Maintainers
