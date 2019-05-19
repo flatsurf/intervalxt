@@ -31,7 +31,7 @@ Label<Tlen, Tmat>::Label() {
   i2.lab = this;
   length = 0;
 }
-}
+}  // namespace intervalxt
 
 // Explicit instantiations of templates so that code is generated for the linker.
 #include <gmpxx.h>
@@ -39,4 +39,3 @@ Label<Tlen, Tmat>::Label() {
 template class intervalxt::Label<unsigned long, unsigned long>;
 template class intervalxt::Label<mpz_class, mpz_class>;
 template class intervalxt::Label<mpz_class, unsigned long>;
-

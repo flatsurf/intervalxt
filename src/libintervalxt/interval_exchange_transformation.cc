@@ -23,9 +23,9 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "intervalxt/interval.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
-#include "intervalxt/interval.hpp"
 
 using boost::numeric_cast;
 
@@ -56,7 +56,7 @@ inline Interval<Tlen, Tmat>* move(Interval<Tlen, Tmat>* i, Interval<Tlen, Tmat>*
 
   return j;
 }
-}
+}  // namespace
 
 template <typename Tlen, typename Tmat>
 void IntervalExchangeTransformation<Tlen, Tmat>::reset(size_t nintervals) {
@@ -328,4 +328,3 @@ template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt
 
 template class intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>;
 template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>&);
-

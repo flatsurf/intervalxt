@@ -21,11 +21,11 @@
 #ifndef LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 #define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 
-#include <vector>
 #include <iosfwd>
+#include <vector>
 
-#include "intervalxt/intervalxt.hpp"
 #include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
 #include "intervalxt/label.hpp"
 
@@ -35,7 +35,6 @@ using Permutation = std::vector<unsigned int>;
 
 template <typename Tlen, typename Tmat>
 class IntervalExchangeTransformation {
-
   size_t n;  // number of intervals (= pairs of Label)
 
   Interval<Tlen, Tmat> *top;  // pointer to the first interval on top
@@ -93,9 +92,9 @@ class IntervalExchangeTransformation {
   template <typename TTlen, typename TTmat>
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
 
-  static Tmat fdiv(Tlen&a,Tlen&b);
+  static Tmat fdiv(Tlen &a, Tlen &b);
 };
 
-}
+}  // namespace intervalxt
 
 #endif

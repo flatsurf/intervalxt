@@ -23,8 +23,8 @@
 
 #include <vector>
 
-#include "intervalxt/intervalxt.hpp"
 #include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
 #include "intervalxt/interval.hpp"
 
@@ -44,8 +44,6 @@ class Label {
   Label();
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-
-

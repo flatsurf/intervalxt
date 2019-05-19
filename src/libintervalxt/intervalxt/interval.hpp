@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_INTERVAL_HPP
 #define LIBINTERVALXT_INTERVAL_HPP
 
-#include "intervalxt/intervalxt.hpp"
 #include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
 
@@ -33,13 +33,12 @@ namespace intervalxt {
 template <typename Tlen, typename Tmat>
 class Interval {
  public:
-  Interval *prev;   // interval on the left
-  Interval *next;   // interval on the right
-  Interval *twin;   // the twin interval
+  Interval *prev;          // interval on the left
+  Interval *next;          // interval on the right
+  Interval *twin;          // the twin interval
   Label<Tlen, Tmat> *lab;  // the label
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-

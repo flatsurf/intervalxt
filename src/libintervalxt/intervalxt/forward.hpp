@@ -36,6 +36,6 @@ class Interval;
 template <typename Tlen, typename Tmat>
 class Label;
 
-}
+}  // namespace intervalxt
 
 #endif

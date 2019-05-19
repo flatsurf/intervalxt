@@ -23,9 +23,9 @@
 
 #include <iosfwd>
 
+#include "intervalxt/interval.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
-#include "intervalxt/interval.hpp"
 
 namespace intervalxt {
 template <typename TTlen, typename TTmat>
