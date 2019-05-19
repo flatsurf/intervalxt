@@ -113,8 +113,8 @@ void IntervalExchangeTransformation<Tlen, Tmat>::setTop(const Permutation& p) {
 
 template <typename Tlen, typename Tmat>
 void IntervalExchangeTransformation<Tlen, Tmat>::setBot(const Permutation& p) {
-  bot->prev = nullptr;
   bot = &(labels[p[0]].i2);
+  bot->prev = nullptr;
 
   for (size_t i = 0; i < n - 1; i++) {
     labels[p[i]].i2.next = &(labels[p[i + 1]].i2);
