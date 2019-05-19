@@ -1,0 +1,13 @@
+{
+    "Benchmarks.track_Induction5<unsigned long>": {
+        "code": "def asv_method(self, t=time): return t",
+        "name": "Benchmarks.track_Induction5<unsigned long>",
+        "param_names": [],
+        "params": [],
+        "timeout": 60.0,
+        "type": "track",
+        "unit": "ns",
+        "version": "95504a3a7767fc6ea8c8805b5e5bf9157a3a0b5f0c0fda6bf99e361d0bb4b107"
+    },
+    "version": 2
+}
