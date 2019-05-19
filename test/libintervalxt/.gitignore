@@ -32,8 +32,8 @@
 *.out
 *.app
 induction
+induction_benchmark
 iet
-irreducible
 
 ### Autotools Generated Files
 /.deps

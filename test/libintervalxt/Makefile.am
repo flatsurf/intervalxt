@@ -1,9 +1,10 @@
-check_PROGRAMS = iet induction
+check_PROGRAMS = iet induction induction_benchmark
 
 TESTS = $(check_PROGRAMS)
 
 iet_SOURCES = iet.test.cc main.hpp
 induction_SOURCES = induction.test.cc main.hpp
+induction_benchmark_SOURCES = induction.benchmark.cc main.hpp
 
 @VALGRIND_CHECK_RULES@
 
