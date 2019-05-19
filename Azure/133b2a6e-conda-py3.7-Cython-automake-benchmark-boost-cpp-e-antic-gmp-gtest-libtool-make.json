@@ -1,0 +1,48 @@
+{
+    "benchmark_version": {
+        "Benchmarks.track_Induction5<unsigned long>": "95504a3a7767fc6ea8c8805b5e5bf9157a3a0b5f0c0fda6bf99e361d0bb4b107"
+    },
+    "commit_hash": "133b2a6e4a89e716f239f40a3bf0033ae7b2dd2b",
+    "date": 1558235465000,
+    "ended_at": {
+        "Benchmarks.track_Induction5<unsigned long>": 1558235874406
+    },
+    "env_name": "conda-py3.7-Cython-automake-benchmark-boost-cpp-e-antic-gmp-gtest-libtool-make",
+    "params": {
+        "Cython": "",
+        "arch": "x86_64",
+        "automake": "",
+        "benchmark": "",
+        "boost-cpp": "",
+        "cpu": "Standard_DS2_v2",
+        "e-antic": "",
+        "gmp": "",
+        "gtest": "",
+        "libtool": "",
+        "machine": "Azure",
+        "make": "",
+        "os": "Linux",
+        "python": "3.7",
+        "ram": "61830880"
+    },
+    "profiles": {},
+    "python": "3.7",
+    "requirements": {
+        "Cython": "",
+        "automake": "",
+        "benchmark": "",
+        "boost-cpp": "",
+        "e-antic": "",
+        "gmp": "",
+        "gtest": "",
+        "libtool": "",
+        "make": ""
+    },
+    "results": {
+        "Benchmarks.track_Induction5<unsigned long>": 233.13078162632223
+    },
+    "started_at": {
+        "Benchmarks.track_Induction5<unsigned long>": 1558235874352
+    },
+    "version": 1
+}
