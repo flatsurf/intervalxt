@@ -1,5 +1,6 @@
-#include <iet.hh>
 #include <gmpxx.h>
+
+#include "intervalxt/iet.hpp"
 
 // Floor divisions
 // (needed for Zorich acceleration)

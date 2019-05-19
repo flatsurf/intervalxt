@@ -1,8 +1,9 @@
-#include <iet.hh>
-#include <iostream>
+#include <vector>
+#include <gtest/gtest.h>
 
-void test1()
-{
+#include <intervalxt/iet.hpp>
+
+TEST(InductionTest, Induction2) {
     IntervalExchangeTransformation<unsigned long, unsigned long> iet(2);
     Permutation topperm(2);
     Permutation botperm(2);
@@ -24,12 +25,11 @@ void test1()
     iet.zorichInductionStep();
     iet.check();
 
-    if (iet.lengths() != l1)
-        throw std::runtime_error("Zorich induction broken");
+    EXPECT_EQ(iet.lengths(), l1);
 }
 
-void test2()
-{
+
+TEST(InductionTest, Induction5) {
     IntervalExchangeTransformation<unsigned long, unsigned long> iet(5);
     Permutation botperm(5);
     Permutation topperm(5);
@@ -67,10 +67,9 @@ void test2()
 
     std::cout << iet << std::endl;
 
-    if (iet.lengths() != l || iet.botPermutation() != botperm || iet.topPermutation() != topperm)
-    {
-        throw std::runtime_error("Zorich induction broken 1");
-    }
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), botperm);
+    EXPECT_EQ(iet.topPermutation(), topperm);
 
     l[3] = 272;
     topperm[0] = 1;
@@ -81,10 +80,9 @@ void test2()
     iet.zorichInductionStep();
     iet.check();
 
-    std::cout << iet << std::endl;
-
-    if (iet.lengths() != l || iet.botPermutation() != topperm || iet.topPermutation() != botperm)
-        throw std::runtime_error("Zorich induction broken 2");
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), topperm);
+    EXPECT_EQ(iet.topPermutation(), botperm);
 
     l[1] = 79;
     botperm[0] = 2;
@@ -96,10 +94,9 @@ void test2()
     iet.zorichInductionStep();
     iet.check();
 
-    std::cout << iet << std::endl;
-
-    if (iet.lengths() != l || iet.botPermutation() != botperm || iet.topPermutation() != topperm)
-        throw std::runtime_error("Zorich induction broken 3");
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), botperm);
+    EXPECT_EQ(iet.topPermutation(), topperm);
 
     l[2] = 64;
     
@@ -107,10 +104,9 @@ void test2()
     iet.zorichInductionStep();
     iet.check();
 
-    std::cout << iet << std::endl;
-
-    if (iet.lengths() != l || iet.botPermutation() != topperm || iet.topPermutation() != botperm)
-        throw std::runtime_error("Zorich induction broken 4");
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), topperm);
+    EXPECT_EQ(iet.topPermutation(), botperm);
 
     l[1] = 15;
 
@@ -123,10 +119,9 @@ void test2()
     iet.zorichInductionStep();
     iet.check();
 
-    std::cout << iet << std::endl;
-
-    if (iet.lengths() != l || iet.botPermutation() != botperm || iet.topPermutation() != topperm)
-        throw std::runtime_error("Zorich induction broken 5");
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), botperm);
+    EXPECT_EQ(iet.topPermutation(), topperm);
 
     l[0] = 34;
     topperm[0] = 2;
@@ -136,23 +131,9 @@ void test2()
     iet.zorichInductionStep();
     iet.check();
 
-    std::cout << iet << std::endl;
-
-    if (iet.lengths() != l || iet.botPermutation() != topperm || iet.topPermutation() != botperm)
-        throw std::runtime_error("Zorich induction broken 6");
+    EXPECT_EQ(iet.lengths(), l);
+    EXPECT_EQ(iet.botPermutation(), topperm);
+    EXPECT_EQ(iet.topPermutation(), botperm);
 }
 
-int main(void)
-{
-    std::cerr << "test1" << std::endl;
-    std::cerr.flush();
-    test1();
-    std::cerr << "done" << std::endl;
-
-    std::cerr << "test2" << std::endl;
-    std::cerr.flush();
-    test2();
-    std::cerr << "done" << std::endl;
-
-    return 0;
-}
+#include "main.hpp"
