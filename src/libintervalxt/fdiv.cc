@@ -35,7 +35,7 @@ int IntervalExchangeTransformation<mpz_class, int>::fdiv(mpz_class& a, mpz_class
   mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
   if (!mpz_fits_sint_p(r.__get_mp()))
     throw std::runtime_error("overflow");
-  return mpz_get_si(r.__get_mp());
+  return static_cast<int>(mpz_get_si(r.__get_mp()));
 }
 
 template <>
