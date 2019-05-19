@@ -1,8 +1,11 @@
 #include <gmpxx.h>
 #include <iostream>
 #include <stdexcept>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include "intervalxt/iet.hpp"
+
+using boost::numeric_cast;
 
 namespace intervalxt {
 // Constructors
@@ -125,7 +128,7 @@ template <typename Tlen, typename Tmat>
 Permutation IntervalExchangeTransformation<Tlen, Tmat>::topPermutation() const {
   Permutation p;
   for (Interval<Tlen, Tmat>* t = top; t != nullptr; t = t->next)
-    p.push_back(t->lab->index);
+    p.push_back(numeric_cast<unsigned int>(t->lab->index));
   return p;
 }
 
@@ -133,7 +136,7 @@ template <typename Tlen, typename Tmat>
 Permutation IntervalExchangeTransformation<Tlen, Tmat>::botPermutation() const {
   Permutation p;
   for (Interval<Tlen, Tmat>* b = bot; b != nullptr; b = b->next)
-    p.push_back(b->lab->index);
+    p.push_back(numeric_cast<unsigned int>(b->lab->index));
   return p;
 }
 
@@ -269,7 +272,8 @@ void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
   if (b->lab == top->lab) {
     // Zorich acceleration step (= perform m full Dehn twists)
 
-    // TODO: here we want a floor division...
+    // vdelecroix had written here: here we want a floor division...
+    // [isn't that what fdiv is doing?]
     Tmat m = fdiv<Tlen, Tmat>(top->lab->length, l);
 
     // std::cout << "m = " << m << std::endl;
