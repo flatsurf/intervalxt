@@ -23,23 +23,40 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "intervalxt/iet.hpp"
+#include "intervalxt/interval.hpp"
+#include "intervalxt/interval_exchange_transformation.hpp"
+#include "intervalxt/label.hpp"
 
 using boost::numeric_cast;
 
 namespace intervalxt {
-// Constructors
-
+namespace {
+// move the labels in the chain between i (included) and j (excluded) just
+// before k. It is assumed that i is the start of the chain.
 template <typename Tlen, typename Tmat>
-Label<Tlen, Tmat>::Label() {
-  i1.twin = &i2;
-  i2.twin = &i1;
-  i1.prev = i1.next = nullptr;
-  i2.prev = i2.next = nullptr;
-  i1.lab = this;
-  i2.lab = this;
-  length = 0;
+inline Interval<Tlen, Tmat>* move(Interval<Tlen, Tmat>* i, Interval<Tlen, Tmat>* j, Interval<Tlen, Tmat>* k) {
+  // nothing to move
+  if (i == j || j == k) return i;
+
+  //  i ... jj j ... kk k
+  //  ->
+  //  j .. kk i .. jj k
+  Interval<Tlen, Tmat>* jj = j->prev;
+  Interval<Tlen, Tmat>* kk = k->prev;
+
+  j->prev = nullptr;
+
+  k->prev = jj;
+  jj->next = k;
+
+  kk->next = i;
+  i->prev = kk;
+
+  i = j;
+
+  return j;
 }
+}  // namespace
 
 template <typename Tlen, typename Tmat>
 void IntervalExchangeTransformation<Tlen, Tmat>::reset(size_t nintervals) {
@@ -250,32 +267,6 @@ static inline void vectorAdd(std::vector<T>& v1, const std::vector<T>& v2, const
     v1[i] += m * v2[i];
 }
 
-// move the labels in the chain between i (included) and j (excluded) just
-// before k. It is assumed that i is the start of the chain.
-template <typename Tlen, typename Tmat>
-static inline Interval<Tlen, Tmat>* move(Interval<Tlen, Tmat>* i, Interval<Tlen, Tmat>* j, Interval<Tlen, Tmat>* k) {
-  // nothing to move
-  if (i == j || j == k) return i;
-
-  //  i ... jj j ... kk k
-  //  ->
-  //  j .. kk i .. jj k
-  Interval<Tlen, Tmat>* jj = j->prev;
-  Interval<Tlen, Tmat>* kk = k->prev;
-
-  j->prev = nullptr;
-
-  k->prev = jj;
-  jj->next = k;
-
-  kk->next = i;
-  i->prev = kk;
-
-  i = j;
-
-  return j;
-}
-
 template <typename Tlen, typename Tmat>
 void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
   if (top->lab == bot->lab)
@@ -294,7 +285,7 @@ void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
 
     // vdelecroix had written here: here we want a floor division...
     // [isn't that what fdiv is doing?]
-    Tmat m = fdiv<Tlen, Tmat>(top->lab->length, l);
+    Tmat m = fdiv(top->lab->length, l);
 
     // std::cout << "m = " << m << std::endl;
 
@@ -328,7 +319,7 @@ void IntervalExchangeTransformation<Tlen, Tmat>::swapTopBot() {
 }
 }  // namespace intervalxt
 
-// template instantiations
+// Explicit instantiations of templates so that code is generated for the linker.
 template class intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>;
 template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>&);
 

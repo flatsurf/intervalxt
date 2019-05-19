@@ -18,30 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
+#ifndef LIBINTERVALXT_INTERVAL_HPP
+#define LIBINTERVALXT_INTERVAL_HPP
 
-#include "intervalxt/interval_exchange_transformation.hpp"
+#include "intervalxt/forward.hpp"
+#include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
 
-template <>
-unsigned long IntervalExchangeTransformation<unsigned long, unsigned long>::fdiv(unsigned long& a, unsigned long& b) {
-  return a / b;
-}
+// An Interval models either a subinterval of the bottom or the top.
+// It keeps pointers to the subinterval on the left, on the right
+// and its twin. It is implemented as a doubled chained list so that Rauzy
+// induction can be efficiently done
+template <typename Tlen, typename Tmat>
+class Interval {
+ public:
+  Interval *prev;          // interval on the left
+  Interval *next;          // interval on the right
+  Interval *twin;          // the twin interval
+  Label<Tlen, Tmat> *lab;  // the label
+};
 
-template <>
-unsigned long IntervalExchangeTransformation<mpz_class, unsigned long>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class r;
-  mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_ulong_p(r.__get_mp()))
-    throw std::runtime_error("overflow");
-  return mpz_get_ui(r.__get_mp());
-}
-
-template <>
-mpz_class IntervalExchangeTransformation<mpz_class, mpz_class>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class res;
-  mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
-  return res;
-}
 }  // namespace intervalxt
+
+#endif

@@ -1,8 +1,8 @@
-check_PROGRAMS = iet induction induction_benchmark
+check_PROGRAMS = interval_exchange_transformation induction induction_benchmark
 
 TESTS = $(check_PROGRAMS)
 
-iet_SOURCES = iet.test.cc main.hpp
+interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.hpp
 induction_SOURCES = induction.test.cc main.hpp
 induction_benchmark_SOURCES = induction.benchmark.cc main.hpp
 

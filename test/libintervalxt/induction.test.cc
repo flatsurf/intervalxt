@@ -21,7 +21,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include <intervalxt/iet.hpp>
+#include <intervalxt/interval_exchange_transformation.hpp>
 
 using namespace intervalxt;
 
