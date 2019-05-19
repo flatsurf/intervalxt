@@ -6,6 +6,8 @@
 #ifndef FLATSURF_RAT_LINSPACE
 #define FLATSURF_RAT_LINSPACE
 
+#include "intervalxt/intervalxt.hpp"
+
 namespace intervalxt {
 // Class that models a Q-vector subspace of Q^d
 // ideally there should be several implementation

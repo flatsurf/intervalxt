@@ -31,6 +31,8 @@
 #include <ostream>
 #include <vector>
 
+#include "intervalxt/intervalxt.hpp"
+
 namespace intervalxt {
 // All datastructures are templated with two types:
 //    Tlen: the type used for the lengths of the iet (typically mpq_class or

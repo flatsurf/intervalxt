@@ -1,0 +1,12 @@
+name: binder
+channels:
+  - flatsurf
+  - conda-forge
+  - defaults
+dependencies:
+  - libintervalxt
+  - pyintervalxt
+  - pip
+  - boost-cpp
+  - notebook
+  - xeus-cling
