@@ -3,6 +3,8 @@
 
 #include <intervalxt/iet.hpp>
 
+using namespace intervalxt;
+
 TEST(InductionTest, Induction2) {
   IntervalExchangeTransformation<unsigned long, unsigned long> iet(2);
   Permutation topperm(2);

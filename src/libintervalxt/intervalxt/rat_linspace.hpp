@@ -6,6 +6,7 @@
 #ifndef FLATSURF_RAT_LINSPACE
 #define FLATSURF_RAT_LINSPACE
 
+namespace intervalxt {
 // Class that models a Q-vector subspace of Q^d
 // ideally there should be several implementation
 // - a generator based version (ie, store generators)
@@ -41,6 +42,7 @@ class RationalLinearSubspace {
   // (NOTE: this can be done via linear programming, eg call to PPL)
   bool hasNonZeroNonNegativeVector();
   bool hasPositiveVector();
+}
 }
 
 #endif

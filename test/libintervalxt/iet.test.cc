@@ -3,6 +3,7 @@
 
 #include <intervalxt/iet.hpp>
 
+using namespace intervalxt;
 using std::vector;
 
 TEST(IETTest, InitializationLengths) {

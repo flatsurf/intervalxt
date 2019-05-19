@@ -2,13 +2,14 @@ lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =               \
     fdiv.cc                              \
-		iet.cc
+    iet.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
 nobase_include_HEADERS =                                  \
     intervalxt/iet.hpp                                    \
-		intervalxt/rat_linspace.hpp
+    intervalxt/rat_linspace.hpp                           \
+    intervalxt/cppyy.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/libintervalxt

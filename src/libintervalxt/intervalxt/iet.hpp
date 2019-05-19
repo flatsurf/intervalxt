@@ -31,6 +31,7 @@
 #include <ostream>
 #include <vector>
 
+namespace intervalxt {
 // All datastructures are templated with two types:
 //    Tlen: the type used for the lengths of the iet (typically mpq_class or
 //          renf_elem_class or RealNumber)
@@ -143,5 +144,5 @@ class IntervalExchangeTransformation {
   template <typename TTlen, typename TTmat>
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
 };
-
+}
 #endif

@@ -1,8 +1,11 @@
-#include <gmpxx.h>
+#include <iostream>
 #include <stdexcept>
+#include <gmpxx.h>
+
 
 #include "intervalxt/iet.hpp"
 
+namespace intervalxt {
 // Constructors
 
 template <typename Tlen, typename Tmat>
@@ -181,8 +184,6 @@ std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<
 
 // Properties
 
-#include <iostream>
-
 template <typename Tlen, typename Tmat>
 bool IntervalExchangeTransformation<Tlen, Tmat>::isReducible() const {
   std::vector<bool> seen(n, false);
@@ -264,7 +265,7 @@ void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
     l += b->lab->length;
     b = b->next;
   }
-  std::cout << "l = " << l << std::endl;
+  // std::cout << "l = " << l << std::endl;
 
   if (b->lab == top->lab) {
     // Zorich acceleration step (= perform m full Dehn twists)
@@ -272,7 +273,7 @@ void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
     // TODO: here we want a floor division...
     Tmat m = fdiv<Tlen, Tmat>(top->lab->length, l);
 
-    std::cout << "m = " << m << std::endl;
+    // std::cout << "m = " << m << std::endl;
 
     top->lab->length -= m * l;
 
@@ -302,13 +303,14 @@ void IntervalExchangeTransformation<Tlen, Tmat>::swapTopBot() {
   top = bot;
   bot = tmp;
 }
+}
 
 // template instantiations
-template class IntervalExchangeTransformation<unsigned long, unsigned long>;
-template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<unsigned long, unsigned long>&);
+template class intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>;
+template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<unsigned long, unsigned long>&);
 
-template class IntervalExchangeTransformation<mpz_class, mpz_class>;
-template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<mpz_class, mpz_class>&);
+template class intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>;
+template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>&);
 
-template class IntervalExchangeTransformation<mpz_class, unsigned long>;
-template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<mpz_class, unsigned long>&);
+template class intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>;
+template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, unsigned long>&);

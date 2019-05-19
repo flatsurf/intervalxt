@@ -1,0 +1,16 @@
+import os
+from distutils.core import setup
+from setuptools.command.egg_info import egg_info
+
+SRC_PATH = os.path.dirname(__file__)
+
+setup(
+    name = 'pyintervalxt',
+    version = '@PACKAGE_VERSION@',
+    packages = ['pyintervalxt',],
+    license = 'GPL 2.0+',
+    install_requires=[
+        'cppyy'
+    ],
+    long_description = open('@top_srcdir@/README').read(),
+)
