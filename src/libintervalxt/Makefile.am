@@ -12,6 +12,7 @@ nobase_include_HEADERS =                                  \
     intervalxt/label.hpp                                  \
     intervalxt/interval.hpp                               \
     intervalxt/rat_linspace.hpp                           \
+    intervalxt/forward.hpp                                \
     intervalxt/cppyy.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
