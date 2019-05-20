@@ -1,0 +1,3 @@
+[submodule "src/libintervalxt/intervalxt/external/spimpl"]
+	path = src/libintervalxt/intervalxt/external/spimpl
+	url = https://github.com/oliora/samples.git

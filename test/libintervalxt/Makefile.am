@@ -1,10 +1,11 @@
-check_PROGRAMS = interval_exchange_transformation induction induction_benchmark
+check_PROGRAMS = rational_linear_subspace interval_exchange_transformation induction induction_benchmark
 
 TESTS = $(check_PROGRAMS)
 
 interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.hpp
 induction_SOURCES = induction.test.cc main.hpp
 induction_benchmark_SOURCES = induction.benchmark.cc main.hpp
+rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.hpp
 
 @VALGRIND_CHECK_RULES@
 

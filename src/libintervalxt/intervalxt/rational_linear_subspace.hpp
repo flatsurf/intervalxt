@@ -22,11 +22,13 @@
 #define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_PP
 
 #include <iosfwd>
+#include <vector>
 
 #include <gmpxx.h>
 #include <boost/operators.hpp>
 #include <ppl.hh>
 
+#include "intervalxt/external/spimpl/spimpl.h"
 #include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
@@ -34,13 +36,17 @@ namespace intervalxt {
 // A linear rational subspace of ℚ^d.
 class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace> {
  public:
-  RationalLinearSubspace(const Parma_Polyhedra_Library::Constraint_System& cs);
+  // The space ℚ^0.
+  RationalLinearSubspace();
+  // The subspace which satisfies Σa_i x_i = 0 for each vector (a_0, …, a_n) in
+  // constraints.
+  RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& equations);
 
-  // Act with the elementary matrix: i -> i + x * j
-  void elementaryTransformation(const Parma_Polyhedra_Library::Variable& i, const Parma_Polyhedra_Library::Variable& j, mpq_class x);
+  // Act with the elementary matrix: x_i ↦ x_i + c * x_j
+  void elementaryTransformation(int i, int j, mpq_class c);
 
-  // Act with the permutation: i <-> j
-  void swap(const Parma_Polyhedra_Library::Variable& i, const Parma_Polyhedra_Library::Variable& j);
+  // Act with the permutation: x_i ↔ x_j
+  void swap(int i, int j);
 
   bool hasNonZeroNonNegativeVector() const;
   bool hasPositiveVector() const;
@@ -48,6 +54,10 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   bool operator==(const RationalLinearSubspace&) const;
 
   friend std::ostream& operator<<(std::ostream&, const RationalLinearSubspace&);
+
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
 };
 }  // namespace intervalxt
 
