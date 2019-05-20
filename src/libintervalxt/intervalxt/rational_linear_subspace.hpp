@@ -21,45 +21,34 @@
 #ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
 #define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_PP
 
+#include <iosfwd>
+
+#include <gmpxx.h>
+#include <boost/operators.hpp>
+#include <ppl.hh>
+
 #include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
-// Class that models a Q-vector subspace of Q^d
-// ideally there should be several implementation
-// - a generator based version (ie, store generators)
-// - a constraint based version (ie, store equations)
-// of course they are dual to each other, but depending on the codimension
-// of the space it might be more efficient to do one or the other.
-//
-// The most important non-trivial functionalities to focus on are
-// - hasNonZeroNonNegativeVector()
-// - hasPositiveVector()
 
-class RationalLinearSubspace {
+// A linear rational subspace of ℚ^d.
+class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace> {
  public:
-  // sadly FLINT imposes matrix dimension
-  // (no resize available)
-  RatLinSpace();
-  RatLinSpace(int dim);
+  RationalLinearSubspace(const Parma_Polyhedra_Library::Constraint_System& cs);
 
-  // action by the elementary matrix on R^d
-  //   ei -> ei + x ej
-  void elementaryTransformation(size_t i, size_t j, Coeff x);
+  // Act with the elementary matrix: i -> i + x * j
+  void elementaryTransformation(const Parma_Polyhedra_Library::Variable& i, const Parma_Polyhedra_Library::Variable& j, mpq_class x);
 
-  // swap action on R^d
-  //   ei <-> ej
-  void swap(size_t i, size_t j);
+  // Act with the permutation: i <-> j
+  void swap(const Parma_Polyhedra_Library::Variable& i, const Parma_Polyhedra_Library::Variable& j);
 
-  // canonical form
-  // This provides canonical generators (or equations) for the subspace
-  // so that we can use
-  void canonicalize();
+  bool hasNonZeroNonNegativeVector() const;
+  bool hasPositiveVector() const;
 
-  // test for non-negative or positive vectors
-  // (NOTE: this can be done via linear programming, eg call to PPL)
-  bool hasNonZeroNonNegativeVector();
-  bool hasPositiveVector();
-}
+  bool operator==(const RationalLinearSubspace&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const RationalLinearSubspace&);
+};
 }  // namespace intervalxt
 
 #endif

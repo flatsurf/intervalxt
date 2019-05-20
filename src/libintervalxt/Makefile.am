@@ -2,8 +2,9 @@ lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =               \
     fdiv.cc                              \
-    interval_exchange_transformation.cc \
-		label.cc
+    interval_exchange_transformation.cc  \
+    label.cc                             \
+    rational_linear_subspace.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
