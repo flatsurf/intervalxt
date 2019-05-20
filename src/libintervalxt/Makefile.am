@@ -1,19 +1,21 @@
 lib_LTLIBRARIES = libintervalxt.la
 
-libintervalxt_la_SOURCES =               \
-    fdiv.cc                              \
-    interval_exchange_transformation.cc \
-		label.cc
+libintervalxt_la_SOURCES =            \
+	fdiv.cc                             \
+	interval_exchange_transformation.cc \
+	label.cc                            \
+	rational_linear_subspace.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
-nobase_include_HEADERS =                                  \
-    intervalxt/interval_exchange_transformation.hpp       \
-    intervalxt/label.hpp                                  \
-    intervalxt/interval.hpp                               \
-    intervalxt/rat_linspace.hpp                           \
-    intervalxt/forward.hpp                                \
-    intervalxt/cppyy.hpp
+nobase_include_HEADERS =                                \
+	intervalxt/interval_exchange_transformation.hpp       \
+	intervalxt/label.hpp                                  \
+	intervalxt/interval.hpp                               \
+	intervalxt/rational_linear_subspace.hpp               \
+	intervalxt/forward.hpp                                \
+	intervalxt/cppyy.hpp                                  \
+	intervalxt/external/spimpl/spimpl.h
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/libintervalxt
