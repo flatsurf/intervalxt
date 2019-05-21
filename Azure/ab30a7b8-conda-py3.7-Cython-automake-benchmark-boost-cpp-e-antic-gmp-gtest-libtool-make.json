@@ -12,6 +12,7 @@
         "Cython": "",
         "arch": "x86_64",
         "automake": "",
+        "benchmark==1.4.1": "",
         "boost-cpp": "",
         "cpu": "Standard_DS2_v2",
         "e-antic": "",
@@ -29,6 +30,7 @@
     "requirements": {
         "Cython": "",
         "automake": "",
+        "benchmark==1.4.1": "",
         "boost-cpp": "",
         "e-antic": "",
         "gmp": "",
