@@ -1,7 +1,7 @@
 {
-    "Benchmarks.track_Induction5<int>": {
+    "Benchmarks.track_Induction5_int_": {
         "code": "def asv_method(self, t=time): return t",
-        "name": "Benchmarks.track_Induction5<int>",
+        "name": "Benchmarks.track_Induction5_int_",
         "param_names": [],
         "params": [],
         "timeout": 60.0,
