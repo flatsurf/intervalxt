@@ -20,311 +20,224 @@
 
 #include <gmpxx.h>
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/adaptor/copied.hpp>
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
+#include <list>
+#include <set>
+#include <vector>
 
-#include "intervalxt/interval.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
+#include "intervalxt/length.hpp"
 
 using boost::numeric_cast;
+using boost::lexical_cast;
+using boost::adaptors::transformed;
+using boost::adaptors::copied;
+using std::list;
+using std::vector;
 
 namespace intervalxt {
 namespace {
-// move the labels in the chain between i (included) and j (excluded) just
-// before k. It is assumed that i is the start of the chain.
-template <typename Tlen, typename Tmat>
-inline Interval<Tlen, Tmat>* move(Interval<Tlen, Tmat>* i, Interval<Tlen, Tmat>* j, Interval<Tlen, Tmat>* k) {
-  // nothing to move
-  if (i == j || j == k) return i;
 
-  //  i ... jj j ... kk k
-  //  ->
-  //  j .. kk i .. jj k
-  Interval<Tlen, Tmat>* jj = j->prev;
-  Interval<Tlen, Tmat>* kk = k->prev;
-
-  j->prev = nullptr;
-
-  k->prev = jj;
-  jj->next = k;
-
-  kk->next = i;
-  i->prev = kk;
-
-  i = j;
-
-  return j;
-}
+template <typename Label>
+struct Interval {
+  Label& label; 
+  typename std::list<Interval<Label>>::iterator twin;
+};
 }  // namespace
 
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::reset(size_t nintervals) {
-  n = nintervals;
-  labels.resize(n);
-  for (size_t i = 0; i < n; i++) {
-    labels[i].index = i;
-    labels[i].v.assign(n, 0);
-    labels[i].v[i] = 1;
+template <typename Label>
+class IntervalExchangeTransformation<Label>::Implementation {
+  friend IntervalExchangeTransformation<Label>;
+  vector<Label> labels;
+  std::list<Interval<Label>> top, bottom;
+
+ public:
+  Implementation(const std::vector<Label>& top, const std::vector<Label>& bottom) : labels(top) {
+    assert(top.size() == bottom.size() && "top and bottom must have the same length");
+
+    for (Label& t : labels)
+      this->top.push_back(Interval<Label>{t, this->bottom.begin()});
+
+    for (auto b : bottom)
+      this->bottom.push_back(Interval<Label>{b, std::find_if(this->top.begin(), this->top.end(), [&](const auto& t) { return t.label == b; })});
+
+    for (auto it = this->bottom.begin(); it != this->bottom.end(); it++)
+      it->twin->twin = it;
+
+
+    assert(std::all_of(this->top.begin(), this->top.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of top do not point back to the original element.");
+    assert(std::all_of(this->bottom.begin(), this->bottom.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of bottom do not point back to the original element.");
+    assert(std::all_of(this->labels.begin(), this->labels.end(), [&](auto& l) { return std::count_if(this->top.begin(), this->top.end(), [&](auto& t) { return t.label == l; }); }) && "top does not contain every label exactly once.");
+    assert(std::all_of(this->labels.begin(), this->labels.end(), [&](auto& l) { return std::count_if(this->bottom.begin(), this->bottom.end(), [&](auto& t) { return t.label == l; }); }) && "bottom does not contain every label exactly once.");
   }
-}
+};
 
-template <typename Tlen, typename Tmat>
-IntervalExchangeTransformation<Tlen, Tmat>::IntervalExchangeTransformation(size_t nintervals) {
-  reset(nintervals);
-  setIdentityPermutation();
-}
+template <typename Label>
+IntervalExchangeTransformation<Label>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<size_t>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, [&]() {
+  std::vector<Label> bot;
+  for(auto b : bottom) bot.push_back(top[b]);
+  return bot;
+}())) {}
 
-template <typename Tlen, typename Tmat>
-IntervalExchangeTransformation<Tlen, Tmat>::IntervalExchangeTransformation(const Permutation& topperm, const Permutation& botperm) {
-  n = topperm.size();
+template <typename Label>
+IntervalExchangeTransformation<Label>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, bottom)) {}
 
-  if (n == 0 || n != botperm.size())
-    throw std::runtime_error("invalid paramters");
+template <typename Label>
+std::optional<std::pair<const Label&, const Label&>> IntervalExchangeTransformation<Label>::reduce() const {
+  std::set<Label> seen;
 
-  reset(n);
-  setTop(topperm);
-  setBot(botperm);
-}
+  int top_ahead = 0;
+  int bottom_ahead = 0;
 
-// check
+  auto top = impl->top.begin();
+  auto bottom = impl->bottom.begin();
+  while(true) {
+    assert(top != impl->top.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+    assert(bottom != impl->bottom.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::check() {
-  std::vector<int> seen(n);
-
-  for (Interval<Tlen, Tmat>* i = top; i != NULL; i = i->next) {
-    if (i->next != nullptr && i->next->prev != i)
-      throw std::runtime_error("invalid top");
-    seen[i->lab->index] += 1;
-  }
-  for (Interval<Tlen, Tmat>* i = bot; i != NULL; i = i->next) {
-    if (i->next != nullptr && i->next->prev != i)
-      throw std::runtime_error("invalid bot");
-    if (seen[i->lab->index] != 1)
-      throw std::runtime_error("some interval appears on bot but not on top");
-    seen[i->lab->index] -= 1;
-  }
-
-  for (size_t i = 0; i < n; ++i)
-    if (seen[i])
-      throw std::runtime_error("some interval appears on top but not on bot");
-}
-
-// setter getter
-
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::setIdentityPermutation() {
-  top = &(labels[0].i1);
-  bot = &(labels[0].i2);
-  top->prev = nullptr;
-  bot->prev = nullptr;
-
-  for (size_t i = 0; i < n - 1; ++i) {
-    labels[i].i1.next = &(labels[i + 1].i1);
-    labels[i + 1].i1.prev = &(labels[i].i1);
-
-    labels[i].i2.next = &(labels[i + 1].i2);
-    labels[i + 1].i2.prev = &(labels[i].i2);
-  }
-
-  labels[n - 1].i1.next = nullptr;
-  labels[n - 1].i2.next = nullptr;
-}
-
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::setTop(const Permutation& p) {
-  if (p.size() != n)
-    throw std::invalid_argument("wrong size of permutations");
-
-  top = &(labels[p[0]].i1);
-  top->prev = nullptr;
-
-  for (size_t i = 0; i < n - 1; i++) {
-    labels[p[i]].i1.next = &(labels[p[i + 1]].i1);
-    labels[p[i + 1]].i1.prev = &(labels[p[i]].i1);
-  }
-
-  labels[p[n - 1]].i1.next = nullptr;
-}
-
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::setBot(const Permutation& p) {
-  bot = &(labels[p[0]].i2);
-  bot->prev = nullptr;
-
-  for (size_t i = 0; i < n - 1; i++) {
-    labels[p[i]].i2.next = &(labels[p[i + 1]].i2);
-    labels[p[i + 1]].i2.prev = &(labels[p[i]].i2);
-  }
-
-  labels[p[n - 1]].i2.next = nullptr;
-}
-
-template <typename Tlen, typename Tmat>
-Permutation IntervalExchangeTransformation<Tlen, Tmat>::topPermutation() const {
-  Permutation p;
-  for (Interval<Tlen, Tmat>* t = top; t != nullptr; t = t->next)
-    p.push_back(numeric_cast<unsigned int>(t->lab->index));
-  return p;
-}
-
-template <typename Tlen, typename Tmat>
-Permutation IntervalExchangeTransformation<Tlen, Tmat>::botPermutation() const {
-  Permutation p;
-  for (Interval<Tlen, Tmat>* b = bot; b != nullptr; b = b->next)
-    p.push_back(numeric_cast<unsigned int>(b->lab->index));
-  return p;
-}
-
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::setLengths(const std::vector<Tlen>& lengths) {
-  if (lengths.size() != n)
-    throw std::invalid_argument("wrong size vector 'lengths'");
-
-  typename std::vector<Tlen>::const_iterator i = lengths.begin();
-  typename std::vector<Label<Tlen, Tmat>>::iterator j = labels.begin();
-  for (size_t count = 0; count < n; count++) {
-    (*j).length = *i;
-    i++;
-    j++;
-  }
-}
-
-template <typename Tlen, typename Tmat>
-std::vector<Tlen> IntervalExchangeTransformation<Tlen, Tmat>::lengths() const {
-  std::vector<Tlen> res;
-  for (typename std::vector<Label<Tlen, Tmat>>::const_iterator i = labels.begin(); i != labels.end(); i++)
-    res.push_back((*i).length);
-  return res;
-}
-
-// output stream
-
-template <typename Tlen, typename Tmat>
-std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Tlen, Tmat>& t) {
-  for (Interval<Tlen, Tmat>* i = t.top; i != nullptr; i = i->next)
-    os << (i->lab->index);
-  os << std::endl;
-  for (Interval<Tlen, Tmat>* i = t.bot; i != nullptr; i = i->next)
-    os << (i->lab->index);
-  os << std::endl;
-
-  for (typename std::vector<Label<Tlen, Tmat>>::const_iterator i = t.labels.begin(); i != t.labels.end(); i++) {
-    os << "interval " << (*i).index << " length " << (*i).length << std::endl;
-  }
-  for (typename std::vector<Label<Tlen, Tmat>>::const_iterator i = t.labels.begin(); i != t.labels.end(); i++) {
-    for (const auto j : (*i).v) os << j << " ";
-    os << std::endl;
-  }
-
-  return os;
-}
-
-// Properties
-
-template <typename Tlen, typename Tmat>
-bool IntervalExchangeTransformation<Tlen, Tmat>::isReducible() const {
-  std::vector<bool> seen(n, false);
-  int topahead = 0;
-  int botahead = 0;
-
-  Interval<Tlen, Tmat>* t = top;
-  Interval<Tlen, Tmat>* b = bot;
-
-  for (size_t count = 0; count < n - 1; count++) {
-    if (seen[t->lab->index])
-      botahead--;
-    else {
-      topahead++;
-      seen[t->lab->index] = true;
+    if (seen.find(top->label) != seen.end()) {
+      bottom_ahead--;
+    } else {
+      top_ahead++;
+      seen.insert(top->label);
     }
 
-    if (seen[b->lab->index])
-      topahead--;
-    else {
-      botahead++;
-      seen[b->lab->index] = true;
+    if (seen.find(bottom->label) != seen.end()) {
+      top_ahead--;
+    } else {
+      bottom_ahead++;
+      seen.insert(bottom->label);
     }
 
-    if (topahead == 0 && botahead == 0)
-      return true;
+    if (top_ahead == 0 && bottom_ahead == 0) {
+      break;
+    }
 
-    t = t->next;
-    b = b->next;
+    ++top;
+    ++bottom;
   }
 
-  if (botahead != 1 || topahead != 1)
-    throw std::runtime_error("unexpected behavior");
+  auto ret = std::make_pair(top->label, bottom->label);
+  ++top;
+  ++bottom;
 
-  return false;
-}
-
-// set v1 = v1 + m * v2
-template <typename T>
-static inline void vectorAdd(std::vector<T>& v1, const std::vector<T>& v2, const T& m) {
-  for (size_t i = 0; i < v1.size(); i++)
-    v1[i] += m * v2[i];
-}
-
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::zorichInductionStep() {
-  if (top->lab == bot->lab)
-    throw std::invalid_argument("top and bot point toward the same label");
-
-  Interval<Tlen, Tmat>* b = bot;
-  Tlen l = 0;  // length to be subtracted
-  while (b->lab != top->lab && l + b->lab->length < top->lab->length) {
-    l += b->lab->length;
-    b = b->next;
+  if (top == impl->top.end()) {
+    assert(bottom == impl->bottom.end() && "top & bottom do not have the same size");
+    return {};
   }
-  // std::cout << "l = " << l << std::endl;
 
-  if (b->lab == top->lab) {
+  return ret;
+}
+
+template <typename Label>
+std::vector<Label> IntervalExchangeTransformation<Label>::top() const noexcept {
+  std::vector<Label> ret;
+
+  for (auto& t : impl->top)
+    ret.push_back(t.label);
+
+  return ret;
+}
+
+template <typename Label>
+std::vector<Label> IntervalExchangeTransformation<Label>::bottom() const noexcept {
+  std::vector<Label> ret;
+
+  for (auto& t : impl->bottom)
+    ret.push_back(t.label);
+
+  return ret;
+}
+
+template <typename Label>
+void IntervalExchangeTransformation<Label>::zorichInduction(int n) {
+  if (n != 1) {
+    throw std::logic_error("not implemented: zorichInduction(n!=1)");
+  }
+
+  typename Label::Length length_to_subtract;
+
+  const auto top = impl->top.begin();
+  auto bottom = impl->bottom.begin();
+
+  assert(top->label != bottom->label && "top and bottom start with the same label");
+
+  while (bottom->label != top->label && length_to_subtract + bottom->label.length() < top->label.length()) {
+    length_to_subtract += bottom->label.length();
+    ++bottom;
+  }
+
+  if (bottom->label == top->label) {
     // Zorich acceleration step (= perform m full Dehn twists)
+    auto m = top->label.length() / length_to_subtract;
 
-    // vdelecroix had written here: here we want a floor division...
-    // [isn't that what fdiv is doing?]
-    Tmat m = fdiv(top->lab->length, l);
-
-    // std::cout << "m = " << m << std::endl;
-
-    top->lab->length -= m * l;
-
-    for (Interval<Tlen, Tmat>* bb = bot; bb != b; bb = bb->next)
-      vectorAdd<Tmat>(bb->lab->v, top->lab->v, m);
+    for (auto b = impl->bottom.begin(); b != bottom; ++b) {
+      top->label.subtract(b->label, m);
+    }
 
     // recompute from what is left
-    b = bot;
-    l = 0;
-    while (l + b->lab->length < top->lab->length) {
-      l += b->lab->length;
-      b = b->next;
+    bottom = impl->bottom.begin();
+    length_to_subtract = typename Label::Length();
+    while (length_to_subtract + bottom->label.length() < top->label.length()) {
+      length_to_subtract += bottom->label.length();
+      ++bottom;
     }
   }
 
   // partial twist
-  top->lab->length -= l;
-  for (Interval<Tlen, Tmat>* bb = bot; bb != b; bb = bb->next)
-    vectorAdd<Tmat>(bb->lab->v, top->lab->v, 1);
+  for (auto b = impl->bottom.begin(); b != bottom; ++b) {
+    top->label.subtract(b->label);
+  }
 
-  bot = move(bot, b, top->twin);
+  impl->bottom.splice(top->twin, impl->bottom, impl->bottom.begin(), bottom);
 }
 
-template <typename Tlen, typename Tmat>
-void IntervalExchangeTransformation<Tlen, Tmat>::swapTopBot() {
-  Interval<Tlen, Tmat>* tmp = top;
-  top = bot;
-  bot = tmp;
+template <typename Label>
+void IntervalExchangeTransformation<Label>::swap() {
+  std::swap(impl->top, impl->bottom);
 }
+
+template <typename Label>
+std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label>& self) {
+  auto id = [&](const Label& query) {
+    std::string ret = boost::lexical_cast<std::string>(query);
+    int clashes = 0;
+    for (auto& t : self.top()) {
+      std::string repr = boost::lexical_cast<std::string>(t);
+      if (t == query) {
+        if (clashes) {
+          return ret + boost::lexical_cast<std::string>(clashes);
+        } else {
+          return ret;
+        }
+      }
+      if (repr == ret) {
+        clashes++;
+      }
+    }
+    assert(false && "each label must be contained in top()");
+  };
+
+  os << join(self.top() | transformed(id), " ") <<std::endl;
+  os << join(self.bottom() | transformed(id), " ") <<std::endl;
+
+  return os;
+}
+
 }  // namespace intervalxt
 
 // Explicit instantiations of templates so that code is generated for the linker.
-template class intervalxt::IntervalExchangeTransformation<int, int>;
-template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<int, int>&);
+namespace intervalxt {
+template class IntervalExchangeTransformation<Label<int>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<int>>&);
 
-template class intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>;
-template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, mpz_class>&);
-
-template class intervalxt::IntervalExchangeTransformation<mpz_class, int>;
-template std::ostream& intervalxt::operator<<(std::ostream& os, const intervalxt::IntervalExchangeTransformation<mpz_class, int>&);
+template class IntervalExchangeTransformation<Label<mpz_class>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<mpz_class>>&);
+}

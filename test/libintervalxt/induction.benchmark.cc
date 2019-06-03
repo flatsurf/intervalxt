@@ -22,25 +22,21 @@
 #include <gtest/gtest.h>
 
 #include <intervalxt/interval_exchange_transformation.hpp>
+#include <intervalxt/length.hpp>
+#include <intervalxt/label.hpp>
 
 using namespace intervalxt;
 
 template <class T>
 void Induction5(benchmark::State& state) {
-  IntervalExchangeTransformation<T, T> iet(5);
-  Permutation botperm(5);
-  Permutation topperm(5);
+  using Length = Length<T>;
 
   // This is not a meaningful benchmark. We just wanted to try the benchmark
   // interface out here.
   for (auto _ : state) {
-    iet.setTop({0, 1, 2, 3, 4});
-    iet.setBot({3, 2, 0, 4, 1});
-    iet.setLengths({997, 351, 143, 321, 12});
+    IntervalExchangeTransformation<Label<T>> iet({Length(997), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
 
-    iet.check();
-    iet.zorichInductionStep();
-    iet.check();
+    iet.zorichInduction();
   }
 }
 BENCHMARK_TEMPLATE(Induction5, int);

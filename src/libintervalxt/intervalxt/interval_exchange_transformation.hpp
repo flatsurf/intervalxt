@@ -23,76 +23,55 @@
 
 #include <iosfwd>
 #include <vector>
+#include <optional>
+
+#include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
-#include "intervalxt/intervalxt.hpp"
 
 #include "intervalxt/label.hpp"
 
 namespace intervalxt {
 
-using Permutation = std::vector<int>;
-
-template <typename Tlen, typename Tmat>
+template <typename Label>
 class IntervalExchangeTransformation {
-  size_t n;  // number of intervals (= pairs of Label)
-
-  Interval<Tlen, Tmat> *top;  // pointer to the first interval on top
-  Interval<Tlen, Tmat> *bot;  // pointer to the first interval on bottom
-
-  std::vector<Label<Tlen, Tmat>> labels;  // the labels
-
-  void reset(size_t nintervals);
-
  public:
-  IntervalExchangeTransformation(size_t n);
-  IntervalExchangeTransformation(const Permutation &topperm, const Permutation &botperm);
+  IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<size_t>& bottom);
+  IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<Label>& bottom);
 
-  // check whether data is consistent
-  void check();
+  // Test whether this permutation is reducible. If it is, return the top and
+  // bottom labels after which we cut.
+  std::optional<std::pair<const Label&, const Label&>> reduce() const;
 
-  // data access
-  Permutation topPermutation() const;
-  Permutation botPermutation() const;
-  std::vector<Tlen> lengths() const;
-  std::vector<std::vector<Tmat>> KontsevichZorichCocycle() const;
+  // Return whether there is a periodic trajectory via Boshernitzan's
+  // algorithm.
+  std::optional<bool> periodicTrajectory() const;
 
-  // set or reset data
-  void setIdentityPermutation();
-  void setTop(const Permutation &p);
-  void setBot(const Permutation &p);
-  void setLengths(const std::vector<Tlen> &lengths);
+  // Perform n zorich induction steps while the length of the first interval on
+  // the top is smaller than the one on the bottom.
+  void zorichInduction(int n = 1);
 
-  // test whether the permutation is irreducible. If it is reducible
-  // return true and set argument to the labels on top and bot
-  // after which we cut. Otherwise returns fals.
-  bool isReducible() const;
-  bool isReducible(Label<Tlen, Tmat> *&, Label<Tlen, Tmat> *&) const;
+  // Swap the top and bottom intervals.
+  void swap();
 
-  // check for periodic trajectory via Boshernitzan's algorithm
-  bool hasNoPeriodicTrajectory() const;
-
-  // assuming that top[0] > bot[0] and perform one step of Zorich induction
-  // (if top[0] <= bot[0] the iet is left unchanged)
-  void zorichInductionStep();
-  void zorichInductions(size_t n);
-
-  // swap the top and bottom intervals
-  void swapTopBot();
-
-  // remove the first pair of intervals (assuming that it corresponds to
-  // a cylinder, that is the leftmost singularity is a connection of length
-  // one). After such cylinder is removed the permutation could be reducible.
+  // Remove the first pair of intervals (assuming that it corresponds to a
+  // cylinder, i.e., the leftmost singularity is a connection of length one).
+  // After such cylinder is removed the permutation could be reducible.
   void dropSaddleConnection();
 
-  // Warning: destructive!
-  // each component found is put as a vector component
-  std::vector<IntervalExchangeTransformation<Tlen, Tmat>> periodicNonPeriodicDecomposition();
+  std::vector<IntervalExchangeTransformation> periodicNonPeriodicDecomposition() const;
 
-  template <typename TTlen, typename TTmat>
-  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
+  // Return the labels of the top permutation (in order.)
+  std::vector<Label> top() const noexcept;
+  // Return the labels of the bottom permutation (in order.)
+  std::vector<Label> bottom() const noexcept;
 
-  static Tmat fdiv(Tlen &a, Tlen &b);
+  template <typename Label_>
+  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Label_> &);
+
+ private:
+  class Implementation;
+  spimpl::unique_impl_ptr<Implementation> impl;
 };
 
 }  // namespace intervalxt

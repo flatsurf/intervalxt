@@ -1,9 +1,9 @@
 lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =            \
-	fdiv.cc                             \
 	interval_exchange_transformation.cc \
 	label.cc                            \
+	length.cc                           \
 	rational_linear_subspace.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
@@ -11,7 +11,7 @@ libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 nobase_include_HEADERS =                                \
 	intervalxt/interval_exchange_transformation.hpp       \
 	intervalxt/label.hpp                                  \
-	intervalxt/interval.hpp                               \
+	intervalxt/length.hpp                                 \
 	intervalxt/rational_linear_subspace.hpp               \
 	intervalxt/forward.hpp                                \
 	intervalxt/cppyy.hpp                                  \
