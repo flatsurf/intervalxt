@@ -34,7 +34,7 @@ void Induction5(benchmark::State& state) {
   // This is not a meaningful benchmark. We just wanted to try the benchmark
   // interface out here.
   for (auto _ : state) {
-    IntervalExchangeTransformation<Label<T>> iet({Length(997), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
+    IntervalExchangeTransformation<Length> iet({Length(997), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
 
     iet.zorichInduction();
   }

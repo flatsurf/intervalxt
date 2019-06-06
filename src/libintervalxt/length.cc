@@ -19,188 +19,80 @@
  *********************************************************************/
 
 #include <variant>
-#include <exact-real/yap/arb.hpp>
-#include <e-antic/renfxx.h>
+#include <cassert>
+
+#include <boost/numeric/conversion/cast.hpp>
 
 #include "intervalxt/length.hpp"
 
-using  exactreal::Arb;
-
 namespace intervalxt {
-namespace {
-template <typename Coordinate>
-struct Linear {
-  Coordinate length;
+template <typename T>
+Length<T>::Length() : Length(0) {}
 
-  // Floor division of this length by rhs.
-  auto operator/(const Linear& rhs) const {
-    if constexpr(std::is_integral_v<Coordinate>) {
-      return length / rhs.length;
-    } else if constexpr(std::is_same_v<Coordinate, mpz_class>) {
-      return length / rhs.length;
-    } else if constexpr(std::is_same_v<Coordinate, eantic::renf_elem_class>) {
-      eantic::renf_elem_class quo = length / rhs.length;
-      if (quo.is_fmpq()) {
-        return quo.get_num() / quo.get_den();
-      }
-      fmpz_t fret;
-      fmpz_init(fret); 
-      renf_elem_floor(fret, quo.renf_elem_t(), quo.parent().renf_t());
-      mpz_class ret;
-      fmpz_get_mpz(ret.get_mpz_t(), fret);
-      fmpz_clear(fret);
-    } else {
-      Arb self = length.arb(exactreal::ARB_PRECISION_FAST);
-      Arb other = rhs.length.arb(exactreal::ARB_PRECISION_FAST);
-      Arb quo = (self / other)(exactreal::ARB_PRECISION_FAST);
-      arb_floor(quo.arb_t(), quo.arb_t(), exactreal::ARB_PRECISION_FAST);
-
-      mpz_class ret;
-
-      fmpz_t fret;
-      fmpz_init(fret);
-      if (arb_get_unique_fmpz(fret, quo.arb_t())) {
-        fmpz_get_mpz(ret.get_mpz_t(), fret);
-        fmpz_clear(fret);
-        return ret;
-      } else {
-        throw std::logic_error("not implemented: Linear::operator/");
-      }
-    }
-  }
-};
-
-template <typename Coordinate>
-struct Squared {
-  Coordinate x, y;
-};
+template <typename T>
+Length<T>::Length(const T& value) : value(value) {\
+  assert(value >= 0 && "a length cannot be negative");
 }
 
-template <typename Coordinate>
-class Length<Coordinate>::Implementation {
- public:
-  Implementation() : length(Linear<Coordinate>()) {}
-  Implementation(const Coordinate& length) : length(Linear<Coordinate>{length}) {}
-  Implementation(const Coordinate& x, const Coordinate& y) : length(Squared<Coordinate>{x, y}) {}
-
-  std::variant<Linear<Coordinate>, Squared<Coordinate>> length;
-};
-
-template <typename Coordinate>
-Length<Coordinate>::Length() : impl(spimpl::make_impl<Implementation>()) {}
-
-template <typename Coordinate>
-Length<Coordinate>::Length(const Coordinate& length) : impl(spimpl::make_impl<Implementation>(length)) {}
-
-template <typename Coordinate>
-Length<Coordinate>::Length(const Coordinate& x, const Coordinate& y) : impl(spimpl::make_impl<Implementation>(x, y)) {}
-
-template <typename Coordinate>
-Length<Coordinate>& Length<Coordinate>::operator+=(const Length<Coordinate>& rhs) noexcept {
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(impl->length)) {
-    if (std::holds_alternative<Linear>(rhs.impl->length)) {
-      std::get<Linear>(impl->length).length += std::get<Linear>(rhs.impl->length).length;
-    } else {
-      throw std::logic_error("not implemented: Length::operator+=");
-    }
-  } else {
-    throw std::logic_error("not implemented: Length::operator+=");
-  }
-
+template <typename T>
+Length<T>& Length<T>::operator+=(const Length<T>& rhs) noexcept {
+  value += rhs.value;
+  assert(value >= 0 && "a length cannot be negative");
   return *this;
 }
 
-template <typename Coordinate>
-Quotient<Coordinate> Length<Coordinate>::operator/(const Length& rhs) {
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(impl->length)) {
-    if (std::holds_alternative<Linear>(rhs.impl->length)) {
-      return std::get<Linear>(impl->length) / std::get<Linear>(rhs.impl->length);
-    } else {
-      throw std::logic_error("not implemented: Length::operator/");
-    }
-  } else {
-    throw std::logic_error("not implemented: Length::operator/");
-  }
+template <typename T>
+Length<T>& Length<T>::operator-=(const Length<T>& rhs) noexcept {
+  value -= rhs.value;
+  assert(value >= 0 && "a length cannot be negative");
+  return *this;
 }
 
-template <typename Coordinate>
-Length<Coordinate>& Length<Coordinate>::operator*=(const Quotient<Coordinate>& rhs) noexcept {
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(impl->length)) {
-    std::get<Linear>(impl->length).length *= rhs;
+template <typename T>
+Length<T>& Length<T>::operator*=(const mpz_class& rhs) noexcept {
+  if constexpr (std::is_integral_v<T>) {
+    assert(rhs.fits_sint_p());
+    value *= boost::numeric_cast<T>(rhs.get_si());
   } else {
-    throw std::logic_error("not implemented: Length::operator<");
+    value *= rhs;
   }
   return *this;
 }
 
-template <typename Coordinate>
-Length<Coordinate>& Length<Coordinate>::operator-=(const Length<Coordinate>& rhs) noexcept {
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(impl->length)) {
-    if (std::holds_alternative<Linear>(rhs.impl->length)) {
-      std::get<Linear>(impl->length).length -= std::get<Linear>(rhs.impl->length).length;
-    } else {
-      throw std::logic_error("not implemented: Length::operator-=");
-    }
+template <typename T>
+mpz_class Length<T>::operator/(const Length<T>& rhs) {
+  assert(static_cast<bool>(rhs) && "cannot divide by zero vector");
+  if constexpr (std::is_integral_v<T>) {
+    return value / rhs.value;
   } else {
-    throw std::logic_error("not implemented: Length::operator-=");
-  }
-
-  return *this;
-}
-
-template <typename Coordinate>
-bool Length<Coordinate>::operator<(const Length<Coordinate>& rhs) const noexcept {
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(impl->length)) {
-    if (std::holds_alternative<Linear>(rhs.impl->length)) {
-      return std::get<Linear>(impl->length).length < std::get<Linear>(rhs.impl->length).length;
-    } else {
-      throw std::logic_error("not implemented: Length::operator<");
-    }
-  } else {
-    throw std::logic_error("not implemented: Length::operator<");
+    throw std::logic_error("not implemented: floor division for this type");
   }
 }
 
-template <typename Coordinate>
-std::ostream& operator<<(std::ostream& os, const Length<Coordinate>& self){
-  using Linear = Linear<Coordinate>;
-  if (std::holds_alternative<Linear>(self.impl->length)) {
-    return os << std::get<Linear>(self.impl->length).length;
-  } else {
-    throw std::logic_error("not implemented: operator<< for Length");
-  }
+template <typename T>
+Length<T>::operator bool() const noexcept {
+  return static_cast<bool>(value);
+}
+
+template <typename T>
+bool Length<T>::operator<(const Length<T>& rhs) const noexcept {
+  return value < rhs.value;
+}
+
+template <typename T>
+bool Length<T>::operator==(const Length<T>& rhs) const noexcept {
+  return value == rhs.value;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Length<T>& self) {
+  return os << self.value;
 }
 }  // namespace intervalxt
 
-// Explicit instantiations of templates so that code is generated for the linker.
-#include <gmpxx.h>
-#include <e-antic/renfxx.h>
-#include <exact-real/element.hpp>
-#include <exact-real/integer_ring_traits.hpp>
-#include <exact-real/rational_field_traits.hpp>
-#include <exact-real/number_field_traits.hpp>
+// Create instantiations of the template for the linker.
 
 namespace intervalxt {
 template class Length<int>;
 template std::ostream& operator<<(std::ostream&, const Length<int>&);
-template class Length<long long>;
-template std::ostream& operator<<(std::ostream&, const Length<long long>&);
-
-template class Length<mpz_class>;
-template std::ostream& operator<<(std::ostream&, const Length<mpz_class>&);
-
-template class Length<eantic::renf_elem_class>;
-template std::ostream& operator<<(std::ostream&, const Length<eantic::renf_elem_class>&);
-
-template class Length<exactreal::Element<exactreal::IntegerRingTraits>>;
-template std::ostream& operator<<(std::ostream&, const Length<exactreal::Element<exactreal::IntegerRingTraits>>&);
-template class Length<exactreal::Element<exactreal::RationalFieldTraits>>;
-template std::ostream& operator<<(std::ostream&, const Length<exactreal::Element<exactreal::RationalFieldTraits>>&);
-template class Length<exactreal::Element<exactreal::NumberFieldTraits>>;
-template std::ostream& operator<<(std::ostream&, const Length<exactreal::Element<exactreal::NumberFieldTraits>>&);
 }

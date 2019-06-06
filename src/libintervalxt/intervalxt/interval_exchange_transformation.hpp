@@ -29,13 +29,12 @@
 
 #include "intervalxt/forward.hpp"
 
-#include "intervalxt/label.hpp"
-
 namespace intervalxt {
 
-template <typename Label>
+template <typename Length>
 class IntervalExchangeTransformation {
  public:
+  using Label = intervalxt::Label<Length>;
   IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<size_t>& bottom);
   IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<Label>& bottom);
 
@@ -66,8 +65,8 @@ class IntervalExchangeTransformation {
   // Return the labels of the bottom permutation (in order.)
   std::vector<Label> bottom() const noexcept;
 
-  template <typename Label_>
-  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Label_> &);
+  template <typename Length_>
+  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length_> &);
 
  private:
   class Implementation;
@@ -75,5 +74,7 @@ class IntervalExchangeTransformation {
 };
 
 }  // namespace intervalxt
+
+#include "detail/interval_exchange_transformation.ipp"
 
 #endif

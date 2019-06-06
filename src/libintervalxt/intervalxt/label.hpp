@@ -27,19 +27,14 @@
 #include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
-#include "intervalxt/length.hpp"
 
 namespace intervalxt {
 
 // Data attached to a pair of matched intervals in an Interval Exchange
 // Transformation.
-template <typename Coordinate>
-class Label : boost::equality_comparable<Label<Coordinate>> {
+template <typename Length>
+class Label : boost::equality_comparable<Label<Length>> {
  public:
-  using Length = intervalxt::Length<Coordinate>;
-
-  // TODO: A label should take a shared_ptr to something gets notified of
-  // subtract calls so that we can make the cocycle tracking optional.
   Label();
   Label(const Length& length);
 
@@ -55,15 +50,16 @@ class Label : boost::equality_comparable<Label<Coordinate>> {
   const Length& length() const noexcept;
   Length& length() noexcept;
 
-  void subtract(Label&, const Quotient<Coordinate>& multiplicity = 1) noexcept;
+  template <typename Length_> 
+  friend std::ostream& operator<<(std::ostream&, const Label<Length_>&);
 
-  template <typename C>
-  friend std::ostream& operator<<(std::ostream&, const Label<C>&);
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
 };
 
 }  // namespace intervalxt
+
+#include "detail/label.ipp"
 
 #endif

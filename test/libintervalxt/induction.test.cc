@@ -29,8 +29,8 @@
 using namespace intervalxt;
 
 namespace intervalxt {
-template <typename Label>
-bool operator==(const IntervalExchangeTransformation<Label>& lhs, const IntervalExchangeTransformation<Label>& rhs) {
+template <typename Length>
+bool operator==(const IntervalExchangeTransformation<Length>& lhs, const IntervalExchangeTransformation<Length>& rhs) {
   return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
 }
 }
@@ -40,43 +40,41 @@ namespace {
 using v = std::vector<int>;
 
 TEST(InductionTest, Induction2) {
-  using IET = IntervalExchangeTransformation<Label<int>>;
   using Length = Length<int>;
 
-  IET iet({Length(23), Length(5)}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({Length(23), Length(5)}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(23 - 4 * 5), Length(5)}, {1, 0}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(23 - 4 * 5), Length(5)}, {1, 0}), iet);
 }
 
 TEST(InductionTest, Induction5) {
-  using IET = IntervalExchangeTransformation<Label<int>>;
   using Length = Length<int>;
 
-  IET iet({Length(977), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
+  IntervalExchangeTransformation<Length> iet({Length(977), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
 
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(49), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1}), iet);
-
-  iet.swap();
-  iet.zorichInduction();
-  EXPECT_EQ(IET({Length(272), Length(143), Length(49), Length(12), Length(351)}, {4, 1, 2, 0, 3}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(49), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1}), iet);
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(79), Length(143), Length(49), Length(272), Length(12)}, {1, 2, 4, 3, 0}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(272), Length(143), Length(49), Length(12), Length(351)}, {4, 1, 2, 0, 3}), iet);
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(64), Length(49), Length(12), Length(272), Length(79)}, {4, 0, 1, 3, 2}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(79), Length(143), Length(49), Length(272), Length(12)}, {1, 2, 4, 3, 0}), iet);
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(15), Length(64), Length(49), Length(272), Length(12)}, {2, 4, 3, 1, 0}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(64), Length(49), Length(12), Length(272), Length(79)}, {4, 0, 1, 3, 2}), iet);
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(IET({Length(34), Length(12), Length(272), Length(64), Length(15)}, {3, 4, 0, 2, 1}), iet);
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(15), Length(64), Length(49), Length(272), Length(12)}, {2, 4, 3, 1, 0}), iet);
+
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(34), Length(12), Length(272), Length(64), Length(15)}, {3, 4, 0, 2, 1}), iet);
 }
 
 }  // namespace

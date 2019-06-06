@@ -24,37 +24,37 @@
 #include <gmpxx.h>
 #include <boost/operators.hpp>
 
-#include "external/spimpl/spimpl.h"
-
 #include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename Coordinate>
-using Quotient = std::conditional_t<std::is_integral_v<Coordinate>, Coordinate, mpz_class>;
-
-// The length of a vector in ℝ².
-template <typename Coordinate>
-class Length : boost::totally_ordered<Length<Coordinate>>, boost::additive<Length<Coordinate>>, boost::multipliable<Length<Coordinate>, Quotient<Coordinate>> {
+// A sample implementation of a length of a vector in ℝ² as a simple T.
+template <typename T>
+class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, mpz_class> {
  public:
+  using Quotient = mpz_class;
+
   Length();
-  Length(const Coordinate& length);
-  Length(const Coordinate& x, const Coordinate& y);
+  Length(const T&);
 
   bool operator==(const Length&) const noexcept;
   bool operator<(const Length&) const noexcept;
   Length& operator+=(const Length&) noexcept;
   Length& operator-=(const Length&) noexcept;
-  Length& operator*=(const Quotient<Coordinate>&) noexcept;
+  Length& operator*=(const Quotient&) noexcept;
+
+  explicit operator bool() const noexcept;
 
   // Return the floor of the division of this length by the argument.
-  Quotient<Coordinate> operator/(const Length&);
+  Quotient operator/(const Length&);
   
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
+
+  const T& length() const;
+
  private:
-  class Implementation;
-  spimpl::impl_ptr<Implementation> impl;
+  T value;
 };
 
 }

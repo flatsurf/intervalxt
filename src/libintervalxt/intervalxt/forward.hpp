@@ -27,13 +27,13 @@
 
 namespace intervalxt {
 
-template <typename Coordinate>
+template <typename T>
 class Length;
 
-template <typename Coordinate>
+template <typename Length>
 class Label;
 
-template <typename Label>
+template <typename Length>
 class IntervalExchangeTransformation;
 
 }  // namespace intervalxt

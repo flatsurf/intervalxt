@@ -23,24 +23,25 @@
 
 #include <intervalxt/interval_exchange_transformation.hpp>
 #include <intervalxt/length.hpp>
+#include <intervalxt/label.hpp>
 
 using namespace intervalxt;
 using std::vector;
 
 TEST(IETTest, Initialization) {
   using Length = Length<int>;
-  IntervalExchangeTransformation<Label<int>> iet({Length(18), Length(3), Length(1), Length(1)}, {3, 0, 1, 2});
+  IntervalExchangeTransformation<Length> iet({Length(18), Length(3), Length(1), Length(1)}, {3, 0, 1, 2});
 }
 
 TEST(IETTest, Reduction) {
   using Length = Length<int>;
-  IntervalExchangeTransformation<Label<int>> iet({Length(1), Length(1), Length(1)}, {2, 1, 0});
+  IntervalExchangeTransformation<Length> iet({Length(1), Length(1), Length(1)}, {2, 1, 0});
   EXPECT_FALSE(iet.reduce());
 
-  iet = IntervalExchangeTransformation<Label<int>>({Length(1), Length(1), Length(1)}, {1, 0, 2});
+  iet = IntervalExchangeTransformation<Length>({Length(1), Length(1), Length(1)}, {1, 0, 2});
   EXPECT_TRUE(iet.reduce());
 
-  iet = IntervalExchangeTransformation<Label<int>>({Length(1), Length(1), Length(1)}, {1, 2, 0});
+  iet = IntervalExchangeTransformation<Length>({Length(1), Length(1), Length(1)}, {1, 2, 0});
   EXPECT_FALSE(iet.reduce());
 }
 

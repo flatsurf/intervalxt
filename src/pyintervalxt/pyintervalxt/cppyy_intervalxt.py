@@ -57,7 +57,8 @@ from cppyy.gbl import intervalxt
 
 def IET(lengths, permutation):
     from cppyy.gbl import std
-    Label = intervalxt.Label[int]
-    return intervalxt.IntervalExchangeTransformation[Label]([Label(l) for l in lengths], permutation);
+    Length = intervalxt.Length[int]
+    Label = intervalxt.Label[Length]
+    return intervalxt.IntervalExchangeTransformation[Length]([Label(l) for l in lengths], permutation);
 
 intervalxt.IET = IET
