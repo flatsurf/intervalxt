@@ -41,6 +41,7 @@ using boost::adaptors::transformed;
 using boost::adaptors::copied;
 using std::list;
 using std::vector;
+using std::set;
 
 namespace intervalxt {
 namespace {
@@ -48,29 +49,33 @@ namespace {
 template <typename Label>
 struct Interval {
   Label& label; 
-  typename std::list<Interval<Label>>::iterator twin;
+  const typename std::list<Interval<Label>>::iterator twin;
 };
 }  // namespace
 
 template <typename Label>
 class IntervalExchangeTransformation<Label>::Implementation {
   friend IntervalExchangeTransformation<Label>;
-  vector<Label> labels;
+  // The labels used by all our intervals (we keep the references alive by adding them to this set.)
+  set<Label> labels;
   std::list<Interval<Label>> top, bottom;
 
  public:
-  Implementation(const std::vector<Label>& top, const std::vector<Label>& bottom) : labels(top) {
+  Implementation(const std::vector<Label>& top, const std::vector<Label>& bottom) : labels(top.begin(), top.end()) {
     assert(top.size() == bottom.size() && "top and bottom must have the same length");
 
-    for (Label& t : labels)
-      this->top.push_back(Interval<Label>{t, this->bottom.begin()});
+    for (const Label& t : labels)
+      this->top.push_back(Interval<Label>{const_cast<Label&>(t), this->bottom.begin()});
 
-    for (auto b : bottom)
-      this->bottom.push_back(Interval<Label>{b, std::find_if(this->top.begin(), this->top.end(), [&](const auto& t) { return t.label == b; })});
+    for (const Label& b : bottom) {
+      auto it = labels.find(b);
+      assert(it != labels.end() && "bottom label not found in top labels");
+      this->bottom.push_back(Interval<Label>{const_cast<Label&>(*it), std::find_if(this->top.begin(), this->top.end(), [&](const auto& t) { return t.label == b; })});
+    }
 
-    for (auto it = this->bottom.begin(); it != this->bottom.end(); it++)
-      it->twin->twin = it;
-
+    for (auto it = this->bottom.begin(); it != this->bottom.end(); it++) {
+      const_cast<typename std::list<Interval<Label>>::iterator&>(it->twin->twin) = it;
+    }
 
     assert(std::all_of(this->top.begin(), this->top.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of top do not point back to the original element.");
     assert(std::all_of(this->bottom.begin(), this->bottom.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of bottom do not point back to the original element.");
@@ -234,10 +239,28 @@ std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<
 }  // namespace intervalxt
 
 // Explicit instantiations of templates so that code is generated for the linker.
+#include <e-antic/renfxx.h>
+#include <exact-real/element.hpp>
+#include <exact-real/integer_ring_traits.hpp>
+#include <exact-real/rational_field_traits.hpp>
+#include <exact-real/number_field_traits.hpp>
+
 namespace intervalxt {
+template class IntervalExchangeTransformation<Label<long long>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<long long>>&);
 template class IntervalExchangeTransformation<Label<int>>;
 template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<int>>&);
 
 template class IntervalExchangeTransformation<Label<mpz_class>>;
 template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<mpz_class>>&);
+
+template class IntervalExchangeTransformation<Label<eantic::renf_elem_class>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<eantic::renf_elem_class>>&);
+
+template class IntervalExchangeTransformation<Label<exactreal::Element<exactreal::IntegerRingTraits>>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<exactreal::Element<exactreal::IntegerRingTraits>>>&);
+template class IntervalExchangeTransformation<Label<exactreal::Element<exactreal::RationalFieldTraits>>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<exactreal::Element<exactreal::RationalFieldTraits>>>&);
+template class IntervalExchangeTransformation<Label<exactreal::Element<exactreal::NumberFieldTraits>>>;
+template std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Label<exactreal::Element<exactreal::NumberFieldTraits>>>&);
 }

@@ -38,6 +38,8 @@ class Label : boost::equality_comparable<Label<Coordinate>> {
  public:
   using Length = intervalxt::Length<Coordinate>;
 
+  // TODO: A label should take a shared_ptr to something gets notified of
+  // subtract calls so that we can make the cocycle tracking optional.
   Label();
   Label(const Length& length);
 

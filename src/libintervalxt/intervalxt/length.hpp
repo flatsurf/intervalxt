@@ -39,7 +39,7 @@ class Length : boost::totally_ordered<Length<Coordinate>>, boost::additive<Lengt
  public:
   Length();
   Length(const Coordinate& length);
-  Length(const Coordinate& x, const Coordinate y);
+  Length(const Coordinate& x, const Coordinate& y);
 
   bool operator==(const Length&) const noexcept;
   bool operator<(const Length&) const noexcept;

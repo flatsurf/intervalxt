@@ -40,7 +40,7 @@ class Label<Coordinate>::Implementation {
   std::map<std::shared_ptr<Id>, Quotient<Coordinate>> cocycle;
 
  public:
-  Implementation() : Implementation(Length(0)) {}
+  Implementation() : Implementation(Length()) {}
   Implementation(const Length& length) : id(std::make_shared<Id>()), length(length) {
     cocycle[id] = 1;
   }
@@ -88,10 +88,28 @@ std::ostream& operator<<(std::ostream& os, const Label<Coordinate>& self) {
 
 // Explicit instantiations of templates so that code is generated for the linker.
 #include <gmpxx.h>
+#include <e-antic/renfxx.h>
+#include <exact-real/element.hpp>
+#include <exact-real/integer_ring_traits.hpp>
+#include <exact-real/rational_field_traits.hpp>
+#include <exact-real/number_field_traits.hpp>
 
 namespace intervalxt {
 template class Label<int>;
 template std::ostream& operator<<(std::ostream&, const Label<int>&);
+template class Label<long long>;
+template std::ostream& operator<<(std::ostream&, const Label<long long>&);
+
 template class Label<mpz_class>;
 template std::ostream& operator<<(std::ostream&, const Label<mpz_class>&);
+
+template class Label<eantic::renf_elem_class>;
+template std::ostream& operator<<(std::ostream&, const Label<eantic::renf_elem_class>&);
+
+template class Label<exactreal::Element<exactreal::IntegerRingTraits>>;
+template std::ostream& operator<<(std::ostream&, const Label<exactreal::Element<exactreal::IntegerRingTraits>>&);
+template class Label<exactreal::Element<exactreal::RationalFieldTraits>>;
+template std::ostream& operator<<(std::ostream&, const Label<exactreal::Element<exactreal::RationalFieldTraits>>&);
+template class Label<exactreal::Element<exactreal::NumberFieldTraits>>;
+template std::ostream& operator<<(std::ostream&, const Label<exactreal::Element<exactreal::NumberFieldTraits>>&);
 }
