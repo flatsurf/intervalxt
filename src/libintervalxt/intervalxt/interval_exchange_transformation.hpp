@@ -28,6 +28,7 @@
 #include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
+#include "intervalxt/maybe_saddle_connection.hpp"
 
 namespace intervalxt {
 
@@ -49,6 +50,8 @@ class IntervalExchangeTransformation {
   // Perform n zorich induction steps while the length of the first interval on
   // the top is smaller than the one on the bottom.
   void zorichInduction(int n = 1);
+
+  MaybeSaddleConnection<Length> induce(int limit = -1);
 
   // Swap the top and bottom intervals.
   void swap();

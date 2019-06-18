@@ -15,6 +15,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/rational_linear_subspace.hpp                \
 	intervalxt/forward.hpp                                 \
 	intervalxt/cppyy.hpp                                   \
+	intervalxt/maybe_saddle_connection.hpp                 \
 	intervalxt/external/spimpl/spimpl.h
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
