@@ -18,30 +18,45 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
+#ifndef LIBINTERVALXT_LENGTH_HPP
+#define LIBINTERVALXT_LENGTH_HPP
 
-#include "intervalxt/interval_exchange_transformation.hpp"
+#include <gmpxx.h>
+#include <boost/operators.hpp>
+
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <>
-int IntervalExchangeTransformation<int, int>::fdiv(int& a, int& b) {
-  return a / b;
-}
+// A sample implementation of a length of a vector in ℝ² as a simple T.
+template <typename T>
+class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, mpz_class> {
+ public:
+  using Quotient = mpz_class;
 
-template <>
-int IntervalExchangeTransformation<mpz_class, int>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class r;
-  mpz_fdiv_q(r.__get_mp(), a.__get_mp(), b.__get_mp());
-  if (!mpz_fits_sint_p(r.__get_mp()))
-    throw std::runtime_error("overflow");
-  return static_cast<int>(mpz_get_si(r.__get_mp()));
-}
+  Length();
+  Length(const T&);
 
-template <>
-mpz_class IntervalExchangeTransformation<mpz_class, mpz_class>::fdiv(mpz_class& a, mpz_class& b) {
-  mpz_class res;
-  mpz_fdiv_q(res.__get_mp(), a.__get_mp(), b.__get_mp());
-  return res;
-}
+  bool operator==(const Length&) const noexcept;
+  bool operator<(const Length&) const noexcept;
+  Length& operator+=(const Length&) noexcept;
+  Length& operator-=(const Length&) noexcept;
+  Length& operator*=(const Quotient&) noexcept;
+
+  explicit operator bool() const noexcept;
+
+  // Return the floor of the division of this length by the argument.
+  Quotient operator/(const Length&);
+
+  template <typename C>
+  friend std::ostream& operator<<(std::ostream&, const Length<C>&);
+
+  const T& length() const;
+
+ private:
+  T value;
+};
+
 }  // namespace intervalxt
+
+#endif

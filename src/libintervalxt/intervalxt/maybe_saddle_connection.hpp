@@ -18,24 +18,35 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include "intervalxt/label.hpp"
+#ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
+#define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
+
+#include <memory>
+#include <optional>
+#include <utility>
+#include <variant>
+
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
-template <typename Tlen, typename Tmat>
-Label<Tlen, Tmat>::Label() {
-  i1.twin = &i2;
-  i2.twin = &i1;
-  i1.prev = i1.next = nullptr;
-  i2.prev = i2.next = nullptr;
-  i1.lab = this;
-  i2.lab = this;
-  length = 0;
-}
+
+struct MinimalityGuarantee {};
+
+template <typename Length>
+struct NonSeparatingSaddleConnection {
+  // Note: Label is already identified when this message is returned.
+  std::pair<Label<Length>, Label<Length>> saddleConnection;
+};
+
+template <typename Length>
+struct SeparatingSaddleConnection {
+  std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
+  std::pair<Label<Length>, Label<Length>> saddleConnection;
+};
+
+template <typename Length>
+using MaybeSaddleConnection = std::optional<std::variant<MinimalityGuarantee, NonSeparatingSaddleConnection<Length>, SeparatingSaddleConnection<Length>>>;
+
 }  // namespace intervalxt
 
-// Explicit instantiations of templates so that code is generated for the linker.
-#include <gmpxx.h>
-
-template class intervalxt::Label<int, int>;
-template class intervalxt::Label<mpz_class, mpz_class>;
-template class intervalxt::Label<mpz_class, int>;
+#endif

@@ -21,29 +21,45 @@
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
 
+#include <boost/operators.hpp>
 #include <vector>
 
-#include "intervalxt/forward.hpp"
-#include "intervalxt/intervalxt.hpp"
+#include "external/spimpl/spimpl.h"
 
-#include "intervalxt/interval.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-// A Label is the data attached to a pair of matched intervals on the top
-// and bottom
-template <typename Tlen, typename Tmat>
-class Label {
+// Data attached to a pair of matched intervals in an Interval Exchange
+// Transformation.
+template <typename Length>
+class Label : boost::equality_comparable<Label<Length>> {
  public:
-  Tlen length;          // length of the subinterval (real part, >= 0)
-  std::vector<Tmat> v;  // Kontsevich-Zorich cocycle (= coordinate of core curves)
-  size_t index;         // index in the iet (a number in {0, 1, ..., nb label - 1}
-
-  Interval<Tlen, Tmat> i1, i2;  // top and bot subintervals
-
   Label();
+  Label(const Length& length);
+
+  // Return whether two labels are considered the same. Note that equal labels
+  // might not be identicial, e.g., when creating a copy of a label and the
+  // modifying one of the copies, the two instances are still considered equal.
+  bool operator==(const Label&) const noexcept;
+
+  // Compare two labels so they can be used in STL containers. The comparison
+  // has no semantic meaning but is compatible with the operator==.
+  bool operator<(const Label&) const noexcept;
+
+  const Length& length() const noexcept;
+  Length& length() noexcept;
+
+  template <typename Length_>
+  friend std::ostream& operator<<(std::ostream&, const Label<Length_>&);
+
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
 };
 
 }  // namespace intervalxt
+
+#include "detail/label.ipp"
 
 #endif

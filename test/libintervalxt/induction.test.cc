@@ -19,85 +19,62 @@
  *********************************************************************/
 
 #include <gtest/gtest.h>
+#include <boost/lexical_cast.hpp>
 #include <vector>
 
 #include <intervalxt/interval_exchange_transformation.hpp>
+#include <intervalxt/label.hpp>
+#include <intervalxt/length.hpp>
 
 using namespace intervalxt;
+
+namespace intervalxt {
+template <typename Length>
+bool operator==(const IntervalExchangeTransformation<Length>& lhs, const IntervalExchangeTransformation<Length>& rhs) {
+  return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
+}
+}  // namespace intervalxt
 
 namespace {
 
 using v = std::vector<int>;
 
 TEST(InductionTest, Induction2) {
-  IntervalExchangeTransformation<int, int> iet(2);
-  iet.setBot({1, 0});
-  iet.setLengths({23, 5});
+  using Length = Length<int>;
 
-  iet.check();
-  iet.zorichInductionStep();
-  iet.check();
+  IntervalExchangeTransformation<Length> iet({Length(23), Length(5)}, {1, 0});
 
-  EXPECT_EQ(iet.lengths(), (v{23 - 4 * 5, 5}));
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(23 - 4 * 5), Length(5)}, {1, 0}), iet);
 }
 
 TEST(InductionTest, Induction5) {
-  IntervalExchangeTransformation<int, int> iet(5);
-  Permutation botperm(5);
-  Permutation topperm(5);
+  using Length = Length<int>;
 
-  iet.setTop({0, 1, 2, 3, 4});
-  iet.setBot({3, 2, 0, 4, 1});
+  IntervalExchangeTransformation<Length> iet({Length(977), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
 
-  iet.setLengths({977, 351, 143, 321, 12});
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(49), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1}), iet);
 
-  iet.check();
-  iet.zorichInductionStep();
-  iet.check();
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(272), Length(143), Length(49), Length(12), Length(351)}, {4, 1, 2, 0, 3}), iet);
 
-  EXPECT_EQ(iet.lengths(), (v{49, 351, 143, 321, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{3, 2, 0, 4, 1}));
-  EXPECT_EQ(iet.topPermutation(), (v{0, 1, 2, 3, 4}));
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(79), Length(143), Length(49), Length(272), Length(12)}, {1, 2, 4, 3, 0}), iet);
 
-  iet.swapTopBot();
-  iet.zorichInductionStep();
-  iet.check();
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(64), Length(49), Length(12), Length(272), Length(79)}, {4, 0, 1, 3, 2}), iet);
 
-  EXPECT_EQ(iet.lengths(), (v{49, 351, 143, 272, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{1, 2, 0, 3, 4}));
-  EXPECT_EQ(iet.topPermutation(), (v{3, 2, 0, 4, 1}));
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(15), Length(64), Length(49), Length(272), Length(12)}, {2, 4, 3, 1, 0}), iet);
 
-  iet.swapTopBot();
-  iet.zorichInductionStep();
-  iet.check();
-
-  EXPECT_EQ(iet.lengths(), (v{49, 79, 143, 272, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{2, 0, 4, 3, 1}));
-  EXPECT_EQ(iet.topPermutation(), (v{1, 2, 0, 3, 4}));
-
-  iet.swapTopBot();
-  iet.zorichInductionStep();
-  iet.check();
-
-  EXPECT_EQ(iet.lengths(), (v{49, 79, 64, 272, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{1, 2, 0, 3, 4}));
-  EXPECT_EQ(iet.topPermutation(), (v{2, 0, 4, 3, 1}));
-
-  iet.swapTopBot();
-  iet.zorichInductionStep();
-  iet.check();
-
-  EXPECT_EQ(iet.lengths(), (v{49, 15, 64, 272, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{0, 4, 3, 2, 1}));
-  EXPECT_EQ(iet.topPermutation(), (v{1, 2, 0, 3, 4}));
-
-  iet.swapTopBot();
-  iet.zorichInductionStep();
-  iet.check();
-
-  EXPECT_EQ(iet.lengths(), (v{34, 15, 64, 272, 12}));
-  EXPECT_EQ(iet.botPermutation(), (v{2, 1, 0, 3, 4}));
-  EXPECT_EQ(iet.topPermutation(), (v{0, 4, 3, 2, 1}));
+  iet.swap();
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(34), Length(12), Length(272), Length(64), Length(15)}, {3, 4, 0, 2, 1}), iet);
 }
 
 }  // namespace

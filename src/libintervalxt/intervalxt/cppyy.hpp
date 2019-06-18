@@ -23,15 +23,14 @@
 
 #include <iosfwd>
 
-#include "intervalxt/interval.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
 
 namespace intervalxt {
-template <typename TTlen, typename TTmat>
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<TTlen, TTmat> &);
+template <typename Coordinate>
+std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Coordinate> &);
 }
 
-extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<int, int> &);
+extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<int> &);
 
 #endif

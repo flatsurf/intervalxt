@@ -34,6 +34,7 @@
 induction
 induction_benchmark
 interval_exchange_transformation
+rational_linear_subspace
 
 ### Autotools Generated Files
 /.deps

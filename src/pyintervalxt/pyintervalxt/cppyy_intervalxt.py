@@ -54,3 +54,11 @@ for path in os.environ.get('PYINTERVALXT_INCLUDE','').split(':'):
 cppyy.include("intervalxt/cppyy.hpp")
 
 from cppyy.gbl import intervalxt
+
+def IET(lengths, permutation):
+    from cppyy.gbl import std
+    Length = intervalxt.Length[int]
+    Label = intervalxt.Label[Length]
+    return intervalxt.IntervalExchangeTransformation[Length]([Label(l) for l in lengths], permutation);
+
+intervalxt.IET = IET

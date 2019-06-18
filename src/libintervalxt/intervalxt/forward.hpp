@@ -27,14 +27,14 @@
 
 namespace intervalxt {
 
-template <typename Tlen, typename Tmat>
-class IntervalExchangeTransformation;
+template <typename T>
+class Length;
 
-template <typename Tlen, typename Tmat>
-class Interval;
-
-template <typename Tlen, typename Tmat>
+template <typename Length>
 class Label;
+
+template <typename Length>
+class IntervalExchangeTransformation;
 
 }  // namespace intervalxt
 
