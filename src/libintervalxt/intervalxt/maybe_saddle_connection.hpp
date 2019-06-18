@@ -21,10 +21,10 @@
 #ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
 #define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
 
+#include <memory>
+#include <optional>
 #include <utility>
 #include <variant>
-#include <optional>
-#include <memory>
 
 #include "intervalxt/forward.hpp"
 
@@ -47,6 +47,6 @@ struct SeparatingSaddleConnection {
 template <typename Length>
 using MaybeSaddleConnection = std::optional<std::variant<MinimalityGuarantee, NonSeparatingSaddleConnection<Length>, SeparatingSaddleConnection<Length>>>;
 
-}
+}  // namespace intervalxt
 
 #endif

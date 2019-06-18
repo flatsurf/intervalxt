@@ -47,7 +47,7 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
 
   // Return the floor of the division of this length by the argument.
   Quotient operator/(const Length&);
-  
+
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
 
@@ -57,6 +57,6 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
   T value;
 };
 
-}
+}  // namespace intervalxt
 
 #endif

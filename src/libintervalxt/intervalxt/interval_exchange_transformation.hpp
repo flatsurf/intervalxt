@@ -22,8 +22,8 @@
 #define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 
 #include <iosfwd>
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "external/spimpl/spimpl.h"
 
@@ -36,12 +36,12 @@ template <typename Length>
 class IntervalExchangeTransformation {
  public:
   using Label = intervalxt::Label<Length>;
-  IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<size_t>& bottom);
-  IntervalExchangeTransformation(const std::vector<Label> & top, const std::vector<Label>& bottom);
+  IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<size_t> &bottom);
+  IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<Label> &bottom);
 
   // Test whether this permutation is reducible. If it is, return the top and
   // bottom labels after which we cut.
-  std::optional<std::pair<const Label&, const Label&>> reduce() const;
+  std::optional<std::pair<const Label &, const Label &>> reduce() const;
 
   // Return whether there is a periodic trajectory via Boshernitzan's
   // algorithm.

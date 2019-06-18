@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
 
-#include <vector>
 #include <boost/operators.hpp>
+#include <vector>
 
 #include "external/spimpl/spimpl.h"
 
@@ -50,7 +50,7 @@ class Label : boost::equality_comparable<Label<Length>> {
   const Length& length() const noexcept;
   Length& length() noexcept;
 
-  template <typename Length_> 
+  template <typename Length_>
   friend std::ostream& operator<<(std::ostream&, const Label<Length_>&);
 
  private:

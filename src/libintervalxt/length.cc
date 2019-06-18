@@ -18,8 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <variant>
 #include <cassert>
+#include <variant>
 
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -30,7 +30,7 @@ template <typename T>
 Length<T>::Length() : Length(0) {}
 
 template <typename T>
-Length<T>::Length(const T& value) : value(value) {\
+Length<T>::Length(const T& value) : value(value) {
   assert(value >= 0 && "a length cannot be negative");
 }
 
@@ -95,4 +95,4 @@ std::ostream& operator<<(std::ostream& os, const Length<T>& self) {
 namespace intervalxt {
 template class Length<int>;
 template std::ostream& operator<<(std::ostream&, const Length<int>&);
-}
+}  // namespace intervalxt

@@ -29,14 +29,14 @@
 // need a lot of casting code that would only exist to work around C++'s
 // shortcomings.
 
-#include <list>
-#include <set>
 #include <algorithm>
 #include <iostream>
+#include <list>
+#include <set>
 
+#include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/range/adaptor/transformed.hpp>
-#include <boost/algorithm/string/join.hpp>
 
 #include "intervalxt/interval_exchange_transformation.hpp"
 
@@ -45,7 +45,7 @@ namespace {
 
 template <typename Length>
 struct Interval {
-  Label<Length>& label; 
+  Label<Length>& label;
   const typename std::list<Interval>::iterator twin;
 };
 }  // namespace
@@ -86,10 +86,10 @@ class IntervalExchangeTransformation<Length>::Implementation {
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<size_t>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, [&]() {
-  std::vector<Label> bot;
-  for(auto b : bottom) bot.push_back(top[b]);
-  return bot;
-}())) {}
+                                                                                                                                             std::vector<Label> bot;
+                                                                                                                                             for (auto b : bottom) bot.push_back(top[b]);
+                                                                                                                                             return bot;
+                                                                                                                                           }())) {}
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, bottom)) {}
@@ -103,7 +103,7 @@ std::optional<std::pair<const Label<Length>&, const Label<Length>&>> IntervalExc
 
   auto top = impl->top.begin();
   auto bottom = impl->bottom.begin();
-  while(true) {
+  while (true) {
     assert(top != impl->top.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
     assert(bottom != impl->bottom.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 

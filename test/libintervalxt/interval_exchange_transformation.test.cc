@@ -22,8 +22,8 @@
 #include <vector>
 
 #include <intervalxt/interval_exchange_transformation.hpp>
-#include <intervalxt/length.hpp>
 #include <intervalxt/label.hpp>
+#include <intervalxt/length.hpp>
 
 using namespace intervalxt;
 using std::vector;

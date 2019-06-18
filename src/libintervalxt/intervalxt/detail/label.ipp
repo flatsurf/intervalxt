@@ -33,7 +33,7 @@ namespace intervalxt {
 namespace {
 // A unique object relating labels that are considered equal.
 class Id {};
-}
+}  // namespace
 
 template <typename Length>
 class Label<Length>::Implementation {

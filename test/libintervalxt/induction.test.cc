@@ -19,12 +19,12 @@
  *********************************************************************/
 
 #include <gtest/gtest.h>
-#include <vector>
 #include <boost/lexical_cast.hpp>
+#include <vector>
 
 #include <intervalxt/interval_exchange_transformation.hpp>
-#include <intervalxt/length.hpp>
 #include <intervalxt/label.hpp>
+#include <intervalxt/length.hpp>
 
 using namespace intervalxt;
 
@@ -33,7 +33,7 @@ template <typename Length>
 bool operator==(const IntervalExchangeTransformation<Length>& lhs, const IntervalExchangeTransformation<Length>& rhs) {
   return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
 }
-}
+}  // namespace intervalxt
 
 namespace {
 
