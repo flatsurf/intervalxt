@@ -21,8 +21,8 @@
 #include <cassert>
 #include <variant>
 
-#include <boost/numeric/conversion/cast.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include "intervalxt/length.hpp"
 
@@ -76,6 +76,11 @@ mpz_class Length<T>::operator/(const Length<T>& rhs) {
 }
 
 template <typename T>
+const T& Length<T>::length() const {
+  return value;
+}
+
+template <typename T>
 Length<T>::operator bool() const noexcept {
   return static_cast<bool>(value);
 }
@@ -100,6 +105,7 @@ std::ostream& operator<<(std::ostream& os, const Length<T>& self) {
 
 namespace intervalxt {
 template class Length<int>;
-template class Length<long long>;
 template std::ostream& operator<<(std::ostream&, const Length<int>&);
+template class Length<long long>;
+template std::ostream& operator<<(std::ostream&, const Length<long long>&);
 }  // namespace intervalxt
