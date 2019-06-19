@@ -22,6 +22,7 @@
 #include <variant>
 
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "intervalxt/length.hpp"
 
@@ -63,7 +64,12 @@ template <typename T>
 mpz_class Length<T>::operator/(const Length<T>& rhs) {
   assert(static_cast<bool>(rhs) && "cannot divide by zero vector");
   if constexpr (std::is_integral_v<T>) {
-    return value / rhs.value;
+    auto ret = value / rhs.value;
+    if constexpr (std::is_same_v<T, long long>) {
+      return mpz_class(boost::lexical_cast<std::string>(ret));
+    } else {
+      return ret;
+    }
   } else {
     throw std::logic_error("not implemented: floor division for this type");
   }
@@ -94,5 +100,6 @@ std::ostream& operator<<(std::ostream& os, const Length<T>& self) {
 
 namespace intervalxt {
 template class Length<int>;
+template class Length<long long>;
 template std::ostream& operator<<(std::ostream&, const Length<int>&);
 }  // namespace intervalxt
