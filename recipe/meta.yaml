@@ -47,6 +47,8 @@ requirements:
     - benchmark
   run_exports:
     - libintervalxt {{ version }}
+    # https://github.com/conda-forge/ppl-feedstock/issues/4
+    - ppl
 
 outputs:
   - name: libintervalxt
