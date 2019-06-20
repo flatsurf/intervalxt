@@ -29,9 +29,24 @@ from pyintervalxt import intervalxt
 expected="""18 3
 3 18
 """
+expected_swapped="""3 18
+18 3
+"""
 
 def test_IntervalExchangeTransformation():
     iet = intervalxt.IET((18, 3), (1, 0))
     assert repr(iet) == expected
+    iet.swap()
+    assert repr(iet) == expected_swapped
+
+def test_reduce():
+    iet = intervalxt.IET((18, 3), (1, 0))
+    r = iet.reduce()
+    assert r.has_value() == False
+
+    iet = intervalxt.IET((18, 3), (0, 1))
+    r = iet.reduce()
+    assert r.has_value() == True
+
 
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))
