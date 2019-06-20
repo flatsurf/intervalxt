@@ -39,19 +39,16 @@ class IntervalExchangeTransformation {
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<size_t> &bottom);
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<Label> &bottom);
 
-  // Test whether this permutation is reducible. If it is, return the top and
-  // bottom labels after which we cut.
-  std::optional<std::pair<const Label &, const Label &>> reduce() const;
+  MaybeConnection<Length> induce(int limit = -1);
 
-  // Return whether there is a periodic trajectory via Boshernitzan's
-  // algorithm.
-  std::optional<bool> periodicTrajectory() const;
+  // TODO: provide an interface for the full decomposition
+  // Not exactly clear what would be the return type...
 
-  // Perform n zorich induction steps while the length of the first interval on
-  // the top is smaller than the one on the bottom.
-  void zorichInduction(int n = 1);
+  // check for reductibility
+  std::optional<IntervalExchangeTransformation<Length>> reduce();
 
-  MaybeSaddleConnection<Length> induce(int limit = -1);
+  // one step of Zorich induction
+  bool zorichInduction(void);
 
   // Swap the top and bottom intervals.
   void swap();
