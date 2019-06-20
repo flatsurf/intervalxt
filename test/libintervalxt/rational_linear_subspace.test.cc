@@ -30,7 +30,7 @@ using std::vector;
 
 TEST(RationalLinearSubspaceTest, HasNonZeroNonNegativeVector) {
   EXPECT_FALSE(RationalLinearSubspace().hasNonZeroNonNegativeVector());
-  EXPECT_FALSE(RationalLinearSubspace(std::vector<std::vector<mpq_class>> {}).hasNonZeroNonNegativeVector());
+  EXPECT_FALSE(RationalLinearSubspace(std::vector<std::vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
   EXPECT_TRUE(RationalLinearSubspace({{1, 0}}).hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace({{1, 0}, {0, 1}}).hasNonZeroNonNegativeVector());
   EXPECT_TRUE(RationalLinearSubspace({{1, -1}}).hasNonZeroNonNegativeVector());
@@ -39,7 +39,7 @@ TEST(RationalLinearSubspaceTest, HasNonZeroNonNegativeVector) {
 
 TEST(RationalLinearSubspaceTest, HasPositiveVector) {
   EXPECT_FALSE(RationalLinearSubspace().hasPositiveVector());
-  EXPECT_FALSE(RationalLinearSubspace(std::vector<std::vector<mpq_class>> {}).hasPositiveVector());
+  EXPECT_FALSE(RationalLinearSubspace(std::vector<std::vector<mpq_class>>{}).hasPositiveVector());
   EXPECT_FALSE(RationalLinearSubspace({{1, 0}}).hasPositiveVector());
   EXPECT_FALSE(RationalLinearSubspace({{1, 0}, {0, 1}}).hasPositiveVector());
   EXPECT_TRUE(RationalLinearSubspace({{1, -1}}).hasPositiveVector());

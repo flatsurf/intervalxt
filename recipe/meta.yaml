@@ -45,10 +45,11 @@ requirements:
     # requirement of make check which also runs benchmarks
     - gtest
     - benchmark
-  run_exports:
-    - libintervalxt {{ version }}
+  run:
     # https://github.com/conda-forge/ppl-feedstock/issues/4
     - ppl
+  run_exports:
+    - libintervalxt {{ version }}
 
 outputs:
   - name: libintervalxt
