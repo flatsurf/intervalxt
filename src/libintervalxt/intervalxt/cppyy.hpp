@@ -32,7 +32,7 @@ template <typename T>
 std::ostream &operator<<(std::ostream &, const Length<T> &);
 template <typename Coordinate>
 std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Coordinate> &);
-}
+}  // namespace intervalxt
 
 extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<int> &);
 extern template std::ostream &intervalxt::operator<<(std::ostream &, const Length<int> &);
