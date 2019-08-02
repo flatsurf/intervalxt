@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PYINTERVALXT_INCLUDE="@srcdir@/../../libintervalxt/src:@builddir@/../../libintervalxt/src"
+export LD_LIBRARY_PATH="@builddir@/../../libintervalxt/src/.libs/"
+export PYTHONPATH="@builddir@/../../pyintervalxt/src/:@pythondir@"

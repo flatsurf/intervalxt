@@ -31,18 +31,10 @@
 *.exe
 *.out
 *.app
-induction
-induction_benchmark
-interval_exchange_transformation
-rational_linear_subspace
+/polygon
 
 ### Autotools Generated Files
 /.deps
 /.libs
 /.dirstamp
 /stamp-h1
-
-### googletest Generated Files
-/*.log
-/*.trs
-/*.json

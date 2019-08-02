@@ -13,8 +13,6 @@ if echo "$ASV_SECRET_KEY" | base64 -d > ~/.ssh/id_rsa; then
 fi
 set -x
 
-# We need setuptools until https://github.com/conda-forge/asv-feedstock/pull/10 has been resolved
-conda install --quiet -y git asv setuptools
 git config --global user.name 'CI Benchmark'
 git config --global user.email 'benchmark@ci.invalid'
 git config --global push.default nothing
@@ -33,6 +31,8 @@ else
 fi
   
 cp recipe/asv-machine.json ~/.asv-machine.json
+# We have to be on a branch. Otherwise, asv cannot find the branch for the
+# commits and refuses to generate graphs.
 git checkout -b master
 
 asv run --machine=azure
@@ -53,3 +53,4 @@ if test "x$have_asv" = "xyes"; then
 fi
 
 popd
+
