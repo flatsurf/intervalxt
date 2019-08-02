@@ -28,6 +28,7 @@ VPATH = $(srcdir) $(builddir)
 BUILT_SOURCES = intervalxt/intervalxt.hpp
 # Distribute intervalxt.hpp.in as part of the tarball, but not intervalxt.hpp
 EXTRA_DIST = intervalxt/intervalxt.hpp.in
-nodist_pkginclude_HEADERS = intervalxt/intervalxt.hpp
+generatedincludedir = $(includedir)/intervalxt
+nodist_generatedinclude_HEADERS = intervalxt/intervalxt.hpp
 
 CLEANFILES = intervalxt/intervalxt.hpp

@@ -1,5 +1,5 @@
-About libintervalxt
-===================
+About intervalxt
+================
 
 Home: https://github.com/flatsurf/intervalxt
 
@@ -7,7 +7,7 @@ Package license: GPL3
 
 Feedstock license: BSD 3-Clause
 
-Summary: Interval Exchange Transformations
+Summary: Boshernitzan Algorithm with Interval Exchange Transformations
 
 
 
@@ -29,10 +29,17 @@ Current build status
         <table>
           <thead><tr><th>Variant</th><th>Status</th></tr></thead>
           <tbody><tr>
-              <td>linux</td>
+              <td>linux_build_flavourcoverage</td>
               <td>
                 <a href="https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=&branchName=master">
-                  <img src="https://dev.azure.com/flatsurf/conda/_apis/build/status/intervalxt-feedstock?branchName=master&jobName=linux&configuration=linux_" alt="variant">
+                  <img src="https://dev.azure.com/flatsurf/conda/_apis/build/status/intervalxt-feedstock?branchName=master&jobName=linux&configuration=linux_build_flavourcoverage" alt="variant">
+                </a>
+              </td>
+            </tr><tr>
+              <td>linux_build_flavourrelease</td>
+              <td>
+                <a href="https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=&branchName=master">
+                  <img src="https://dev.azure.com/flatsurf/conda/_apis/build/status/intervalxt-feedstock?branchName=master&jobName=linux&configuration=linux_build_flavourrelease" alt="variant">
                 </a>
               </td>
             </tr>
@@ -64,10 +71,10 @@ Current release info
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libintervalxt-green.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-pyintervalxt-green.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) |
 
-Installing libintervalxt
-========================
+Installing intervalxt
+=====================
 
-Installing `libintervalxt` from the `flatsurf` channel can be achieved by adding `flatsurf` to your channels with:
+Installing `intervalxt` from the `flatsurf` channel can be achieved by adding `flatsurf` to your channels with:
 
 ```
 conda config --add channels flatsurf
@@ -88,17 +95,17 @@ conda search libintervalxt --channel flatsurf
 
 
 
-Updating libintervalxt-feedstock
-================================
+Updating intervalxt-feedstock
+=============================
 
-If you would like to improve the libintervalxt recipe or build a new
+If you would like to improve the intervalxt recipe or build a new
 package version, please fork this repository and submit a PR. Upon submission,
 your changes will be run on the appropriate platforms to give the reviewer an
 opportunity to confirm that the changes result in a successful build. Once
 merged, the recipe will be re-built and uploaded automatically to the
 `flatsurf` channel, whereupon the built conda packages will be available for
 everybody to install and use from the `flatsurf` channel.
-Note that all branches in the conda-forge/libintervalxt-feedstock are
+Note that all branches in the conda-forge/intervalxt-feedstock are
 immediately built and any created packages are uploaded, so PRs should be based
 on branches in forks and branches in the main repository should only be used to
 build distinct package versions.
