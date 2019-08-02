@@ -1,13 +1,12 @@
-# conda-smithy assumes that the build number is >= 1000 when building with the new anaconda compilers,
-# this probably is not important but make_build_number otherwise complains during the build
 # See https://github.com/conda/conda-build/issues/2666 for the missing tag
 {% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged')|string|replace('-','_') %}
+# conda-smithy assumes that the build number is >= 1000 when building with the new anaconda compilers,
+# this probably is not important but make_build_number otherwise complains during the build
 {% set build_number = (environ.get('GIT_DESCRIBE_NUMBER')|int + 1000)|string %}
-{% set build_string = "master_" + build_number %}
-{% set flavour = environ.get('FLAVOUR', 'build')|string %}
+{% set build_string = "master_" + ((build_flavour + "_") if build_flavour != "release" else "") + build_number %}
 
 package:
-  name: libintervalxt
+  name: intervalxt
   version: {{ version }}
 
 source:
@@ -16,69 +15,100 @@ source:
 build:
   number: {{ build_number }}
   string: {{ build_string }}
-  # intervalxt is not available for Windows & macOS
+  # e-antic is not available on Windows yet
   skip: True  # [win]
+  # e-antic is not available on macOS yet
   skip: True  # [osx]
-  script:
-    - source ./recipe/cflags.sh
-    # /tmp/secrets contains some CI-injected credentials to services such as
-    # coveralls or ASV.
-    - source /tmp/secrets
-    - ./recipe/build-{{ flavour }}.sh
-    # conda-build can currently not copy build-artifacts over to the testing
-    # stage, so we can only run make check if we rebuild everything. Therefore,
-    # we run make check as part of the build in the usual make; make check;
-    # make install order.
-    - ./recipe/test-{{ flavour }}.sh
-    - cd src/libintervalxt && make install
 
 requirements:
   build:
     - libtool
     - automake
     - {{ compiler('cxx') }}
+    # requirements for ASV benchmarks
+    - git
+    # requirements for clang-format
+    - clangdev ==8.0.0
   host:
+    # compile time dependencies of libintervalxt
     - boost-cpp
     - e-antic 1.*
     - gmp
     - ppl
-    # requirement of make check which also runs benchmarks
+    # We pin to an explicit version of Python here; since the Python part is
+    # noarch:python, the version does not matter. However, we need the same
+    # version when doing "make install" so that files go into the site-packages
+    # directory that was determined by ./configure.
+    - python ==3.7
+    # enable test/pyintervalxt tests in ./configure
+    - pytest
+    - cppyy
+    # enable test/libintervalxt tests in ./configure
     - gtest
     - benchmark
-  run:
-    # https://github.com/conda-forge/ppl-feedstock/issues/4
-    - ppl
-  run_exports:
-    - libintervalxt {{ version }}
+    # enable check-valgrind in ./configure
+    - valgrind
+    # requirements for ASV benchmarks
+    - asv
 
 outputs:
   - name: libintervalxt
-  - name: pyintervalxt
+    script: install-libintervalxt.sh
     build:
-      skip: True  # [win]
-      skip: True  # [osx]
-    script: install-pyintervalxt.sh
+      number: {{ build_number }}
+      string: {{ build_string }}
+{%- if build_flavour and build_flavour != 'release' %}
+      features:
+        - {{ build_flavour }}
+{% endif %}
     requirements:
       build:
-        - libtool
-        - automake
         - {{ compiler('cxx') }}
       host:
         - boost-cpp
+        - e-antic 1.*
+        - gmp
+        - ppl
       run:
-        - libintervalxt =={{ version }}
-        # cppyy, not packaged in conda-forge yet
-
-    # We cannot test that that the import works since cppyy is not on conda-forge yet
-    #test:
-    #  imports:
-    #    - pyintervalxt
+        # https://github.com/conda-forge/ppl-feedstock/issues/4
+        - ppl
+    run_exports:
+      # We pin the version of libintervalxt exactly since we do not want to
+      # bother with incompatibilities in our nightly builds.
+      - libintervalxt {{ version }}
+  - name: pyintervalxt
+    build:
+      number: {{ build_number }}
+      string: {{ build_string }}
+{%- if build_flavour and build_flavour != 'release' %}
+      features:
+        - {{ build_flavour }}
+{% endif %}
+      noarch: python
+    script: install-pyintervalxt.sh
+    requirements:
+      host:
+        - python ==3.7
+        - setuptools
+      run:
+        # We pin the version of libintervalxt exactly since we do not want to
+        # bother with incompatibilities in our nightly builds.
+        - {{ pin_subpackage('libintervalxt', exact=True) }}
+        - cppyy
+        - pyeantic
+        - python
+        - boost-cpp
+{%- if build_flavour == 'release' %}
+    test:
+      imports:
+        - pyintervalxt
+{% endif %}
 
 about:
   home: https://github.com/flatsurf/intervalxt
   license: GPL3
   license_file: COPYING
-  summary: Interval Exchange Transformations
+  summary: Boshernitzan Algorithm with Interval Exchange Transformations
 
 extra:
   recipe-maintainers:
