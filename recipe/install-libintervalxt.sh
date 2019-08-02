@@ -1,4 +1,5 @@
 #!/bin/bash
-cd pyintervalxt
+cd libintervalxt
 
 make install
+
