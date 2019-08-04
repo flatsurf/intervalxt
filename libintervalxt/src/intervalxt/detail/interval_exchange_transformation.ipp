@@ -135,14 +135,12 @@ class IntervalExchangeTransformation<Length>::Implementation {
           vtop.push_back(j->label);
       for (auto j = ibottom; j != bottom.end(); j++)
           vbottom.push_back(j->label);
-      IntervalExchangeTransformation<Length> right(vtop, vbottom);
-
       top.erase(itop, top.end());
       bottom.erase(ibottom, bottom.end());
       assert(top.size() == bottom.size() && "top and bottom must have the same length");
       for (auto it = vtop.begin(); it != vtop.end(); it++) labels.erase(*it);
 
-      return right;
+      return IntervalExchangeTransformation<Length>(vtop, vbottom);
     }
   }
 
