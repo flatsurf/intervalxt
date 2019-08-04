@@ -32,20 +32,30 @@ namespace intervalxt {
 
 struct MinimalityGuarantee {};
 
+// the given label appears both on top and bottom at the left
+// hand side of the iet
+// Note: Label is already removed when this message is returned.
 template <typename Length>
-struct NonSeparatingSaddleConnection {
-  // Note: Label is already identified when this message is returned.
-  std::pair<Label<Length>, Label<Length>> saddleConnection;
+struct Cylinder {
+  Label<Length> label;
 };
 
+// the pair of labels have the same lengths.
+// Note: top is already removed when this message is returned.
 template <typename Length>
-struct SeparatingSaddleConnection {
+struct NonSeparatingConnection {
+  Label<Length> bottom, top;
+};
+
+// Note: top is already removed when this message is returned.
+template <typename Length>
+struct SeparatingConnection {
   std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
-  std::pair<Label<Length>, Label<Length>> saddleConnection;
+  Label<Length> bottom, top;
 };
 
 template <typename Length>
-using MaybeSaddleConnection = std::optional<std::variant<MinimalityGuarantee, NonSeparatingSaddleConnection<Length>, SeparatingSaddleConnection<Length>>>;
+using MaybeConnection = std::optional<std::variant<MinimalityGuarantee, Cylinder<Length>, NonSeparatingConnection<Length>, SeparatingConnection<Length>>>;
 
 }  // namespace intervalxt
 
