@@ -126,15 +126,14 @@ class IntervalExchangeTransformation<Length>::Implementation {
     if (itop == top.end()) {
       assert(ibottom == bottom.end() && "top & bottom do not have the same size");
       return {};
-    }
-    else {
+    } else {
       std::vector<Label> vtop;
       std::vector<Label> vbottom;
 
       for (auto j = itop; j != top.end(); j++)
-          vtop.push_back(j->label);
+        vtop.push_back(j->label);
       for (auto j = ibottom; j != bottom.end(); j++)
-          vbottom.push_back(j->label);
+        vbottom.push_back(j->label);
       top.erase(itop, top.end());
       bottom.erase(ibottom, bottom.end());
       assert(top.size() == bottom.size() && "top and bottom must have the same length");
@@ -152,7 +151,7 @@ class IntervalExchangeTransformation<Length>::Implementation {
     auto ibottom = bottom.begin();
 
     if (itop->label == ibottom->label)
-        return true;
+      return true;
 
     while (ibottom->label != itop->label && length_to_subtract + ibottom->label.length() < itop->label.length()) {
       length_to_subtract += ibottom->label.length();
@@ -189,12 +188,9 @@ class IntervalExchangeTransformation<Length>::Implementation {
   // Return whether there is a periodic trajectory via Boshernitzan's
   // algorithm.
   bool boshernitzanMinimal(void) const {
-      return false;
+    return false;
   }
-
 };
-
-
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<size_t>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, [&]() {
@@ -205,7 +201,6 @@ IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, bottom)) {}
-
 
 template <typename Length>
 std::vector<Label<Length>> IntervalExchangeTransformation<Length>::top() const noexcept {
@@ -226,7 +221,6 @@ std::vector<Label<Length>> IntervalExchangeTransformation<Length>::bottom() cons
 
   return ret;
 }
-
 
 template <typename Length>
 void IntervalExchangeTransformation<Length>::swap() {

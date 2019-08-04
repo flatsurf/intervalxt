@@ -33,7 +33,7 @@ template <typename Length>
 bool operator==(const IntervalExchangeTransformation<Length>& lhs, const IntervalExchangeTransformation<Length>& rhs) {
   return boost::lexical_cast<std::string>(lhs) == boost::lexical_cast<std::string>(rhs);
 }
-} // namespace intervalxt
+}  // namespace intervalxt
 
 TEST(IETTest, Initialization) {
   using Length = Length<int>;
@@ -52,8 +52,8 @@ TEST(IETTest, Reduction) {
   iet = IntervalExchangeTransformation<Length>({Length(17), Length(23), Length(33)}, {1, 0, 2});
   auto r = iet.reduce();
   EXPECT_TRUE(r);
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(17), Length(23)}, {1,0}));
-  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({Length(33)}, std::vector<size_t> {0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(17), Length(23)}, {1, 0}));
+  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({Length(33)}, std::vector<size_t>{0}));
 
   iet = IntervalExchangeTransformation<Length>({Length(1), Length(1), Length(1)}, {1, 2, 0});
   EXPECT_FALSE(iet.reduce());
