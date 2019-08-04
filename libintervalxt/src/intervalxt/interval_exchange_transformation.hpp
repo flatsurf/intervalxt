@@ -41,9 +41,6 @@ class IntervalExchangeTransformation {
 
   MaybeConnection<Length> induce(int limit = -1);
 
-  // TODO: provide an interface for the full decomposition
-  // Not exactly clear what would be the return type...
-
   // check for reductibility
   std::optional<IntervalExchangeTransformation<Length>> reduce();
 
