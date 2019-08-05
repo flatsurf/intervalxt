@@ -17,8 +17,6 @@ git fetch origin
 git checkout -b master
 git branch -u origin/master
 
-find
-
 set +x
 # Do not upload; print what would have been uploaded instead…
 COVERALLS_FLAGS="-d"
