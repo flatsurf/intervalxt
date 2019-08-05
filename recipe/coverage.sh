@@ -7,8 +7,6 @@ make check
 # Install gcov
 conda install -y --quiet gcc_linux-64
 
-# gcov should be invoked in the directory where the compiler was invoked
-# originally, i.e., in the place where the Makefile resides
 cd $SRC_DIR
 
 git remote remove origin || true
@@ -25,4 +23,8 @@ if [ ${#COVERALLS_REPO_TOKEN} = 36 ];then
   COVERALLS_FLAGS="-t $COVERALLS_REPO_TOKEN"
 fi
 
+# gcov should be invoked in the directory where the compiler was invoked
+# originally, i.e., in the place where the Makefile resides. At the same time,
+# codecov should run in the repository root so the paths resolve correctly in
+# links to github.
 bash <(curl -s https://codecov.io/bash) $COVERALLS_FLAGS -R `pwd` -x `which x86_64-conda_cos6-linux-gnu-gcov` -a '\-lrp' -p ./libintervalxt/src
