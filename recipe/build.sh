@@ -7,7 +7,7 @@ $RECIPE_DIR/configure.sh
 
 # Build libintervalxt
 if [[ "$build_flavour" == "coverage" ]]; then
-    export EXTRA_CXXFLAGS="--coverage"
+    export EXTRA_CXXFLAGS="--coverage -O0"
 fi
 
 make CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS"
