@@ -256,7 +256,9 @@ std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<
         clashes++;
       }
     }
+
     assert(false && "each label must be contained in top()");
+    return std::string();
   };
 
   os << boost::algorithm::join(self.top() | boost::adaptors::transformed(id), " ") << std::endl;

@@ -2,7 +2,7 @@
 set -exo pipefail
 
 # Create coverage statistics
-make check
+make CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS"
 
 # Install gcov
 conda install -y --quiet gcc_linux-64
@@ -25,4 +25,4 @@ if [ ${#COVERALLS_REPO_TOKEN} = 36 ];then
   COVERALLS_FLAGS="-t $COVERALLS_REPO_TOKEN"
 fi
 
-bash <(curl -s https://codecov.io/bash) $COVERALLS_FLAGS -R `pwd` -x `which x86_64-conda_cos6-linux-gnu-gcov` -a '\-lrp' -p ./libintervalxt/src
+bash <(curl -s https://codecov.io/bash) $COVERALLS_FLAGS -R `pwd` -x `which x86_64-conda_cos6-linux-gnu-gcov` -a '\-lrp' -p .
