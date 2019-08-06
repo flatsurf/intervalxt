@@ -65,6 +65,8 @@ docker run ${DOCKER_RUN_ARGS} \
            -e HOST_USER_ID \
            -e COVERALLS_REPO_TOKEN \
            -e ASV_SECRET_KEY \
+           -e VCS_PULL_REQUEST \
+           -e VCS_BRANCH_NAME \
            -e UPLOAD_PACKAGES \
            -e CI \
            $DOCKER_IMAGE \

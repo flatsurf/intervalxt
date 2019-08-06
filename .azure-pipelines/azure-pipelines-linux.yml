@@ -33,5 +33,8 @@ jobs:
     displayName: Run docker build
     env:
       BINSTAR_TOKEN: $(BINSTAR_TOKEN)
+      # TODO: Rename to codecov
       COVERALLS_REPO_TOKEN: $(COVERALLS_REPO_TOKEN)
       ASV_SECRET_KEY: $(ASV_SECRET_KEY)
+      VCS_PULL_REQUEST: $(System.PullRequest.PullRequestId)
+      VCS_BRANCH_NAME: $(System.PullRequest.TargetBranch)
