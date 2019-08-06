@@ -26,7 +26,6 @@
 
 #include "intervalxt/rational_linear_subspace.hpp"
 
-using boost::numeric_cast;
 using Parma_Polyhedra_Library::Constraint;
 using Parma_Polyhedra_Library::Constraint_System;
 using Parma_Polyhedra_Library::Linear_Expression;
@@ -35,6 +34,7 @@ using Parma_Polyhedra_Library::NNC_Polyhedron;
 using Parma_Polyhedra_Library::NOT_NECESSARILY_CLOSED;
 using Parma_Polyhedra_Library::SPARSE;
 using Parma_Polyhedra_Library::Variable;
+using boost::numeric_cast;
 using std::ostream;
 using std::vector;
 

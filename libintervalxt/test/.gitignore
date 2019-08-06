@@ -35,6 +35,7 @@
 /induction_benchmark
 /interval_exchange_transformation
 /rational_linear_subspace
+/cereal
 
 ### Autotools Generated Files
 /.deps

@@ -2,7 +2,8 @@ lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =            \
 	length.cc                           \
-	rational_linear_subspace.cc
+	rational_linear_subspace.cc         \
+	id.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
@@ -11,6 +12,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/detail/interval_exchange_transformation.ipp \
 	intervalxt/label.hpp                                   \
 	intervalxt/detail/label.ipp                            \
+	intervalxt/detail/id.hpp                               \
 	intervalxt/length.hpp                                  \
 	intervalxt/rational_linear_subspace.hpp                \
 	intervalxt/forward.hpp                                 \
