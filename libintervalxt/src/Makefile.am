@@ -19,7 +19,8 @@ nobase_include_HEADERS =                                 \
 	intervalxt/forward.hpp                                 \
 	intervalxt/cppyy.hpp                                   \
 	intervalxt/maybe_saddle_connection.hpp                 \
-	intervalxt/external/spimpl/spimpl.h
+	intervalxt/external/spimpl/spimpl.h                    \
+	intervalxt/cereal.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/libintervalxt
