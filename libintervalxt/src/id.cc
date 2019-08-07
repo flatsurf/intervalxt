@@ -42,18 +42,18 @@ auto& uuid2id() {
   static UniqueFactory<const Id, boost::uuids::uuid> factory;
   return factory;
 }
-}
+}  // namespace
 
 Id::Id() noexcept {}
 
 Id::operator boost::uuids::uuid() const noexcept {
   // Note that this is thread-safe since the factories are thread-safe.
-  auto ret = *id2uuid().get(this->weak_from_this(), [&]() { 
+  auto ret = *id2uuid().get(this->weak_from_this(), [&]() {
     // It is safe to call generator() here even though it is not thread-safe.
     // Since the factory allows only one get() to run at a time.
     return new boost::uuids::uuid(generator()());
   });
-  uuid2id().get(ret, [&]()->std::shared_ptr<const Id> {
+  uuid2id().get(ret, [&]() -> std::shared_ptr<const Id> {
     return this->shared_from_this();
   });
   return ret;
@@ -72,5 +72,5 @@ std::shared_ptr<const Id> Id::make(const boost::uuids::uuid& uuid) noexcept {
   });
   return id;
 }
-}
-}
+}  // namespace detail
+}  // namespace intervalxt

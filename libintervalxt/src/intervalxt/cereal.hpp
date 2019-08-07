@@ -26,9 +26,9 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>
 
+#include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
 #include "intervalxt/length.hpp"
-#include "intervalxt/interval_exchange_transformation.hpp"
 
 namespace intervalxt {
 
@@ -73,4 +73,4 @@ void load(Archive& archive, IntervalExchangeTransformation<Length>& self) {
   self = IntervalExchangeTransformation<Length>(top, bottom);
 }
 
-}
+}  // namespace intervalxt

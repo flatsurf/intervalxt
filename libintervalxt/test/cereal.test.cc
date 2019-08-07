@@ -20,18 +20,18 @@
 
 #include <gtest/gtest.h>
 #include <boost/lexical_cast.hpp>
-#include <vector>
-#include <memory>
 #include <cereal/archives/json.hpp>
+#include <memory>
+#include <vector>
 
+#include <intervalxt/cereal.hpp>
 #include <intervalxt/interval_exchange_transformation.hpp>
 #include <intervalxt/label.hpp>
 #include <intervalxt/length.hpp>
-#include <intervalxt/cereal.hpp>
 
 using namespace intervalxt;
-using cereal::JSONOutputArchive;
 using cereal::JSONInputArchive;
+using cereal::JSONOutputArchive;
 
 namespace {
 

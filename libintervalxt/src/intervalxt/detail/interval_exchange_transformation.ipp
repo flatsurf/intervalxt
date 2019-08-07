@@ -195,10 +195,10 @@ class IntervalExchangeTransformation<Length>::Implementation {
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<size_t>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, [&]() {
-  std::vector<Label> bot;
-  for (auto b : bottom) bot.push_back(top[b]);
-  return bot;
-}())) {}
+                                                                                                                                             std::vector<Label> bot;
+                                                                                                                                             for (auto b : bottom) bot.push_back(top[b]);
+                                                                                                                                             return bot;
+                                                                                                                                           }())) {}
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation() : IntervalExchangeTransformation(std::vector<Label>(), std::vector<Label>()) {}

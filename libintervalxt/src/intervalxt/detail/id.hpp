@@ -37,8 +37,7 @@ class Id : public std::enable_shared_from_this<Id> {
   static std::shared_ptr<const Id> make(const boost::uuids::uuid& uuid) noexcept;
   static std::shared_ptr<const Id> make() noexcept;
 };
-}
+}  // namespace detail
 }  // namespace intervalxt
 
 #endif
-
