@@ -47,15 +47,13 @@ auto& uuid2id() {
 Id::Id() noexcept {}
 
 Id::operator boost::uuids::uuid() const noexcept {
-  // TODO: Can the factory handle a weak_ptr as the key?
+  // Note that this is thread-safe since the factories are thread-safe.
   auto ret = *id2uuid().get(this->weak_from_this(), [&]() { 
-    // TODO: Comment on why this is thread-safe.
+    // It is safe to call generator() here even though it is not thread-safe.
+    // Since the factory allows only one get() to run at a time.
     return new boost::uuids::uuid(generator()());
-    // TODO: Is this still thread-safe if this method is called twice at the
-    // same time?
   });
   uuid2id().get(ret, [&]()->std::shared_ptr<const Id> {
-    // TODO: Comment on why this is thread-safe.
     return this->shared_from_this();
   });
   return ret;
