@@ -21,6 +21,7 @@
 #ifndef LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 #define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 
+#include <boost/operators.hpp>
 #include <iosfwd>
 #include <optional>
 #include <vector>
@@ -36,6 +37,7 @@ template <typename Length>
 class IntervalExchangeTransformation {
  public:
   using Label = intervalxt::Label<Length>;
+  IntervalExchangeTransformation();
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<size_t> &bottom);
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<Label> &bottom);
 

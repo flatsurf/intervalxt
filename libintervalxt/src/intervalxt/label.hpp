@@ -33,14 +33,15 @@ namespace intervalxt {
 // Data attached to a pair of matched intervals in an Interval Exchange
 // Transformation.
 template <typename Length>
-class Label : boost::equality_comparable<Label<Length>> {
+class Label : public boost::equality_comparable<Label<Length>> {
  public:
   Label();
   Label(const Length& length);
 
   // Return whether two labels are considered the same. Note that equal labels
   // might not be identicial, e.g., when creating a copy of a label and the
-  // modifying one of the copies, the two instances are still considered equal.
+  // modifying the lengths of one of the copies, the two instances are still
+  // considered equal.
   bool operator==(const Label&) const noexcept;
 
   // Compare two labels so they can be used in STL containers. The comparison
@@ -56,6 +57,11 @@ class Label : boost::equality_comparable<Label<Length>> {
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
+
+  template <typename Archive, typename Len>
+  friend void load(Archive&, Label<Len>&);
+  template <typename Archive, typename Len>
+  friend void save(Archive&, const Label<Len>&);
 };
 
 }  // namespace intervalxt
