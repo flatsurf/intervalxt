@@ -7,8 +7,6 @@ make CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS"
 # Install gcov
 conda install -y --quiet gcc_linux-64
 
-# gcov should be invoked in the directory where the compiler was invorked
-# originally, i.e., in the place where the Makefile resides
 cd $SRC_DIR
 
 git remote remove origin || true
