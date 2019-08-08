@@ -83,9 +83,10 @@ class IntervalExchangeTransformation<Length>::Implementation {
     assert(std::all_of(this->labels.begin(), this->labels.end(), [&](auto& l) { return std::count_if(this->bottom.begin(), this->bottom.end(), [&](auto& t) { return t.label == l; }); }) && "bottom does not contain every label exactly once.");
   }
 
-  // NOTE: using a set here is algorithmicall much worse than the bitarray that
-  // used to be. We know exactly how many labels we have to fit. Instead of constant
-  // time searches and additions we have here logarithmic search and addition...
+  // NOTE: using a set here is algorithmically worse than the bitarray that
+  // used to be. We know exactly how many labels we have to fit. Instead of
+  // constant time searches and additions we have here logarithmic search and
+  // addition...then again many consider logarithms just big constants.
   std::optional<IntervalExchangeTransformation<Length>> reduce() {
     std::set<Label> seen;
 
@@ -198,6 +199,9 @@ IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std
                                                                                                                                              for (auto b : bottom) bot.push_back(top[b]);
                                                                                                                                              return bot;
                                                                                                                                            }())) {}
+
+template <typename Length>
+IntervalExchangeTransformation<Length>::IntervalExchangeTransformation() : IntervalExchangeTransformation(std::vector<Label>(), std::vector<Label>()) {}
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, bottom)) {}

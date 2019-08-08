@@ -23,28 +23,30 @@
 
 #include <memory>
 
+#include <boost/uuid/uuid.hpp>
+
+#include "intervalxt/detail/id.hpp"
 #include "intervalxt/label.hpp"
 #include "intervalxt/length.hpp"
 
-// Consult the rant on top of interval_exchange_transformation.ipp for the
-// rationale of this file.
+// Consult the rant on top of interval_exchange_transformation.ipp for why we
+// have to put the implementation into this header file.
 
 namespace intervalxt {
-namespace {
-// A unique object relating labels that are considered equal.
-class Id {};
-}  // namespace
-
 template <typename Length>
 class Label<Length>::Implementation {
-  friend Label<Length>;
-
-  std::shared_ptr<Id> id;
+  std::shared_ptr<const detail::Id> id;
   Length length;
 
  public:
   Implementation() : Implementation(Length()) {}
-  Implementation(const Length& length) : id(std::make_shared<Id>()), length(length) {}
+  Implementation(const Length& length) : id(detail::Id::make()), length(length) {}
+
+  friend Label<Length>;
+  template <typename Archive, typename Len>
+  friend void load(Archive&, Label<Len>&);
+  template <typename Archive, typename Len>
+  friend void save(Archive&, const Label<Len>&);
 };
 
 template <typename Length>
@@ -73,6 +75,7 @@ template <typename Length>
 std::ostream& operator<<(std::ostream& os, const Label<Length>& self) {
   return os << self.length();
 }
+
 }  // namespace intervalxt
 
 #endif
