@@ -21,14 +21,14 @@ if [[ "$build_flavour" == "release" ]]; then
     popd
     pushd pyintervalxt
     make check-valgrind
-    # Check would fail since libintervalx is not installed
+    # Check would fail since libintervalxt is not installed
     # make distcheck
     popd
     make distcheck
 fi
 
 # /tmp/secrets contains some CI-injected credentials to services such as
-# coveralls or ASV.
+# codecov or ASV.
 source /tmp/secrets || true
 
 if [[ "$build_flavour" == "release" ]]; then
