@@ -2,7 +2,7 @@
   "version": 1,
   "project": "intervalxt",
   "project_url": "https://github.com/flatsurf/intervalxt",
-  "show_commit_url": "https://github.com/flatsurf/intervalxt",
+  "show_commit_url": "https://github.com/flatsurf/intervalxt/commit",
   "repo": ".",
   "environment_type": "conda",
   "matrix": {
