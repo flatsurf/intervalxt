@@ -81,6 +81,13 @@ const T& Length<T>::length() const {
 }
 
 template <typename T>
+T Length<T>::squared() const {
+  auto ret = value * value;
+  assert(ret >= value);
+  return ret;
+}
+
+template <typename T>
 Length<T>::operator bool() const noexcept {
   return static_cast<bool>(value);
 }
