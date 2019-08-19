@@ -23,7 +23,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/cereal.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile
-	mkdir -p $(builddir)/libintervalxt
+	mkdir -p $(builddir)/intervalxt
 	sed -e 's,[@]libdir[@],$(libdir),g' < $< > $@
 
 # Since we generate intervalxt.hpp, we need to search $(builddir) during out-of-tree builds aka VPATH builds
