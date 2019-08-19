@@ -48,6 +48,8 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
   // Return the floor of the division of this length by the argument.
   Quotient operator/(const Length&);
 
+  T squared() const;
+
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
 
