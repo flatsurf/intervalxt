@@ -23,11 +23,12 @@
 #ifndef LIBINTERVALXT_FORWARD_HPP
 #define LIBINTERVALXT_FORWARD_HPP
 
+#include <gmpxx.h>
 #include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
 
-template <typename T>
+template <typename T, typename Quo = std::conditional_t<std::is_integral_v<T>, T, mpz_class>>
 class Length;
 
 template <typename Length>

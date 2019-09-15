@@ -26,6 +26,8 @@
 #include <optional>
 #include <vector>
 
+#include <gmpxx.h>
+
 #include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
@@ -51,6 +53,9 @@ class IntervalExchangeTransformation {
 
   // Swap the top and bottom intervals.
   void swap();
+
+  // Return the Sah-Arnoux-Fathi invariant
+  std::valarray<mpq_class> safInvariant() const;
 
   // Remove the first pair of intervals (assuming that it corresponds to a
   // cylinder, i.e., the leftmost singularity is a connection of length one).

@@ -33,6 +33,9 @@
 #include <iostream>
 #include <list>
 #include <set>
+#include <valarray>
+
+#include <gmpxx.h>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
@@ -49,6 +52,23 @@ struct Interval {
   const typename std::list<Interval>::iterator twin;
 };
 }  // namespace
+
+template <typename T>
+std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
+  if (v1.size() != v2.size())
+    throw std::logic_error("vectors must have same size");
+
+  size_t d = v1.size();
+  std::valarray<T> res(d * (d - 1) / 2);
+  size_t k = 0;
+  for (size_t i = 0; i < d - 1; i++)
+    for (size_t j = i + 1; j < d; j++) {
+      res[k] += v1[i] * v2[j] - v1[j] * v2[i];
+      k += 1;
+    }
+
+  return res;
+}
 
 template <typename Length>
 class IntervalExchangeTransformation<Length>::Implementation {
@@ -186,6 +206,38 @@ class IntervalExchangeTransformation<Length>::Implementation {
     return top.begin()->label.length() == bottom.begin()->label.length();
   }
 
+  // Return the Sah-Arnoux-Fathi invariant (as a vector of rationals)
+  std::valarray<mpq_class> safInvariant() const {
+    size_t d = top.begin()->label.length().degree();
+    if (d == 1) {
+      // empty vector for integers or rationals
+      std::valarray<mpq_class> v;
+      return v;
+    } else {
+      std::valarray<mpq_class> w;
+
+      w.resize(d * (d - 1) / 2);
+
+      for (auto i = labels.begin(); i != labels.end(); ++i) {
+        std::valarray<mpq_class> t;  // translation vector
+        t.resize(d);
+        for (auto j = top.begin(); j->label != *i; ++j) {
+          std::vector<mpq_class> v = j->label.length().coefficients();
+          t += std::valarray<mpq_class>(v.data(), v.size());
+        }
+        for (auto j = bottom.begin(); j->label != *i; ++j) {
+          std::vector<mpq_class> v = j->label.length().coefficients();
+          t -= std::valarray<mpq_class>(v.data(), v.size());
+        }
+
+        std::vector<mpq_class> v = i->length().coefficients();
+        w += wedge(std::valarray<mpq_class>(v.data(), v.size()), t);
+      }
+
+      return w;
+    }
+  }
+
   // Return whether there is a periodic trajectory via Boshernitzan's
   // algorithm.
   bool boshernitzanMinimal(void) const {
@@ -239,6 +291,11 @@ bool IntervalExchangeTransformation<Length>::zorichInduction(void) {
 template <typename Length>
 std::optional<IntervalExchangeTransformation<Length>> IntervalExchangeTransformation<Length>::reduce() {
   return impl->reduce();
+}
+
+template <typename Length>
+std::valarray<mpq_class> IntervalExchangeTransformation<Length>::safInvariant() const {
+  return impl->safInvariant();
 }
 
 template <typename Length>
