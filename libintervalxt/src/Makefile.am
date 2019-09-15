@@ -8,6 +8,9 @@ libintervalxt_la_SOURCES =                   \
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
+# We use FLINT through renfxx.h so we need to link against it explicitly
+libintervalxt_la_LDFLAGS += -lflint
+
 nobase_include_HEADERS =                                 \
 	intervalxt/interval_exchange_transformation.hpp        \
 	intervalxt/detail/interval_exchange_transformation.ipp \
