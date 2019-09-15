@@ -28,10 +28,21 @@
 
 namespace intervalxt {
 template <typename T>
-Length<T>::Length() : Length(0) {}
+Length<T>::Length() : Length(T(0)) {}
 
 template <typename T>
 Length<T>::Length(const T& value) : value(value) {
+  assert(value >= 0 && "a length cannot be negative");
+}
+
+template <typename T>
+template <bool enable, std::enable_if_t<enable, int>>
+Length<T>::Length(const std::string& s) {
+  if constexpr (std::is_integral_v<T>) {
+    value = std::stoi(s);
+  } else if constexpr (std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
+    value = T(s);
+  }
   assert(value >= 0 && "a length cannot be negative");
 }
 
@@ -70,6 +81,16 @@ mpz_class Length<T>::operator/(const Length<T>& rhs) {
     } else {
       return ret;
     }
+  } else if constexpr (std::is_same_v<T, mpz_class>) {
+    mpz_class ret = value / rhs.value;
+    return ret;
+  } else if constexpr (std::is_same_v<T, mpq_class>) {
+    // NOTE: floor division could be smarter than that!
+    mpz_class ret = (value.get_num() * rhs.value.get_den()) / (value.get_den() * rhs.value.get_num());
+    return ret;
+  } else if constexpr (std::is_same_v<T, eantic::renf_elem_class>) {
+    // NOTE: floor division could be smarter than that!
+    return (value / rhs.value).floor();
   } else {
     throw std::logic_error("not implemented: floor division for this type");
   }
@@ -112,7 +133,17 @@ std::ostream& operator<<(std::ostream& os, const Length<T>& self) {
 
 namespace intervalxt {
 template class Length<int>;
+template Length<int>::Length(const std::string&);
 template std::ostream& operator<<(std::ostream&, const Length<int>&);
 template class Length<long long>;
+template Length<long long>::Length(const std::string&);
 template std::ostream& operator<<(std::ostream&, const Length<long long>&);
+template class Length<mpz_class>;
+template Length<mpz_class>::Length(const std::string&);
+template std::ostream& operator<<(std::ostream&, const Length<mpz_class>&);
+template class Length<mpq_class>;
+template Length<mpq_class>::Length(const std::string&);
+template std::ostream& operator<<(std::ostream&, const Length<mpq_class>&);
+template class Length<eantic::renf_elem_class>;
+template std::ostream& operator<<(std::ostream&, const Length<eantic::renf_elem_class>&);
 }  // namespace intervalxt
