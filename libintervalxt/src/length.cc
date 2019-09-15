@@ -38,12 +38,12 @@ Length<T>::Length(const T& value) : value(value) {
 template <typename T>
 template <bool enable, std::enable_if_t<enable, int>>
 Length<T>::Length(const std::string& s) {
-    if constexpr (std::is_integral_v<T>) {
-      value = std::stoi(s);
-    } else if constexpr (std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
-      value = T(s);
-    }
-    assert(value >= 0 && "a length cannot be negative");
+  if constexpr (std::is_integral_v<T>) {
+    value = std::stoi(s);
+  } else if constexpr (std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
+    value = T(s);
+  }
+  assert(value >= 0 && "a length cannot be negative");
 }
 
 template <typename T>

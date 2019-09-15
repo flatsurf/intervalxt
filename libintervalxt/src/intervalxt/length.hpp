@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_LENGTH_HPP
 #define LIBINTERVALXT_LENGTH_HPP
 
-#include <gmpxx.h>
 #include <e-antic/renfxx.h>
+#include <gmpxx.h>
 
 #include <boost/operators.hpp>
 
@@ -39,7 +39,7 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
   Length();
   Length(const T&);
 
-  template <bool enable=!std::is_same_v<T, eantic::renf_elem_class>, std::enable_if_t<enable, int> = 0>
+  template <bool enable = !std::is_same_v<T, eantic::renf_elem_class>, std::enable_if_t<enable, int> = 0>
   Length(const std::string&);
 
   bool operator==(const Length&) const noexcept;

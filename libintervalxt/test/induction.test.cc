@@ -58,26 +58,26 @@ TEST(InductionTest, InductionMpzClass) {
 }
 
 TEST(InductionTest, InductionMpqClass) {
-    using Length = Length<mpq_class>;
+  using Length = Length<mpq_class>;
 
-    IntervalExchangeTransformation<Length> iet({Length("3/5"), Length("1/4")}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({Length("3/5"), Length("1/4")}, {1, 0});
 
-    iet.zorichInduction();
-    EXPECT_EQ(IntervalExchangeTransformation<Length>({Length("1/10"), Length("1/4")}, {1, 0}), iet);
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length("1/10"), Length("1/4")}, {1, 0}), iet);
 }
 
 TEST(InductionTest, InductionRenfElemClass) {
-    using Length = Length<eantic::renf_elem_class>;
+  using Length = Length<eantic::renf_elem_class>;
 
-    auto K = eantic::renf_class::make("a^2 - a - 1", "a", "1.618 +/- 0.01");
+  auto K = eantic::renf_class::make("a^2 - a - 1", "a", "1.618 +/- 0.01");
 
-    eantic::renf_elem_class a(K, "a");
-    eantic::renf_elem_class b(K, 1);
+  eantic::renf_elem_class a(K, "a");
+  eantic::renf_elem_class b(K, 1);
 
-    IntervalExchangeTransformation<Length> iet({Length(a), Length(b)}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({Length(a), Length(b)}, {1, 0});
 
-    iet.zorichInduction();
-    EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(a - 1), Length(b)}, {1, 0}), iet);
+  iet.zorichInduction();
+  EXPECT_EQ(IntervalExchangeTransformation<Length>({Length(a - 1), Length(b)}, {1, 0}), iet);
 }
 
 TEST(InductionTest, Induction5) {
