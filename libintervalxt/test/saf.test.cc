@@ -46,14 +46,18 @@ TEST(IETTest, NonZeroSAF1) {
   std::valarray<mpq_class> v = iet.safInvariant();
   EXPECT_TRUE(v.min() != 0 || v.max() != 0);
 
-  int sign = -1;
+  int sign = 1;
 
   for (int i = 0; i < 10; i++) {
     iet.zorichInduction();
     iet.swap();
-    std::valarray<mpq_class> vv = sign * iet.safInvariant();
+    std::valarray<mpq_class> vv;
+    if (sign)
+      vv = -iet.safInvariant();
+    else
+      vv = iet.safInvariant();
     EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-    sign *= -1;
+    sign ^= 1;
   }
 }
 
@@ -68,14 +72,18 @@ TEST(IETTest, NonZeroSAF2) {
   std::valarray<mpq_class> v = iet.safInvariant();
   EXPECT_TRUE(v.min() != 0 || v.max() != 0);
 
-  int sign = -1;
+  int sign = 1;
 
   for (int i = 0; i < 10; i++) {
     iet.zorichInduction();
     iet.swap();
-    std::valarray<mpq_class> vv = sign * iet.safInvariant();
+    std::valarray<mpq_class> vv;
+    if (sign)
+      vv = -iet.safInvariant();
+    else
+      vv = iet.safInvariant();
     EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-    sign *= -1;
+    sign ^= 1;
   }
 }
 
