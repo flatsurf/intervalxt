@@ -35,8 +35,8 @@ template <typename T, typename Quo>
 class Length : boost::totally_ordered<Length<T, Quo>>, boost::additive<Length<T, Quo>>, boost::multipliable<Length<T, Quo>, Quo> {
  public:
   using Quotient = Quo;
-  // TODO: ideally coefficient should also be mpz_class and the interval exchange transformation
-  // should store a mpz_class denominator
+  // Ideally coefficient should only be mpz_class and the interval exchange
+  // transformation keeps track of a common denominator, see https://github.com/flatsurf/intervalxt/issues/48
   using Coefficient = mpq_class;
 
   Length();
