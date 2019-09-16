@@ -28,13 +28,12 @@
 #include "intervalxt/length.hpp"
 
 namespace intervalxt {
-template <typename T>
-std::ostream &operator<<(std::ostream &, const Length<T> &);
-template <typename Coordinate>
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Coordinate> &);
+template <typename T, typename Q>
+std::ostream &operator<<(std::ostream &, const Length<T, Q> &);
+template <typename Length>
+std::ostream &operator<<(std::ostream &, const Label<Length> &);
+template <typename Length>
+std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length> &);
 }  // namespace intervalxt
-
-extern template std::ostream &intervalxt::operator<<(std::ostream &, const IntervalExchangeTransformation<int> &);
-extern template std::ostream &intervalxt::operator<<(std::ostream &, const Length<int> &);
 
 #endif

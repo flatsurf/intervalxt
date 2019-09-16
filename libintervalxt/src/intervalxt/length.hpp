@@ -31,10 +31,13 @@
 namespace intervalxt {
 
 // A sample implementation of a length of a vector in ℝ² as a simple T.
-template <typename T>
-class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, mpz_class> {
+template <typename T, typename Quo>
+class Length : boost::totally_ordered<Length<T, Quo>>, boost::additive<Length<T, Quo>>, boost::multipliable<Length<T, Quo>, Quo> {
  public:
-  using Quotient = mpz_class;
+  using Quotient = Quo;
+  // Ideally coefficient should only be mpz_class and the interval exchange
+  // transformation keeps track of a common denominator, see https://github.com/flatsurf/intervalxt/issues/48
+  using Coefficient = mpq_class;
 
   Length();
   Length(const T&);
@@ -50,13 +53,17 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
 
   explicit operator bool() const noexcept;
 
+  // Return the coefficients as a (fixed length) vector of integers (discarding the denominator)
+  size_t degree() const;
+  std::vector<Coefficient> coefficients() const;
+
   // Return the floor of the division of this length by the argument.
   Quotient operator/(const Length&);
 
   T squared() const;
 
-  template <typename C>
-  friend std::ostream& operator<<(std::ostream&, const Length<C>&);
+  template <typename C, typename Q>
+  friend std::ostream& operator<<(std::ostream&, const Length<C, Q>&);
 
   const T& length() const;
 
