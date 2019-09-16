@@ -32,7 +32,7 @@ namespace intervalxt {
 
 // A sample implementation of a length of a vector in ℝ² as a simple T.
 template <typename T, typename Quo>
-class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, Quo> {
+class Length : boost::totally_ordered<Length<T, Quo>>, boost::additive<Length<T, Quo>>, boost::multipliable<Length<T, Quo>, Quo> {
  public:
   using Quotient = Quo;
   // TODO: ideally coefficient should also be mpz_class and the interval exchange transformation

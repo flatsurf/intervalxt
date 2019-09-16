@@ -36,6 +36,7 @@
 /interval_exchange_transformation
 /rational_linear_subspace
 /cereal
+/saf
 
 ### Autotools Generated Files
 /.deps
