@@ -13,14 +13,14 @@ fi
 make CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS"
 
 # Run all our test suites
-make check CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS"
+make check CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" || (cat */test/test-suite*.log && false)
 if [[ "$build_flavour" == "release" ]]; then
     pushd libintervalxt
-    make check-valgrind
+    make check-valgrind || (cat test/test-suite-memcheck.log && false)
     make distcheck
     popd
     pushd pyintervalxt
-    make check-valgrind
+    make check-valgrind || (cat test/test-suite-memcheck.log && false)
     # Check would fail since libintervalxt is not installed
     # make distcheck
     popd
