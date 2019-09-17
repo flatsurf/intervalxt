@@ -61,8 +61,8 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
     throw std::logic_error("vectors must have same size");
 
   size_t d = v1.size();
-  assert(d);
   std::valarray<T> res(d * (d - 1) / 2);
+  if (d == 0) return res;
   size_t k = 0;
   for (size_t i = 0; i < d - 1; i++)
     for (size_t j = i + 1; j < d; j++) {
