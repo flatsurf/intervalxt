@@ -61,6 +61,7 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
     throw std::logic_error("vectors must have same size");
 
   size_t d = v1.size();
+  assert(d);
   std::valarray<T> res(d * (d - 1) / 2);
   size_t k = 0;
   for (size_t i = 0; i < d - 1; i++)
@@ -278,26 +279,28 @@ MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit
     // 1. merge the labels on top and bottom (by removing the one on top)
     impl->top.erase(impl->top.begin());
     impl->bottom.insert(ti.twin, bi);
+    auto x = bi.label;
     impl->bottom.erase(impl->bottom.begin());
-
-    // NOTE: we copy the top label since this is deleted below
-    const Label til = ti.label;
-
     impl->bottom.erase(ti.twin);
+
+    // NOTE: we copy the labels since we delete ti.label now and reduce might delete bi
+    const Label til = ti.label;
+    const Label bil = bi.label;
+
     impl->labels.erase(ti.label);
 
     // 2. check for reduceness after the merge
     auto r = impl->reduce();
     if (r) {
       SeparatingConnection<Length> c;
-      c.top = til;  // NOTE: do not use ti.label here (see above)
-      c.bottom = bi.label;
+      c.top = til;
+      c.bottom = bil;
       c.addedIET = std::make_unique<IntervalExchangeTransformation<Length>>(std::move(r.value()));
       return std::move(c);
     } else {
       NonSeparatingConnection<Length> c;
-      c.top = til;  // NOTE: do not use ti.label here (see above)
-      c.bottom = bi.label;
+      c.top = til;
+      c.bottom = bil;
       return c;
     }
   } else if (impl->boshernitzanMinimal()) {
