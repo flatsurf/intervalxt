@@ -83,10 +83,6 @@ class RationalLinearSubspace::Implementation {
     if (eqns) {
       // Initialize from equations
       for (auto equation : vectors) {
-        if (equation.size() == 0) {
-          // The equation 0 == 0 is trivial.
-          continue;
-        }
         Linear_Expression linear = linearExpressionFromVector(equation);
         constraints.insert(linear == 0);
       }

@@ -31,12 +31,14 @@ using std::vector;
 TEST(RationalLinearSubspaceTest, HasNonZeroNonNegativeVector) {
   EXPECT_FALSE(RationalLinearSubspace().hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace::fromEquations(std::vector<std::vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
+  EXPECT_FALSE(RationalLinearSubspace::fromEquations(std::vector<std::vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector());
   EXPECT_TRUE(RationalLinearSubspace::fromEquations({{1, 0}}).hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace::fromEquations({{1, 0}, {0, 1}}).hasNonZeroNonNegativeVector());
   EXPECT_TRUE(RationalLinearSubspace::fromEquations({{1, -1}}).hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace::fromEquations({{1, 1}}).hasNonZeroNonNegativeVector());
 
   EXPECT_FALSE(RationalLinearSubspace::fromGenerators(std::vector<std::vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
+  EXPECT_FALSE(RationalLinearSubspace::fromGenerators(std::vector<std::vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector());
   EXPECT_TRUE(RationalLinearSubspace::fromGenerators({{0, 1}}).hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace::fromGenerators({{0, 0}}).hasNonZeroNonNegativeVector());
   EXPECT_FALSE(RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVector());
