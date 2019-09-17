@@ -29,12 +29,16 @@
 using boost::numeric_cast;
 using Parma_Polyhedra_Library::Constraint;
 using Parma_Polyhedra_Library::Constraint_System;
+using Parma_Polyhedra_Library::Generator_System;
 using Parma_Polyhedra_Library::Linear_Expression;
 using Parma_Polyhedra_Library::Linear_System;
 using Parma_Polyhedra_Library::NNC_Polyhedron;
 using Parma_Polyhedra_Library::NOT_NECESSARILY_CLOSED;
 using Parma_Polyhedra_Library::SPARSE;
 using Parma_Polyhedra_Library::Variable;
+// Note: there are global point and ray in the ppl header!!
+using Parma_Polyhedra_Library::point;
+using Parma_Polyhedra_Library::ray;
 using std::ostream;
 using std::vector;
 
@@ -51,32 +55,48 @@ struct SwapDimensions {
 };
 }  // namespace
 
+Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec) {
+  auto den = mpz_class(1);
+  for (auto c : vec) {
+    den = lcm(den, c.get_den());
+  }
+
+  Linear_Expression linear;
+  for (size_t i = 0; i < vec.size(); i++) {
+    mpq_class num = den * vec[i];
+    assert(num.get_den() == 1);
+    linear = linear + num.get_num() * Variable(i);
+  }
+
+  return linear;
+}
+
 namespace intervalxt {
 class RationalLinearSubspace::Implementation {
  public:
-  Implementation(const vector<vector<mpq_class>>& equations) {
+  Implementation() {}
+
+  Implementation(const vector<vector<mpq_class>>& vectors, bool eqns) {
+    Generator_System generators;
     Constraint_System constraints;
-    for (auto equation : equations) {
-      if (equation.size() == 0) {
-        // The equation 0 == 0 is trivial.
-        continue;
-      }
 
-      auto den = mpz_class(1);
-      for (auto c : equation) {
-        den = lcm(den, c.get_den());
+    if (eqns) {
+      // Initialize from equations
+      for (auto equation : vectors) {
+        Linear_Expression linear = linearExpressionFromVector(equation);
+        constraints.insert(linear == 0);
       }
+      subspace = NNC_Polyhedron(constraints);
 
-      Linear_Expression linear;
-      for (size_t i = 0; i < equation.size(); i++) {
-        mpq_class num = den * equation[i];
-        assert(num.get_den() == 1);
-        linear = linear + num.get_num() * Variable(i);
+    } else {
+      // Initialize from generators
+      generators.insert(point());
+      for (auto generator : vectors) {
+        Linear_Expression linear = linearExpressionFromVector(generator);
+        if (!linear.is_zero()) generators.insert(ray(linear));
       }
-
-      constraints.insert(linear == 0);
+      subspace = NNC_Polyhedron(generators);
     }
-    subspace = NNC_Polyhedron(constraints);
 
     constraints.clear();
     for (size_t i = 0; i < subspace.space_dimension(); i++) {
@@ -96,9 +116,19 @@ class RationalLinearSubspace::Implementation {
   NNC_Polyhedron nonNegative;
 };
 
-RationalLinearSubspace::RationalLinearSubspace() : impl(spimpl::make_impl<Implementation>(vector<vector<mpq_class>>())) {}
+RationalLinearSubspace::RationalLinearSubspace() : impl(spimpl::make_impl<Implementation>()) {}
 
-RationalLinearSubspace::RationalLinearSubspace(const vector<vector<mpq_class>>& equations) : impl(spimpl::make_impl<Implementation>(equations)) {}
+RationalLinearSubspace RationalLinearSubspace::fromEquations(const vector<vector<mpq_class>>& equations) {
+  RationalLinearSubspace R;
+  R.impl = spimpl::make_impl<Implementation>(equations, true);
+  return R;
+}
+
+RationalLinearSubspace RationalLinearSubspace::fromGenerators(const vector<vector<mpq_class>>& generators) {
+  RationalLinearSubspace R;
+  R.impl = spimpl::make_impl<Implementation>(generators, false);
+  return R;
+}
 
 bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   if (impl->subspace.space_dimension() == 0) {
