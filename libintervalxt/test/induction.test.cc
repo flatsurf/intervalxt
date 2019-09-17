@@ -22,9 +22,10 @@
 #include <boost/lexical_cast.hpp>
 #include <vector>
 
-#include <intervalxt/interval_exchange_transformation.hpp>
-#include <intervalxt/label.hpp>
 #include <intervalxt/length.hpp>
+#include <intervalxt/label.hpp>
+#include <intervalxt/interval_exchange_transformation.hpp>
+#include <intervalxt/maybe_saddle_connection.hpp>
 
 using namespace intervalxt;
 

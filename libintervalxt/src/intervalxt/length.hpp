@@ -30,11 +30,14 @@
 
 namespace intervalxt {
 
+template <typename T>
+using LengthQuotient = std::conditional_t<std::is_integral_v<T>, T, mpz_class>;
+
 // A sample implementation of a length of a vector in ℝ² as a simple T.
-template <typename T, typename Quo>
-class Length : boost::totally_ordered<Length<T, Quo>>, boost::additive<Length<T, Quo>>, boost::multipliable<Length<T, Quo>, Quo> {
+template <typename T>
+class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, LengthQuotient<T>> {
  public:
-  using Quotient = Quo;
+  using Quotient = LengthQuotient<T>;
   // Ideally coefficient should only be mpz_class and the interval exchange
   // transformation keeps track of a common denominator, see https://github.com/flatsurf/intervalxt/issues/48
   using Coefficient = mpq_class;
@@ -62,8 +65,8 @@ class Length : boost::totally_ordered<Length<T, Quo>>, boost::additive<Length<T,
 
   T squared() const;
 
-  template <typename C, typename Q>
-  friend std::ostream& operator<<(std::ostream&, const Length<C, Q>&);
+  template <typename C>
+  friend std::ostream& operator<<(std::ostream&, const Length<C>&);
 
   const T& length() const;
 

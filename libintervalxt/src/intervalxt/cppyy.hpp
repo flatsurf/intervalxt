@@ -28,8 +28,8 @@
 #include "intervalxt/length.hpp"
 
 namespace intervalxt {
-template <typename T, typename Q>
-std::ostream &operator<<(std::ostream &, const Length<T, Q> &);
+template <typename T>
+std::ostream &operator<<(std::ostream &, const Length<T> &);
 template <typename Length>
 std::ostream &operator<<(std::ostream &, const Label<Length> &);
 template <typename Length>

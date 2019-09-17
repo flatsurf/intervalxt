@@ -23,12 +23,14 @@
 #ifndef LIBINTERVALXT_FORWARD_HPP
 #define LIBINTERVALXT_FORWARD_HPP
 
-#include <gmpxx.h>
+#include <optional>
+#include <variant>
+
 #include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
 
-template <typename T, typename Quo = std::conditional_t<std::is_integral_v<T>, T, mpz_class>>
+template <typename T>
 class Length;
 
 template <typename Length>
@@ -36,6 +38,24 @@ class Label;
 
 template <typename Length>
 class IntervalExchangeTransformation;
+
+struct MinimalityGuarantee;
+
+template <typename Length>
+struct Cylinder;
+
+template <typename Length>
+struct NonSeparatingConnection;
+
+template <typename Length>
+struct SeparatingConnection;
+
+template <typename Length>
+using MaybeConnection = std::optional<std::variant<
+  MinimalityGuarantee,
+  Cylinder<Length>,
+  NonSeparatingConnection<Length>,
+  SeparatingConnection<Length>>>;
 
 }  // namespace intervalxt
 
