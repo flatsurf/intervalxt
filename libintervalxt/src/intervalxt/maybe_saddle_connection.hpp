@@ -22,11 +22,11 @@
 #define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
 
 #include <memory>
-#include <optional>
 #include <utility>
-#include <variant>
 
 #include "intervalxt/forward.hpp"
+
+#include "intervalxt/label.hpp"
 
 namespace intervalxt {
 
@@ -53,9 +53,6 @@ struct SeparatingConnection {
   std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
   Label<Length> bottom, top;
 };
-
-template <typename Length>
-using MaybeConnection = std::optional<std::variant<MinimalityGuarantee, Cylinder<Length>, NonSeparatingConnection<Length>, SeparatingConnection<Length>>>;
 
 }  // namespace intervalxt
 

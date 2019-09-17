@@ -42,6 +42,8 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include "intervalxt/interval_exchange_transformation.hpp"
+#include "intervalxt/label.hpp"
+#include "intervalxt/maybe_saddle_connection.hpp"
 
 namespace intervalxt {
 namespace {
@@ -60,6 +62,7 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
 
   size_t d = v1.size();
   std::valarray<T> res(d * (d - 1) / 2);
+  if (d == 0) return res;
   size_t k = 0;
   for (size_t i = 0; i < d - 1; i++)
     for (size_t j = i + 1; j < d; j++) {
@@ -182,10 +185,10 @@ class IntervalExchangeTransformation<Length>::Implementation {
     if (ibottom->label == itop->label) {
       // Zorich acceleration step (= perform m full Dehn twists)
       auto m = itop->label.length() / length_to_subtract;
+      itop->label.length() -= m * length_to_subtract;
 
-      for (auto b = bottom.begin(); b != ibottom; ++b) {
-        itop->label.length() -= m * b->label.length();
-      }
+      // if it gets zero, cancel the last step
+      if (!itop->label.length()) itop->label.length() = length_to_subtract;
 
       // recompute from what is left
       ibottom = bottom.begin();
@@ -244,6 +247,68 @@ class IntervalExchangeTransformation<Length>::Implementation {
     return false;
   }
 };
+
+template <typename Length>
+MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit) {
+  using Label = typename IntervalExchangeTransformation<Length>::Label;
+
+  int test;
+  for (int i = 0; i < limit; i++) {
+    test = impl->zorichInduction();
+    if (test) break;
+
+    std::swap(impl->top, impl->bottom);
+    test = impl->zorichInduction();
+    std::swap(impl->top, impl->bottom);
+    if (test) break;
+  }
+
+  const Interval<Length> ti = *(impl->top.begin());
+  const Interval<Length> bi = *(impl->bottom.begin());
+
+  if (ti.twin->label == bi.label) {
+    // Found a cylinder
+    Cylinder<Length> cyl;
+    cyl.label = ti.label;
+    impl->top.erase(impl->top.begin());
+    impl->bottom.erase(impl->bottom.begin());
+    impl->labels.erase(ti.label);
+    return cyl;
+  } else if (ti.label.length() == bi.label.length()) {
+    // Found a saddle connection
+    // 1. merge the labels on top and bottom (by removing the one on top)
+    impl->top.erase(impl->top.begin());
+    impl->bottom.insert(ti.twin, bi);
+    auto x = bi.label;
+    impl->bottom.erase(impl->bottom.begin());
+    impl->bottom.erase(ti.twin);
+
+    // NOTE: we copy the labels since we delete ti.label now and reduce might delete bi
+    const Label til = ti.label;
+    const Label bil = bi.label;
+
+    impl->labels.erase(ti.label);
+
+    // 2. check for reduceness after the merge
+    auto r = impl->reduce();
+    if (r) {
+      SeparatingConnection<Length> c;
+      c.top = til;
+      c.bottom = bil;
+      c.addedIET = std::make_unique<IntervalExchangeTransformation<Length>>(std::move(r.value()));
+      return std::move(c);
+    } else {
+      NonSeparatingConnection<Length> c;
+      c.top = til;
+      c.bottom = bil;
+      return c;
+    }
+  } else if (impl->boshernitzanMinimal()) {
+    auto m = MinimalityGuarantee();
+    return m;
+  }
+  return {};
+}
 
 template <typename Length>
 IntervalExchangeTransformation<Length>::IntervalExchangeTransformation(const std::vector<Label>& top, const std::vector<size_t>& bottom) : impl(spimpl::make_unique_impl<Implementation>(top, [&]() {
