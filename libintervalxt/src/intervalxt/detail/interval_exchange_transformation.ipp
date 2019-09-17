@@ -293,7 +293,7 @@ MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit
       c.top = til;  // NOTE: do not use ti.label here (see above)
       c.bottom = bi.label;
       c.addedIET = std::make_unique<IntervalExchangeTransformation<Length>>(std::move(r.value()));
-      return c;
+      return std::move(c);
     } else {
       NonSeparatingConnection<Length> c;
       c.top = til;  // NOTE: do not use ti.label here (see above)
