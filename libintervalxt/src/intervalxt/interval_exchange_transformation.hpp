@@ -56,6 +56,9 @@ class IntervalExchangeTransformation {
   // Return the Sah-Arnoux-Fathi invariant
   std::valarray<mpq_class> safInvariant() const;
 
+  // Boshernitzan criterion for absence of periodic trajectories
+  bool boshernitzanNoPeriodicTrajectory() const;
+
   // Remove the first pair of intervals (assuming that it corresponds to a
   // cylinder, i.e., the leftmost singularity is a connection of length one).
   // After such cylinder is removed the permutation could be reducible.

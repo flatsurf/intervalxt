@@ -30,7 +30,8 @@
 
 namespace intervalxt {
 
-struct MinimalityGuarantee {};
+// the iet has no periodic trajectory
+struct NoPeriodicTrajectoryGuarantee {};
 
 // the given label appears both on top and bottom at the left
 // hand side of the iet
@@ -53,6 +54,7 @@ struct SeparatingConnection {
   std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
   Label<Length> bottom, top;
 };
+
 
 }  // namespace intervalxt
 
