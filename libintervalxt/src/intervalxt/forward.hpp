@@ -52,10 +52,10 @@ struct SeparatingConnection;
 
 template <typename Length>
 using MaybeConnection = std::optional<std::variant<
-  MinimalityGuarantee,
-  Cylinder<Length>,
-  NonSeparatingConnection<Length>,
-  SeparatingConnection<Length>>>;
+    MinimalityGuarantee,
+    Cylinder<Length>,
+    NonSeparatingConnection<Length>,
+    SeparatingConnection<Length>>>;
 
 }  // namespace intervalxt
 

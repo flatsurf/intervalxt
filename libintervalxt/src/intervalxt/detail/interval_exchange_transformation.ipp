@@ -42,8 +42,8 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include "intervalxt/interval_exchange_transformation.hpp"
-#include "intervalxt/maybe_saddle_connection.hpp"
 #include "intervalxt/label.hpp"
+#include "intervalxt/maybe_saddle_connection.hpp"
 
 namespace intervalxt {
 namespace {
