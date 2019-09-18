@@ -42,6 +42,8 @@ class Label<Length>::Implementation {
   Implementation() : Implementation(Length()) {}
   Implementation(const Length& length) : id(detail::Id::make()), length(length) {}
 
+  template <typename L>
+  friend std::ostream& operator<<(std::ostream&, const Label<L>&);
   friend Label<Length>;
   template <typename Archive, typename Len>
   friend void load(Archive&, Label<Len>&);
@@ -66,6 +68,12 @@ bool Label<Length>::operator<(const Label<Length>& rhs) const noexcept {
 }
 
 template <typename Length>
+Label<Length>& Label<Length>::operator=(const Length& rhs) noexcept {
+  impl->length = rhs;
+  return *this;
+}
+
+template <typename Length>
 Length& Label<Length>::length() noexcept { return impl->length; }
 
 template <typename Length>
@@ -73,7 +81,7 @@ const Length& Label<Length>::length() const noexcept { return impl->length; }
 
 template <typename Length>
 std::ostream& operator<<(std::ostream& os, const Label<Length>& self) {
-  return os << self.length();
+  return os << self.length() << "[" << *self.impl->id << "]";
 }
 
 }  // namespace intervalxt

@@ -366,27 +366,10 @@ std::valarray<mpq_class> IntervalExchangeTransformation<Length>::safInvariant() 
 template <typename Length>
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<Length>& self) {
   using Label = typename IntervalExchangeTransformation<Length>::Label;
+
   auto id = [&](const Label& query) {
-    std::string ret = boost::lexical_cast<std::string>(query);
-    int clashes = 0;
-    for (auto& t : self.top()) {
-      std::string repr = boost::lexical_cast<std::string>(t);
-      if (t == query) {
-        if (clashes) {
-          return ret + boost::lexical_cast<std::string>(clashes);
-        } else {
-          return ret;
-        }
-      }
-      if (repr == ret) {
-        clashes++;
-      }
-    }
-
-    assert(false && "each label must be contained in top()");
-    return std::string();
+    return boost::lexical_cast<std::string>(query);
   };
-
   os << boost::algorithm::join(self.top() | boost::adaptors::transformed(id), " ") << std::endl;
   os << boost::algorithm::join(self.bottom() | boost::adaptors::transformed(id), " ") << std::endl;
 

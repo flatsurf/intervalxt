@@ -42,21 +42,51 @@ auto& uuid2id() {
   static UniqueFactory<const Id, boost::uuids::uuid> factory;
   return factory;
 }
+
+auto& id2name() {
+  static UniqueFactory<std::string, std::weak_ptr<const Id>> factory;
+  return factory;
+}
+
 }  // namespace
 
 Id::Id() noexcept {}
 
 Id::operator boost::uuids::uuid() const noexcept {
   // Note that this is thread-safe since the factories are thread-safe.
-  auto ret = *id2uuid().get(this->weak_from_this(), [&]() {
+  auto ret = id2uuid().get(this->weak_from_this(), [&]() {
     // It is safe to call generator() here even though it is not thread-safe.
     // Since the factory allows only one get() to run at a time.
     return new boost::uuids::uuid(generator()());
   });
-  uuid2id().get(ret, [&]() -> std::shared_ptr<const Id> {
+  // Entering the uuid as a key makes sure that it's being kept alive in the
+  // id2uuid cache as well.
+  uuid2id().get(*ret, [&]() {
     return this->shared_from_this();
   });
-  return ret;
+  return *ret;
+}
+
+std::ostream& operator<<(std::ostream& os, const Id& self) {
+  // Note that this is thread-safe since the factories are thread-safe.
+  auto ret = *id2name().get(self.weak_from_this(), [&]() {
+    // It is safe to call generator() here even though it is not thread-safe.
+    // Since the factory allows only one get() to run at a time.
+    static int next = 0;
+    std::string ret;
+    int current = next++;
+    while (current || ret.size() == 0) {
+      int offset = current % (2 * 26);
+      if (offset < 26) {
+        ret += static_cast<char>('a' + offset);
+      } else {
+        ret += static_cast<char>('A' + (offset - 26));
+      }
+      current /= (2 * 26);
+    }
+    return new std::string(ret);
+  });
+  return os << ret;
 }
 
 std::shared_ptr<const Id> Id::make() noexcept {
@@ -72,5 +102,6 @@ std::shared_ptr<const Id> Id::make(const boost::uuids::uuid& uuid) noexcept {
   });
   return id;
 }
+
 }  // namespace detail
 }  // namespace intervalxt

@@ -26,18 +26,11 @@ import pytest
 
 from pyintervalxt import intervalxt
 
-expected="""18 3
-3 18
-"""
-expected_swapped="""3 18
-18 3
-"""
-
 def test_IntervalExchangeTransformation():
     iet = intervalxt.IET((18, 3), (1, 0))
-    assert repr(iet) == expected
+    assert repr(iet) == "18[a] 3[b]\n3[b] 18[a]\n"
     iet.swap()
-    assert repr(iet) == expected_swapped
+    assert repr(iet) == "3[b] 18[a]\n18[a] 3[b]\n"
 
 def test_reduce():
     iet = intervalxt.IET((18, 3), (1, 0))
@@ -48,19 +41,19 @@ def test_reduce():
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
-    assert repr(iet) == "18\n18\n"
-    assert repr(iet2) == "3\n3\n"
+    assert repr(iet) == "18[c]\n18[c]\n"
+    assert repr(iet2) == "3[d]\n3[d]\n"
 
     iet = intervalxt.IET((4,56,23,11,21,9,65),(1,0,4,3,2,6,5))
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
-    assert repr(iet) == "4 56\n56 4\n"
-    assert repr(iet2) == "23 11 21 9 65\n21 11 23 65 9\n"
+    assert repr(iet) == "4[e] 56[f]\n56[f] 4[e]\n"
+    assert repr(iet2) == "23[g] 11[h] 21[i] 9[j] 65[k]\n21[i] 11[h] 23[g] 65[k] 9[j]\n"
     r2 = iet2.reduce()
     assert r2.has_value()
     iet3 = r2.value()
-    assert repr(iet2) == "23 11 21\n21 11 23\n"
-    assert repr(iet3) == "9 65\n65 9\n"
+    assert repr(iet2) == "23[g] 11[h] 21[i]\n21[i] 11[h] 23[g]\n"
+    assert repr(iet3) == "9[j] 65[k]\n65[k] 9[j]\n"
 
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))

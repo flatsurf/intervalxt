@@ -82,20 +82,30 @@ TEST(IETTest, Reduce2) {
 
 TEST(IETTest, Reduce3) {
   using Length = Length<int>;
-  IntervalExchangeTransformation<Length> iet({Length(17), Length(23), Length(33)}, {1, 0, 2});
+  using Label = Label<Length>;
+  auto a = Label(17);
+  auto b = Label(23);
+  auto c = Label(33);
+
+  IntervalExchangeTransformation<Length> iet({a, b, c}, {b, a, c});
   auto r = iet.reduce();
   EXPECT_TRUE(r);
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(17), Length(23)}, {1, 0}));
-  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({Length(33)}, std::vector<unsigned long>{0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a, b}, {b, a}));
+  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({c}, {c}));
 }
 
 TEST(IETTest, Reduce4) {
   using Length = Length<int>;
-  IntervalExchangeTransformation<Length> iet({Length(12), Length(3), Length(41), Length(7)}, {1, 0, 3, 2});
+  using Label = Label<Length>;
+  auto d = Label(12);
+  auto e = Label(3);
+  auto f = Label(41);
+  auto g = Label(7);
+  IntervalExchangeTransformation<Length> iet({d, e, f, g}, {e, d, g, f});
   auto r = iet.reduce();
   EXPECT_TRUE(r);
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(12), Length(3)}, {1, 0}));
-  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({Length(41), Length(7)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({d, e}, {e, d}));
+  EXPECT_EQ(r.value(), IntervalExchangeTransformation<Length>({f, g}, {g, f}));
 }
 
 #include "main.hpp"
