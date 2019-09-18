@@ -24,7 +24,7 @@
 #include <ppl.hh>
 #include <vector>
 
-#include "intervalxt/rational_linear_subspace.hpp"
+#include "intervalxt/detail/rational_linear_subspace.hpp"
 
 using boost::numeric_cast;
 using Parma_Polyhedra_Library::Constraint;
@@ -36,7 +36,7 @@ using Parma_Polyhedra_Library::NNC_Polyhedron;
 using Parma_Polyhedra_Library::NOT_NECESSARILY_CLOSED;
 using Parma_Polyhedra_Library::SPARSE;
 using Parma_Polyhedra_Library::Variable;
-// Note: there are global point and ray in the ppl header!!
+// Note: there are global point and ray in the ppl header.
 using Parma_Polyhedra_Library::point;
 using Parma_Polyhedra_Library::ray;
 using std::ostream;
@@ -72,6 +72,7 @@ Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec) 
 }
 
 namespace intervalxt {
+namespace detail {
 class RationalLinearSubspace::Implementation {
  public:
   Implementation() {}
@@ -165,4 +166,5 @@ void RationalLinearSubspace::elementaryTransformation(int i, int j, mpq_class c)
 ostream& operator<<(std::ostream& os, const RationalLinearSubspace& self) {
   return Parma_Polyhedra_Library::IO_Operators::operator<<(os, self.impl->subspace);
 }
+}  // namespace detail
 }  // namespace intervalxt

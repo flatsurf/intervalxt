@@ -19,19 +19,19 @@
  *********************************************************************/
 
 #ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
-#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_PP
+#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
 
 #include <iosfwd>
 #include <vector>
 
 #include <gmpxx.h>
 #include <boost/operators.hpp>
-#include <ppl.hh>
 
 #include "intervalxt/external/spimpl/spimpl.h"
 #include "intervalxt/intervalxt.hpp"
 
 namespace intervalxt {
+namespace detail {
 
 // A linear rational subspace of ℚ^d.
 class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace> {
@@ -63,6 +63,7 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
 };
+}  // namespace detail
 }  // namespace intervalxt
 
 #endif

@@ -19,13 +19,12 @@
  *********************************************************************/
 
 #include <gtest/gtest.h>
-#include <ppl.hh>
 #include <vector>
 
-#include <intervalxt/rational_linear_subspace.hpp>
+#include <intervalxt/detail/rational_linear_subspace.hpp>
 
 using namespace intervalxt;
-using namespace Parma_Polyhedra_Library;
+using intervalxt::detail::RationalLinearSubspace;
 using std::vector;
 
 TEST(RationalLinearSubspaceTest, HasNonZeroNonNegativeVector) {

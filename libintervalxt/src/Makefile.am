@@ -15,7 +15,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/detail/label.ipp                            \
 	intervalxt/detail/id.hpp                               \
 	intervalxt/length.hpp                                  \
-	intervalxt/rational_linear_subspace.hpp                \
+	intervalxt/detail/rational_linear_subspace.hpp         \
 	intervalxt/forward.hpp                                 \
 	intervalxt/cppyy.hpp                                   \
 	intervalxt/maybe_saddle_connection.hpp                 \

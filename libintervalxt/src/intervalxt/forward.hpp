@@ -39,7 +39,7 @@ class Label;
 template <typename Length>
 class IntervalExchangeTransformation;
 
-struct MinimalityGuarantee;
+struct NoPeriodicTrajectoryGuarantee;
 
 template <typename Length>
 struct Cylinder;
@@ -52,7 +52,7 @@ struct SeparatingConnection;
 
 template <typename Length>
 using MaybeConnection = std::optional<std::variant<
-    MinimalityGuarantee,
+    NoPeriodicTrajectoryGuarantee,
     Cylinder<Length>,
     NonSeparatingConnection<Length>,
     SeparatingConnection<Length>>>;

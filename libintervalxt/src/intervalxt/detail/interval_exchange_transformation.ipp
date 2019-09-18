@@ -35,12 +35,14 @@
 #include <set>
 #include <valarray>
 
+#include <e-antic/renfxx.h>
 #include <gmpxx.h>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
+#include "intervalxt/detail/rational_linear_subspace.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
 #include "intervalxt/maybe_saddle_connection.hpp"
@@ -209,6 +211,26 @@ class IntervalExchangeTransformation<Length>::Implementation {
     return top.begin()->label.length() == bottom.begin()->label.length();
   }
 
+  // Return the translation vector for the label i
+  // The output is a vector of mpq_class with respect to the irrational basis used for
+  // the lengths of the iet.
+  std::valarray<mpq_class> translation(const Label& i) const {
+    // Note: it would be nice to access the dimension of the module
+    // in some more straightforward way...
+    size_t d = top.begin()->label.length().degree();
+    std::valarray<mpq_class> t;
+    t.resize(d);
+    for (auto j = top.begin(); j->label != i; ++j) {
+      std::vector<mpq_class> v = j->label.length().coefficients();
+      t -= std::valarray<mpq_class>(v.data(), v.size());
+    }
+    for (auto j = bottom.begin(); j->label != i; ++j) {
+      std::vector<mpq_class> v = j->label.length().coefficients();
+      t += std::valarray<mpq_class>(v.data(), v.size());
+    }
+    return t;
+  }
+
   // Return the Sah-Arnoux-Fathi invariant (as a vector of rationals)
   std::valarray<mpq_class> safInvariant() const {
     size_t d = top.begin()->label.length().degree();
@@ -221,30 +243,39 @@ class IntervalExchangeTransformation<Length>::Implementation {
 
       w.resize(d * (d - 1) / 2);
 
-      for (auto i = labels.begin(); i != labels.end(); ++i) {
-        std::valarray<mpq_class> t;  // translation vector
-        t.resize(d);
-        for (auto j = top.begin(); j->label != *i; ++j) {
-          std::vector<mpq_class> v = j->label.length().coefficients();
-          t += std::valarray<mpq_class>(v.data(), v.size());
-        }
-        for (auto j = bottom.begin(); j->label != *i; ++j) {
-          std::vector<mpq_class> v = j->label.length().coefficients();
-          t -= std::valarray<mpq_class>(v.data(), v.size());
-        }
-
-        std::vector<mpq_class> v = i->length().coefficients();
-        w += wedge(std::valarray<mpq_class>(v.data(), v.size()), t);
+      for (auto& i : labels) {
+        std::vector<mpq_class> v = i.length().coefficients();
+        w += wedge(std::valarray<mpq_class>(v.data(), v.size()), translation(i));
       }
 
       return w;
     }
   }
 
-  // Return whether there is a periodic trajectory via Boshernitzan's
+  // Return whether there is no periodic trajectory via Boshernitzan's
   // algorithm.
-  bool boshernitzanMinimal(void) const {
-    return false;
+  bool boshernitzanNoPeriodicTrajectory(void) const {
+    using T = std::decay_t<decltype(std::declval<Length>().length())>;
+
+    if constexpr (std::is_integral_v<T> || std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
+      return false;
+    } else if constexpr (std::is_same_v<T, eantic::renf_elem_class>) {
+      // Build the QQ-module of relations between translations, that is the space generated
+      // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
+      // Note: it would be nice to access the dimension of the module
+      // in some more straightforward way...
+      size_t d = top.begin()->label.length().degree();
+      std::vector<std::vector<mpq_class>> translations(d);
+      for (auto& i : labels) {
+        auto t = translation(i);
+        assert(t.size() == d);
+        for (size_t j = 0; j < d; j++) translations[j].push_back(t[j]);
+      }
+      detail::RationalLinearSubspace R = detail::RationalLinearSubspace::fromEquations(translations);
+      return not R.hasNonZeroNonNegativeVector();
+    } else {
+      static_assert(false_t<T>, "not implemented");
+    }
   }
 };
 
@@ -303,8 +334,8 @@ MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit
       c.bottom = bil;
       return c;
     }
-  } else if (impl->boshernitzanMinimal()) {
-    auto m = MinimalityGuarantee();
+  } else if (impl->boshernitzanNoPeriodicTrajectory()) {
+    auto m = NoPeriodicTrajectoryGuarantee();
     return m;
   }
   return {};
@@ -361,6 +392,11 @@ std::optional<IntervalExchangeTransformation<Length>> IntervalExchangeTransforma
 template <typename Length>
 std::valarray<mpq_class> IntervalExchangeTransformation<Length>::safInvariant() const {
   return impl->safInvariant();
+}
+
+template <typename Length>
+bool IntervalExchangeTransformation<Length>::boshernitzanNoPeriodicTrajectory() const {
+  return impl->boshernitzanNoPeriodicTrajectory();
 }
 
 template <typename Length>
