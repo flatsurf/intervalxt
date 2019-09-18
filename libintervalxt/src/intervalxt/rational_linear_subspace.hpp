@@ -19,7 +19,7 @@
  *********************************************************************/
 
 #ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
-#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_PP
+#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
 
 #include <iosfwd>
 #include <vector>
