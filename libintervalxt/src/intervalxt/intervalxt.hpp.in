@@ -35,7 +35,8 @@
 #endif  // __CLING__
 
 namespace intervalxt {
-template <typename = void> constexpr bool false_t = false;
+template <typename = void>
+constexpr bool false_t = false;
 }
 
 #endif

@@ -35,8 +35,8 @@
 #include <set>
 #include <valarray>
 
-#include <gmpxx.h>
 #include <e-antic/renfxx.h>
+#include <gmpxx.h>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
@@ -260,19 +260,19 @@ class IntervalExchangeTransformation<Length>::Implementation {
     if constexpr (std::is_integral_v<T> || std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
       return false;
     } else if constexpr (std::is_same_v<T, eantic::renf_elem_class>) {
-       // Build the QQ-module of relations between translations, that is the space generated
-       // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
-       // Note: it would be nice to access the dimension of the module
-       // in some more straightforward way...
-       size_t d = top.begin()->label.length().degree();
-       std::vector<std::vector<mpq_class>> translations(d);
-       for (auto& i : labels) {
-         auto t = translation(i);
-         assert(t.size() == d);
-         for (size_t j = 0; j < d; j++) translations[j].push_back(t[j]);
-       }
-       RationalLinearSubspace R = RationalLinearSubspace::fromEquations(translations);
-       return not R.hasNonZeroNonNegativeVector();
+      // Build the QQ-module of relations between translations, that is the space generated
+      // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
+      // Note: it would be nice to access the dimension of the module
+      // in some more straightforward way...
+      size_t d = top.begin()->label.length().degree();
+      std::vector<std::vector<mpq_class>> translations(d);
+      for (auto& i : labels) {
+        auto t = translation(i);
+        assert(t.size() == d);
+        for (size_t j = 0; j < d; j++) translations[j].push_back(t[j]);
+      }
+      RationalLinearSubspace R = RationalLinearSubspace::fromEquations(translations);
+      return not R.hasNonZeroNonNegativeVector();
     } else {
       static_assert(false_t<T>, "not implemented");
     }

@@ -42,7 +42,7 @@ namespace {
 TEST(BoshernitzanTest, Boshernitzan0) {
   using Length = Length<int>;
 
-  IntervalExchangeTransformation<Length> iet({Length(451), Length(3321), Length(451)}, {2,1,0});
+  IntervalExchangeTransformation<Length> iet({Length(451), Length(3321), Length(451)}, {2, 1, 0});
   EXPECT_FALSE(iet.boshernitzanNoPeriodicTrajectory());
 }
 

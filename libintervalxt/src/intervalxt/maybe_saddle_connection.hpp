@@ -55,7 +55,6 @@ struct SeparatingConnection {
   Label<Length> bottom, top;
 };
 
-
 }  // namespace intervalxt
 
 #endif
