@@ -78,9 +78,9 @@ std::ostream& operator<<(std::ostream& os, const Id& self) {
     while (current || ret.size() == 0) {
       int offset = current % (2 * 26);
       if (offset < 26) {
-        ret += 'a' + offset;
+        ret += static_cast<char>('a' + offset);
       } else {
-        ret += 'A' + (offset - 26);
+        ret += static_cast<char>('A' + (offset - 26));
       }
       current /= (2 * 26);
     }
