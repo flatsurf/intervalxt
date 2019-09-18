@@ -48,6 +48,8 @@ class Label : public boost::equality_comparable<Label<Length>> {
   // has no semantic meaning but is compatible with the operator==.
   bool operator<(const Label&) const noexcept;
 
+  Label& operator=(const Length& l) noexcept;
+
   const Length& length() const noexcept;
   Length& length() noexcept;
 

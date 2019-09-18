@@ -36,6 +36,10 @@ class Id : public std::enable_shared_from_this<Id> {
   operator boost::uuids::uuid() const noexcept;
   static std::shared_ptr<const Id> make(const boost::uuids::uuid& uuid) noexcept;
   static std::shared_ptr<const Id> make() noexcept;
+  // Change the name of this Id for printing
+  void rename(std::string) noexcept;
+  // Return a human-readable name for this Id; not preserved by serialization.
+  friend std::ostream& operator<<(std::ostream&, const Id&);
 };
 }  // namespace detail
 }  // namespace intervalxt

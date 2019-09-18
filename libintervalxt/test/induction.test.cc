@@ -42,19 +42,25 @@ using v = std::vector<int>;
 
 TEST(InductionTest, Induction2) {
   using Length = Length<int>;
+  using Label = Label<Length>;
+  auto a = Label(23);
+  auto b = Label(5);
 
-  IntervalExchangeTransformation<Length> iet({Length(23), Length(5)}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(23 - 4 * 5), Length(5)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = 23 - 4 * 5, b}, {1, 0}));
 }
 
 TEST(InductionTest, Induction3) {
   using Length = Length<int>;
+  using Label = Label<Length>;
+  auto a = Label(13);
+  auto b = Label(1);
 
-  IntervalExchangeTransformation<Length> iet({Length(13), Length(1)}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(1), Length(1)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = 1, b = 1}, {1, 0}));
 }
 
 TEST(InductionTest, Induction4) {
@@ -73,63 +79,74 @@ TEST(InductionTest, Induction4) {
 
 TEST(InductionTest, InductionMpzClass) {
   using Length = Length<mpz_class>;
+  using Label = Label<Length>;
+  Label a = Length("14328748557375491835455123393141239398243");
+  Label b = Length("51123145748597134");
 
-  IntervalExchangeTransformation<Length> iet({Length("14328748557375491835455123393141239398243"), Length("51123145748597134")}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length("15560595195676063"), Length("51123145748597134")}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length("15560595195676063"), b = Length("51123145748597134")}, {1, 0}));
 }
 
 TEST(InductionTest, InductionMpqClass) {
   using Length = Length<mpq_class>;
+  using Label = Label<Length>;
+  Label a = Length("3/5");
+  Label b = Length("1/4");
 
-  IntervalExchangeTransformation<Length> iet({Length("3/5"), Length("1/4")}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length("1/10"), Length("1/4")}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length("1/10"), b = Length("1/4")}, {1, 0}));
 }
 
 TEST(InductionTest, InductionRenfElemClass) {
   using Length = Length<eantic::renf_elem_class>;
+  using Label = Label<Length>;
 
   auto K = eantic::renf_class::make("a^2 - a - 1", "a", "1.618 +/- 0.01");
 
   eantic::renf_elem_class a(K, "a");
   eantic::renf_elem_class b(K, 1);
+  Label aa = Length(a);
+  Label bb = Length(b);
 
-  IntervalExchangeTransformation<Length> iet({Length(a), Length(b)}, {1, 0});
+  IntervalExchangeTransformation<Length> iet({aa, bb}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(a - 1), Length(b)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({aa = a - 1, bb}, {1, 0}));
 }
 
 TEST(InductionTest, Induction5) {
   using Length = Length<int>;
+  using Label = Label<Length>;
+  Label a(977), b(351), c(143), d(321), e(12);
 
-  IntervalExchangeTransformation<Length> iet({Length(977), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1});
+  IntervalExchangeTransformation<Length> iet({a, b, c, d, e}, {3, 2, 0, 4, 1});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(49), Length(351), Length(143), Length(321), Length(12)}, {3, 2, 0, 4, 1}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = 49, b, c, d, e}, {3, 2, 0, 4, 1}));
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(272), Length(143), Length(49), Length(12), Length(351)}, {4, 1, 2, 0, 3}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({d = 272, c, a, e, b}, {4, 1, 2, 0, 3}));
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(79), Length(143), Length(49), Length(272), Length(12)}, {1, 2, 4, 3, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({b = 79, c, a, d, e}, {1, 2, 4, 3, 0}));
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(64), Length(49), Length(12), Length(272), Length(79)}, {4, 0, 1, 3, 2}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({c = 64, a, e, d, b}, {4, 0, 1, 3, 2}));
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(15), Length(64), Length(49), Length(272), Length(12)}, {2, 4, 3, 1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({b = 15, c, a, d, e}, {2, 4, 3, 1, 0}));
 
   iet.swap();
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(34), Length(12), Length(272), Length(64), Length(15)}, {3, 4, 0, 2, 1}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = 34, e, d, c, b}, {3, 4, 0, 2, 1}));
 }
 
 TEST(InductionTest, InductionAndReport1) {
@@ -142,16 +159,16 @@ TEST(InductionTest, InductionAndReport1) {
 TEST(InductionTest, InductionAndReport2) {
   using Length = Length<int>;
   using Label = Label<Length>;
+  Label a(1), b(1), c(1);
 
-  Label l0(1), l1(1), l2(1);
-  IntervalExchangeTransformation<Length> iet({l0, l1, l2}, {l0, l2, l1});
+  IntervalExchangeTransformation<Length> iet({a, b, c}, {a, c, b});
   auto r = iet.induce(0);
   EXPECT_TRUE(r);
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(1), Length(1)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({b, c}, {1, 0}));
 
   EXPECT_TRUE(std::holds_alternative<Cylinder<Length>>(r.value()));
   auto u = &std::get<Cylinder<Length>>(r.value());
-  EXPECT_EQ(u->label, l0);
+  EXPECT_EQ(u->label, a);
 }
 
 TEST(InductionTest, InductionAndReport3) {
@@ -165,13 +182,13 @@ TEST(InductionTest, InductionAndReport3) {
 
   EXPECT_TRUE(r);
   EXPECT_TRUE(std::holds_alternative<SeparatingConnection<Length>>(r.value()));
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(1)}, std::vector<unsigned long>({0})));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({l1}, {l1}));
 
   auto u = &std::get<SeparatingConnection<Length>>(r.value());
 
   EXPECT_EQ(u->top, l0);
   EXPECT_EQ(u->bottom, l2);
-  EXPECT_EQ(*(u->addedIET), IntervalExchangeTransformation<Length>({Length(1)}, std::vector<unsigned long>({0})));
+  EXPECT_EQ(*(u->addedIET), IntervalExchangeTransformation<Length>({l2}, {l2}));
 }
 
 TEST(InductionTest, InductionAndReport4) {
@@ -208,7 +225,7 @@ TEST(InductionTest, InductionAndReport5) {
   auto r = iet.induce(0);
   EXPECT_TRUE(r);
   EXPECT_TRUE(std::holds_alternative<NonSeparatingConnection<Length>>(r.value()));
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({Length(3), Length(1)}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({l1, l2}, {1, 0}));
 
   auto u = &std::get<NonSeparatingConnection<Length>>(r.value());
   EXPECT_EQ(u->top, l0);
