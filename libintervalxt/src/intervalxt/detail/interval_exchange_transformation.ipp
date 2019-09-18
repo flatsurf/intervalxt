@@ -42,10 +42,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
+#include "intervalxt/detail/rational_linear_subspace.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
 #include "intervalxt/maybe_saddle_connection.hpp"
-#include "intervalxt/rational_linear_subspace.hpp"
 
 namespace intervalxt {
 namespace {
@@ -271,7 +271,7 @@ class IntervalExchangeTransformation<Length>::Implementation {
         assert(t.size() == d);
         for (size_t j = 0; j < d; j++) translations[j].push_back(t[j]);
       }
-      RationalLinearSubspace R = RationalLinearSubspace::fromEquations(translations);
+      detail::RationalLinearSubspace R = detail::RationalLinearSubspace::fromEquations(translations);
       return not R.hasNonZeroNonNegativeVector();
     } else {
       static_assert(false_t<T>, "not implemented");

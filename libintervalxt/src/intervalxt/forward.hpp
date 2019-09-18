@@ -57,7 +57,6 @@ using MaybeConnection = std::optional<std::variant<
     NonSeparatingConnection<Length>,
     SeparatingConnection<Length>>>;
 
-class RationalLinearSubspace;
 }  // namespace intervalxt
 
 #endif
