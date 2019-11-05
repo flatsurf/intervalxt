@@ -18,54 +18,39 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
+#define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <iosfwd>
+#include <vector>
 
-#include <optional>
-#include <variant>
+#include "external/spimpl/spimpl.h"
 
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
-
 template <typename Length>
-class Label;
+class DynamicalDecomposition {
+ public:
+  DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
 
-template <typename Length>
-class IntervalExchangeTransformation;
+  // Return the new component if component splits.
+  std::optional<const Component<Length>&> findConnection(const Component<Length>& component, int limit = -1);
 
-struct NoPeriodicTrajectoryGuarantee;
+  // Run findConnection() recursively on every component.
+  void findConnections(int limit = -1);
+  
+  const std::vector<Component<Length>>& components() const noexcept;
 
-template <typename Length>
-struct Cylinder;
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition<T>&);
 
-template <typename Length>
-struct NonSeparatingConnection;
+ private:
+  class Implementation;
+  spimpl::unique_impl_ptr<Implementation> impl;
+};
 
-template <typename Length>
-struct SeparatingConnection;
-
-template <typename Length>
-using MaybeConnection = std::optional<std::variant<
-    NoPeriodicTrajectoryGuarantee,
-    Cylinder<Length>,
-    NonSeparatingConnection<Length>,
-    SeparatingConnection<Length>>>;
-
-template <typename Length>
-class DynamicalDecomposition;
-
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class Component;
-
-}  // namespace intervalxt
+}
 
 #endif

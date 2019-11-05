@@ -18,53 +18,44 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
+#define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <memory>
+#include <utility>
 
-#include <optional>
-#include <variant>
+#include "intervalxt/forward.hpp"
 
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/label.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
+// The types in this file make up MaybeConnection defined in forward.hpp.
 
+// the iet has no periodic trajectory
+struct NoPeriodicTrajectoryGuarantee {};
+
+// the given label appears both on top and bottom at the left
+// hand side of the iet
+// Note: Label is already removed when this message is returned.
 template <typename Length>
-class Label;
+struct Cylinder {
+  Label<Length> label;
+};
 
+// the pair of labels have the same lengths.
+// Note: top is already removed when this message is returned.
 template <typename Length>
-class IntervalExchangeTransformation;
+struct NonSeparatingConnection {
+  Label<Length> bottom, top;
+};
 
-struct NoPeriodicTrajectoryGuarantee;
-
+// Note: top is already removed when this message is returned.
 template <typename Length>
-struct Cylinder;
-
-template <typename Length>
-struct NonSeparatingConnection;
-
-template <typename Length>
-struct SeparatingConnection;
-
-template <typename Length>
-using MaybeConnection = std::optional<std::variant<
-    NoPeriodicTrajectoryGuarantee,
-    Cylinder<Length>,
-    NonSeparatingConnection<Length>,
-    SeparatingConnection<Length>>>;
-
-template <typename Length>
-class DynamicalDecomposition;
-
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class Component;
+struct SeparatingConnection {
+  std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
+  Label<Length> bottom, top;
+};
 
 }  // namespace intervalxt
 

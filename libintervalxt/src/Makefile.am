@@ -18,7 +18,10 @@ nobase_include_HEADERS =                                 \
 	intervalxt/detail/rational_linear_subspace.hpp         \
 	intervalxt/forward.hpp                                 \
 	intervalxt/cppyy.hpp                                   \
-	intervalxt/maybe_saddle_connection.hpp                 \
+	intervalxt/maybe_connection.hpp                        \
+	intervalxt/dynamical_decomposition.hpp                 \
+	intervalxt/component.hpp                               \
+	intervalxt/connection.hpp                              \
 	intervalxt/external/spimpl/spimpl.h                    \
 	intervalxt/cereal.hpp
 

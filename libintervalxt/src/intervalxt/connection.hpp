@@ -18,43 +18,26 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
-#define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
+#ifndef LIBINTERVALXT_CONNECTION_HPP
+#define LIBINTERVALXT_CONNECTION_HPP
 
-#include <memory>
-#include <utility>
+#include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
 
-#include "intervalxt/label.hpp"
-
 namespace intervalxt {
 
-// the iet has no periodic trajectory
-struct NoPeriodicTrajectoryGuarantee {};
-
-// the given label appears both on top and bottom at the left
-// hand side of the iet
-// Note: Label is already removed when this message is returned.
 template <typename Length>
-struct Cylinder {
-  Label<Length> label;
+class Connection {
+ public:
+  // Return the component that reports this connection on its boundary.
+  // (to get the component on the other side of this connection, use
+  // `(-connection).component()`.
+  const Component<Length>& component() const;
+
+  const Connection& operator-() const;
 };
 
-// the pair of labels have the same lengths.
-// Note: top is already removed when this message is returned.
-template <typename Length>
-struct NonSeparatingConnection {
-  Label<Length> bottom, top;
-};
-
-// Note: top is already removed when this message is returned.
-template <typename Length>
-struct SeparatingConnection {
-  std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
-  Label<Length> bottom, top;
-};
-
-}  // namespace intervalxt
+}
 
 #endif

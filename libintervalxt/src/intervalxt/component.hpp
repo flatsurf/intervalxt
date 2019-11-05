@@ -18,54 +18,39 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_COMPONENT_HPP
+#define LIBINTERVALXT_COMPONENT_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <list>
+#include <utility>
 
-#include <optional>
-#include <variant>
+#include "external/spimpl/spimpl.h"
 
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
-
 template <typename Length>
-class Label;
+class Component {
+ public:
+  using Boundary = std::list<Connection<Length>>;
 
-template <typename Length>
-class IntervalExchangeTransformation;
+  bool cylinder();
+  bool certified();
 
-struct NoPeriodicTrajectoryGuarantee;
+  // Returns the left and the right boundary of this component as circular linked lists;
+  // note that the right boundary goes "bottom to top" whereas the left
+  // boundary goes "top to bottom".
+  std::pair<Boundary, Boundary> boundary();
 
-template <typename Length>
-struct Cylinder;
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const Component<T>&);
 
-template <typename Length>
-struct NonSeparatingConnection;
+ private:
+  class Implementation;
+  spimpl::unique_impl_ptr<Implementation> impl;
+};
 
-template <typename Length>
-struct SeparatingConnection;
-
-template <typename Length>
-using MaybeConnection = std::optional<std::variant<
-    NoPeriodicTrajectoryGuarantee,
-    Cylinder<Length>,
-    NonSeparatingConnection<Length>,
-    SeparatingConnection<Length>>>;
-
-template <typename Length>
-class DynamicalDecomposition;
-
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class Component;
-
-}  // namespace intervalxt
+}
 
 #endif
