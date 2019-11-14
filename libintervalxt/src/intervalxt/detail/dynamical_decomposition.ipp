@@ -236,7 +236,7 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
           DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY
         };
       default:
-        assert(false && "invalid enum value");
+        throw std::logic_error("invalid enum value");
     }
   }
 
@@ -285,8 +285,8 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
     return bottom;
   }
 
-  int estimateBoshernitzanCost(const IntervalExchangeTransformation<Length>& iet) {
-    // TODO: Do something smart.
+  int estimateBoshernitzanCost(const IntervalExchangeTransformation<Length>&) {
+    // see https://github.com/flatsurf/intervalxt/issues/60
     return 1;
   }
 

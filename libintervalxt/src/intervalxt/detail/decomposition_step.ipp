@@ -49,7 +49,7 @@ std::ostream& operator<<(std::ostream& os, const DecompositionStep<Length>& self
     case Result::KEANE:
       return os << "KEANE";
     default:
-      assert(false && "impossible decomposition step state");
+      throw std::logic_error("impossible decomposition step state");
   }
 }
 }
