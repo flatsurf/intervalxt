@@ -18,45 +18,36 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
-
-#include <optional>
-#include <variant>
-
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
+// The result of a call to Component::decompositionStep.
+template <typename Length>
+struct DecompositionStep {
+  enum class Result {
+    LIMIT_REACHED,
+    CYLINDER,
+    SEPARATING_CONNECTION,
+    NON_SEPARATING_CONNECTION,
+    WITHOUT_PERIODIC_TRAJECTORY,
+    KEANE,
+  };
+
+  Result result;
+  std::optional<Connection<Length>> connection = {};
+  std::optional<Component<Length>> additionalComponent = {};
+};
 
 template <typename Length>
-class Label;
+std::ostream& operator<<(std::ostream&, const DecompositionStep<Length>&);
+  
+}
 
-template <typename Length>
-class IntervalExchangeTransformation;
-
-template <typename Length>
-class DynamicalDecomposition;
-
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class MaybeConnection;
-
-template <typename Length>
-class Component;
-
-template <typename Length>
-struct DecompositionStep;
-
-template <typename Length>
-struct InductionStep;
-
-}  // namespace intervalxt
+#include "detail/decomposition_step.ipp"
 
 #endif
+

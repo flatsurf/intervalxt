@@ -21,6 +21,9 @@
 #ifndef LIBINTERVALXT_CONNECTION_HPP
 #define LIBINTERVALXT_CONNECTION_HPP
 
+#include <iosfwd>
+#include <boost/operators.hpp>
+
 #include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
@@ -28,15 +31,33 @@
 namespace intervalxt {
 
 template <typename Length>
-class Connection {
- public:
-  // Return the component that reports this connection on its boundary.
-  // (to get the component on the other side of this connection, use
-  // `(-connection).component()`.
-  const Component<Length>& component() const;
+class Connection : boost::equality_comparable<Connection<Length>> {
+  // Connections can not be created directly (other than copying & moving them.)
+  // They are created as products of DynamicalDecomposition.
+  Connection();
 
-  const Connection& operator-() const;
+ public:
+  Connection operator-() const noexcept;
+
+  MaybeConnection<Length> source() const noexcept;
+
+  MaybeConnection<Length> nextInBoundary() const noexcept;
+
+  bool operator==(const Connection&) const noexcept;
+
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
+
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const Connection<T>&);
+
+  friend class DynamicalDecomposition<Length>;
+  friend class Component<Length>;
+  friend class MaybeConnection<Length>;
 };
+
+#include "detail/dynamical_decomposition.ipp"
 
 }
 

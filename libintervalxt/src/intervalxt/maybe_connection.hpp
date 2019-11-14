@@ -18,45 +18,59 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
-#define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
+#ifndef LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
+#define LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
 
-#include <memory>
-#include <utility>
+#include <iosfwd>
+#include <boost/operators.hpp>
+
+#include "external/spimpl/spimpl.h"
 
 #include "intervalxt/forward.hpp"
 
-#include "intervalxt/label.hpp"
-
 namespace intervalxt {
 
-// The types in this file make up MaybeConnection defined in forward.hpp.
-
-// the iet has no periodic trajectory
-struct NoPeriodicTrajectoryGuarantee {};
-
-// the given label appears both on top and bottom at the left
-// hand side of the iet
-// Note: Label is already removed when this message is returned.
 template <typename Length>
-struct Cylinder {
-  Label<Length> label;
+class MaybeConnection : boost::equality_comparable<MaybeConnection<Length>> {
+  // Connections can not be created directly (other than copying & moving them.)
+  // They are created as products of DynamicalDecomposition.
+  MaybeConnection();
+
+ public:
+  // Return the component that contains this connection on its inside or
+  // boundary, i.e., the component on the left if this is a connection "from
+  // bottom to top" or the connection on its right if this is a connection
+  // "from top to bottom".
+  const Component<Length>& component() const noexcept;
+
+  // Return the next connection at the source of this singularity in counter-clockwise order.
+  MaybeConnection nextAtSingularity() const noexcept;
+
+  // Return the next connection at the source of this singularity in clockwise order.
+  MaybeConnection previousAtSingularity() const noexcept;
+
+  Label<Length> before() const noexcept;
+  Label<Length> after() const noexcept;
+
+  bool operator==(const MaybeConnection<Length>&) const noexcept;
+
+  std::optional<Connection<Length>> connection() const noexcept;
+
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
+
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const MaybeConnection<T>&);
+
+  friend class DynamicalDecomposition<Length>;
+  friend class Component<Length>;
+  friend class Connection<Length>;
 };
 
-// the pair of labels have the same lengths.
-// Note: top is already removed when this message is returned.
-template <typename Length>
-struct NonSeparatingConnection {
-  Label<Length> bottom, top;
-};
+#include "detail/dynamical_decomposition.ipp"
 
-// Note: top is already removed when this message is returned.
-template <typename Length>
-struct SeparatingConnection {
-  std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
-  Label<Length> bottom, top;
-};
-
-}  // namespace intervalxt
+}
 
 #endif
+

@@ -18,45 +18,37 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_INDUCTION_STEP_HPP
+#define LIBINTERVALXT_INDUCTION_STEP_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
-
-#include <optional>
-#include <variant>
-
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
+// The result of a call to IntervalExchangeTransformation::induce()
+template <typename Length>
+struct InductionStep {
+  enum class Result {
+    LIMIT_REACHED,
+    CYLINDER,
+    SEPARATING_CONNECTION,
+    NON_SEPARATING_CONNECTION,
+    WITHOUT_PERIODIC_TRAJECTORY,
+  };
+
+  Result result;
+  std::optional<std::pair<Label<Length>, Label<Length>>> connection = {};
+  std::optional<IntervalExchangeTransformation<Length>> additionalIntervalExchangeTransformation = {};
+  std::optional<Label<Length>> cylinder = {};
+};
 
 template <typename Length>
-class Label;
+std::ostream& operator<<(std::ostream&, const InductionStep<Length>&);
+  
+}
 
-template <typename Length>
-class IntervalExchangeTransformation;
-
-template <typename Length>
-class DynamicalDecomposition;
-
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class MaybeConnection;
-
-template <typename Length>
-class Component;
-
-template <typename Length>
-struct DecompositionStep;
-
-template <typename Length>
-struct InductionStep;
-
-}  // namespace intervalxt
+#include "detail/dynamical_decomposition.ipp"
 
 #endif
+
+

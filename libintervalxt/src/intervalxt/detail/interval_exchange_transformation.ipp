@@ -45,7 +45,7 @@
 #include "intervalxt/detail/rational_linear_subspace.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
-#include "intervalxt/maybe_connection.hpp"
+#include "intervalxt/induction_step.hpp"
 
 namespace intervalxt {
 namespace {
@@ -280,18 +280,19 @@ class IntervalExchangeTransformation<Length>::Implementation {
 };
 
 template <typename Length>
-MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit) {
+InductionStep<Length> IntervalExchangeTransformation<Length>::induce(int limit) {
   using Label = typename IntervalExchangeTransformation<Length>::Label;
+  using Result = typename InductionStep<Length>::Result;
 
-  int test;
-  for (int i = 0; i < limit; i++) {
-    test = impl->zorichInduction();
-    if (test) break;
+  bool foundSaddleConnection = false;
+  for (int i = 0; limit == -1 || i < limit; i++) {
+    foundSaddleConnection = impl->zorichInduction();
+    if (foundSaddleConnection) break;
 
-    std::swap(impl->top, impl->bottom);
-    test = impl->zorichInduction();
-    std::swap(impl->top, impl->bottom);
-    if (test) break;
+    swap();
+    foundSaddleConnection = impl->zorichInduction();
+    swap();
+    if (foundSaddleConnection) break;
   }
 
   const Interval<Length> ti = *(impl->top.begin());
@@ -299,15 +300,30 @@ MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit
 
   if (ti.twin->label == bi.label) {
     // Found a cylinder
-    Cylinder<Length> cyl;
-    cyl.label = ti.label;
+    const Label cylinder = ti.label;
     impl->top.erase(impl->top.begin());
     impl->bottom.erase(impl->bottom.begin());
     impl->labels.erase(ti.label);
-    return cyl;
-  } else if (ti.label.length() == bi.label.length()) {
-    // Found a saddle connection
-    // 1. merge the labels on top and bottom (by removing the one on top)
+    return {
+      Result::CYLINDER,
+      {},
+      {},
+      cylinder,
+    };
+  }
+
+  auto reducible = impl->reduce();
+  if (reducible) {
+    return {
+      Result::SEPARATING_CONNECTION,
+      std::make_pair(*top().rbegin(), *bottom().rbegin()),
+      std::move(*reducible)
+    };
+  }
+
+  if (ti.label.length() == bi.label.length()) {
+    // Found a saddle connection; merge the labels on top and bottom (by
+    // removing the one on top)
     impl->top.erase(impl->top.begin());
     impl->bottom.insert(ti.twin, bi);
     auto x = bi.label;
@@ -320,25 +336,17 @@ MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit
 
     impl->labels.erase(ti.label);
 
-    // 2. check for reduceness after the merge
-    auto r = impl->reduce();
-    if (r) {
-      SeparatingConnection<Length> c;
-      c.top = til;
-      c.bottom = bil;
-      c.addedIET = std::make_unique<IntervalExchangeTransformation<Length>>(std::move(r.value()));
-      return std::move(c);
-    } else {
-      NonSeparatingConnection<Length> c;
-      c.top = til;
-      c.bottom = bil;
-      return c;
-    }
-  } else if (impl->boshernitzanNoPeriodicTrajectory()) {
-    auto m = NoPeriodicTrajectoryGuarantee();
-    return m;
+    return {
+      Result::NON_SEPARATING_CONNECTION,
+      std::make_pair(til, bil),
+    };
   }
-  return {};
+
+  if (impl->boshernitzanNoPeriodicTrajectory()) {
+    return { Result::WITHOUT_PERIODIC_TRAJECTORY };
+  }
+
+  return { Result::LIMIT_REACHED };
 }
 
 template <typename Length>
@@ -367,7 +375,6 @@ std::vector<Label<Length>> IntervalExchangeTransformation<Length>::top() const n
 template <typename Length>
 std::vector<Label<Length>> IntervalExchangeTransformation<Length>::bottom() const noexcept {
   std::vector<Label> ret;
-
   for (auto& t : impl->bottom)
     ret.push_back(t.label);
 
@@ -380,7 +387,7 @@ void IntervalExchangeTransformation<Length>::swap() {
 }
 
 template <typename Length>
-bool IntervalExchangeTransformation<Length>::zorichInduction(void) {
+bool IntervalExchangeTransformation<Length>::zorichInduction() {
   return impl->zorichInduction();
 }
 
@@ -397,6 +404,11 @@ std::valarray<mpq_class> IntervalExchangeTransformation<Length>::safInvariant() 
 template <typename Length>
 bool IntervalExchangeTransformation<Length>::boshernitzanNoPeriodicTrajectory() const {
   return impl->boshernitzanNoPeriodicTrajectory();
+}
+
+template <typename Length>
+size_t IntervalExchangeTransformation<Length>::size() const noexcept {
+  return impl->top.size();
 }
 
 template <typename Length>

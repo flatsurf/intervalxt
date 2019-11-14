@@ -7,3 +7,6 @@
 [submodule "libintervalxt/src/external/unique-factory"]
 	path = libintervalxt/src/external/unique-factory
 	url = https://github.com/flatsurf/unique-factory.git
+[submodule "libintervalxt/test/external/catch2"]
+	path = libintervalxt/test/external/catch2
+	url = https://github.com/catchorg/Catch2.git

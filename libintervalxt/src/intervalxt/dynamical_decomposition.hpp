@@ -30,27 +30,34 @@
 
 namespace intervalxt {
 
+// Frontend to a decomposition of an IntervalExchangeTransformation into
+// Components.
 template <typename Length>
 class DynamicalDecomposition {
  public:
   DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
+  std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
 
-  // Return the new component if component splits.
-  std::optional<const Component<Length>&> findConnection(const Component<Length>& component, int limit = -1);
-
-  // Run findConnection() recursively on every component.
-  void findConnections(int limit = -1);
+  void decompose(std::function<bool(const Component<Length>&)> target= [](const auto& c) {
+      return c.cylinder() || c.withoutPeriodicTrajectovy();
+    }, int limit = -1);
   
-  const std::vector<Component<Length>>& components() const noexcept;
+  std::vector<Component<Length>> components() const noexcept;
 
   template <typename T>
   friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition<T>&);
 
  private:
   class Implementation;
-  spimpl::unique_impl_ptr<Implementation> impl;
+  spimpl::impl_ptr<Implementation> impl;
+
+  friend class Component<Length>;
+  friend class Connection<Length>;
+  friend class MaybeConnection<Length>;
 };
 
 }
+
+#include "detail/dynamical_decomposition.ipp"
 
 #endif

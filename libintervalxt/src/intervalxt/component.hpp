@@ -21,8 +21,11 @@
 #ifndef LIBINTERVALXT_COMPONENT_HPP
 #define LIBINTERVALXT_COMPONENT_HPP
 
+#include <functional>
 #include <list>
 #include <utility>
+
+#include <boost/logic/tribool_fwd.hpp>
 
 #include "external/spimpl/spimpl.h"
 
@@ -32,25 +35,40 @@ namespace intervalxt {
 
 template <typename Length>
 class Component {
+  // Components can not be created directly (other than copying & moving them.)
+  // They are created as products of a DynamicalDecomposition.
+  Component();
+
  public:
   using Boundary = std::list<Connection<Length>>;
 
-  bool cylinder();
-  bool certified();
+  boost::logic::tribool cylinder() const noexcept;
+  boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
+  boost::logic::tribool keane() const noexcept;
 
-  // Returns the left and the right boundary of this component as circular linked lists;
-  // note that the right boundary goes "bottom to top" whereas the left
-  // boundary goes "top to bottom".
-  std::pair<Boundary, Boundary> boundary();
+  // The left boundaries of this component as a linked list going from "top to bottom."
+  std::vector<Boundary> left() const;
+  // The right boundaries of this component as a linked list going from "bottom to top."
+  std::vector<Boundary> right() const;
+
+  DecompositionStep<Length> decompositionStep(int limit = -1);
+
+  void decompose(std::function<bool(const Component&)> target= [](const auto& c) {
+      return c.cylinder() || c.withoutPeriodicTrajectovy();
+    }, int limit=-1);
 
   template <typename T>
   friend std::ostream& operator<<(std::ostream&, const Component<T>&);
 
  private:
   class Implementation;
-  spimpl::unique_impl_ptr<Implementation> impl;
+  spimpl::impl_ptr<Implementation> impl;
+
+  friend class DynamicalDecomposition<Length>;
 };
 
 }
+
+#include "detail/dynamical_decomposition.ipp"
 
 #endif

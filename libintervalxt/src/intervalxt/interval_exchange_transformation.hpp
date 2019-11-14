@@ -25,6 +25,7 @@
 #include <iosfwd>
 #include <optional>
 #include <vector>
+#include <map>
 
 #include <gmpxx.h>
 
@@ -42,13 +43,15 @@ class IntervalExchangeTransformation {
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<size_t> &bottom);
   IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<Label> &bottom);
 
-  MaybeConnection<Length> induce(int limit = -1);
+  // Perform up to limit many steps of full Zorich induction until a connection
+  // is found. Set to -1 for no limit on the number of steps.
+  InductionStep<Length> induce(int limit = -1);
 
   // check for reductibility
-  std::optional<IntervalExchangeTransformation<Length>> reduce();
+  std::optional<IntervalExchangeTransformation> reduce();
 
   // one step of Zorich induction
-  bool zorichInduction(void);
+  bool zorichInduction();
 
   // Swap the top and bottom intervals.
   void swap();
@@ -70,6 +73,9 @@ class IntervalExchangeTransformation {
   std::vector<Label> top() const noexcept;
   // Return the labels of the bottom permutation (in order.)
   std::vector<Label> bottom() const noexcept;
+
+  // Return the number of intervals in this interval exchange transformation.
+  size_t size() const noexcept;
 
   template <typename Length_>
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length_> &);
