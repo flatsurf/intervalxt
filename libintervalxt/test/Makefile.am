@@ -17,6 +17,8 @@ dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 # Cereal is basically not packaged in any distribution since it is a
 # header-only library that people always vendor into their source tree.
 EXTRA_DIST = external/cereal/include
+# We vendor the header-only catch2 testing framework
+EXTRA_DIST += external/catch2/single_include/catch2
 
 @VALGRIND_CHECK_RULES@
 
