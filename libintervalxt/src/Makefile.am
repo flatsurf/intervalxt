@@ -14,6 +14,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/detail/dynamical_decomposition.ipp          \
 	intervalxt/detail/component.ipp                        \
 	intervalxt/detail/connection.ipp                       \
+	intervalxt/detail/maybe_connection.ipp                 \
 	intervalxt/label.hpp                                   \
 	intervalxt/detail/label.ipp                            \
 	intervalxt/detail/id.hpp                               \
@@ -26,6 +27,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/dynamical_decomposition.hpp                 \
 	intervalxt/component.hpp                               \
 	intervalxt/connection.hpp                              \
+	intervalxt/maybe_connection.hpp                        \
 	intervalxt/external/spimpl/spimpl.h                    \
 	intervalxt/cereal.hpp
 
