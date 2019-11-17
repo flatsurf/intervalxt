@@ -22,6 +22,7 @@
 #define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 
 #include <iosfwd>
+#include <functional>
 #include <vector>
 
 #include "external/spimpl/spimpl.h"
@@ -39,7 +40,7 @@ class DynamicalDecomposition {
   std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
 
   void decompose(std::function<bool(const Component<Length>&)> target= [](const auto& c) {
-      return c.cylinder() || c.withoutPeriodicTrajectovy();
+      return c.cylinder() || c.withoutPeriodicTrajectory();
     }, int limit = -1);
   
   std::vector<Component<Length>> components() const noexcept;
