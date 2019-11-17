@@ -12,6 +12,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/interval_exchange_transformation.hpp        \
 	intervalxt/detail/interval_exchange_transformation.ipp \
 	intervalxt/detail/dynamical_decomposition.ipp          \
+	intervalxt/detail/decomposition_step.ipp               \
 	intervalxt/detail/component.ipp                        \
 	intervalxt/detail/connection.ipp                       \
 	intervalxt/detail/maybe_connection.ipp                 \
