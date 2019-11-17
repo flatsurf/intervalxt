@@ -38,7 +38,7 @@ BENCHMARKS = {}
 PREFIX = "track_"
 
 os.chdir(ASV_BUILD_DIR)
-for benchmark in glob.glob('**/test/*.*.cc'):
+for benchmark in glob.glob('**/test/*.benchmark.cc'):
     os.system("echo 'Processing %s'"%benchmark)
     os.chdir(ASV_BUILD_DIR)
     os.chdir(os.path.dirname(benchmark))
