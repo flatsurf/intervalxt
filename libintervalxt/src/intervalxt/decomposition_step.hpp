@@ -18,43 +18,35 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
-#define LIBINTERVALXT_MAYBE_SADDLE_CONNECTION_HPP
-
-#include <memory>
-#include <utility>
+#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
 
 #include "intervalxt/forward.hpp"
 
-#include "intervalxt/label.hpp"
-
 namespace intervalxt {
 
-// the iet has no periodic trajectory
-struct NoPeriodicTrajectoryGuarantee {};
-
-// the given label appears both on top and bottom at the left
-// hand side of the iet
-// Note: Label is already removed when this message is returned.
+// The result of a call to Component::decompositionStep.
 template <typename Length>
-struct Cylinder {
-  Label<Length> label;
+struct DecompositionStep {
+  enum class Result {
+    LIMIT_REACHED,
+    CYLINDER,
+    SEPARATING_CONNECTION,
+    NON_SEPARATING_CONNECTION,
+    WITHOUT_PERIODIC_TRAJECTORY,
+    KEANE,
+  };
+
+  Result result;
+  std::optional<Connection<Length>> connection = {};
+  std::optional<Component<Length>> additionalComponent = {};
 };
 
-// the pair of labels have the same lengths.
-// Note: top is already removed when this message is returned.
 template <typename Length>
-struct NonSeparatingConnection {
-  Label<Length> bottom, top;
-};
-
-// Note: top is already removed when this message is returned.
-template <typename Length>
-struct SeparatingConnection {
-  std::unique_ptr<IntervalExchangeTransformation<Length>> addedIET;
-  Label<Length> bottom, top;
-};
+std::ostream& operator<<(std::ostream&, const DecompositionStep<Length>&);
 
 }  // namespace intervalxt
+
+#include "detail/decomposition_step.ipp"
 
 #endif

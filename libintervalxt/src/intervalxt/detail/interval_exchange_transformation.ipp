@@ -43,9 +43,9 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include "intervalxt/detail/rational_linear_subspace.hpp"
+#include "intervalxt/induction_step.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
-#include "intervalxt/maybe_saddle_connection.hpp"
 
 namespace intervalxt {
 namespace {
@@ -53,7 +53,7 @@ namespace {
 template <typename Length>
 struct Interval {
   Label<Length>& label;
-  const typename std::list<Interval>::iterator twin;
+  typename std::list<Interval>::iterator twin;
 };
 }  // namespace
 
@@ -89,6 +89,7 @@ class IntervalExchangeTransformation<Length>::Implementation {
     for (const Label& t : top) {
       auto it = labels.find(t);
       assert(it != labels.end() && "top label not found in top labels");
+      // We let twin point to a dummy value and reset it later when bottom exists.
       this->top.push_back(Interval<Length>{const_cast<Label&>(*it), this->bottom.begin()});
     }
 
@@ -98,9 +99,8 @@ class IntervalExchangeTransformation<Length>::Implementation {
       this->bottom.push_back(Interval<Length>{const_cast<Label&>(*it), std::find_if(this->top.begin(), this->top.end(), [&](const auto& t) { return t.label == b; })});
     }
 
-    for (auto it = this->bottom.begin(); it != this->bottom.end(); it++) {
+    for (auto it = this->bottom.begin(); it != this->bottom.end(); it++)
       const_cast<typename std::list<Interval<Length>>::iterator&>(it->twin->twin) = it;
-    }
 
     assert(std::all_of(this->top.begin(), this->top.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of top do not point back to the original element.");
     assert(std::all_of(this->bottom.begin(), this->bottom.end(), [](auto& t) { return &t == &*t.twin->twin; }) && "twin pointers of bottom do not point back to the original element.");
@@ -118,54 +118,58 @@ class IntervalExchangeTransformation<Length>::Implementation {
     int top_ahead = 0;
     int bottom_ahead = 0;
 
-    auto itop = top.begin();
-    auto ibottom = bottom.begin();
+    auto topIterator = top.begin();
+    auto bottomIterator = bottom.begin();
     while (true) {
-      assert(itop != top.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
-      assert(ibottom != bottom.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+      assert(topIterator != top.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+      assert(bottomIterator != bottom.end() && "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
-      if (seen.find(itop->label) != seen.end()) {
+      if (seen.find(topIterator->label) != seen.end()) {
         bottom_ahead--;
       } else {
         top_ahead++;
-        seen.insert(itop->label);
+        seen.insert(topIterator->label);
       }
 
-      if (seen.find(ibottom->label) != seen.end()) {
+      if (seen.find(bottomIterator->label) != seen.end()) {
         top_ahead--;
       } else {
         bottom_ahead++;
-        seen.insert(ibottom->label);
+        seen.insert(bottomIterator->label);
       }
 
       if (top_ahead == 0 && bottom_ahead == 0) {
         break;
       }
 
-      ++itop;
-      ++ibottom;
+      ++topIterator;
+      ++bottomIterator;
     }
 
-    ++itop;
-    ++ibottom;
+    ++topIterator;
+    ++bottomIterator;
 
-    if (itop == top.end()) {
-      assert(ibottom == bottom.end() && "top & bottom do not have the same size");
+    if (topIterator == top.end()) {
+      assert(bottomIterator == bottom.end() && "top & bottom do not have the same size");
       return {};
     } else {
-      std::vector<Label> vtop;
-      std::vector<Label> vbottom;
+      std::vector<Label> newComponentTop;
+      std::vector<Label> newComponentBottom;
 
-      for (auto j = itop; j != top.end(); j++)
-        vtop.push_back(j->label);
-      for (auto j = ibottom; j != bottom.end(); j++)
-        vbottom.push_back(j->label);
-      top.erase(itop, top.end());
-      bottom.erase(ibottom, bottom.end());
+      for (auto it = topIterator; it != top.end(); it++)
+        newComponentTop.push_back(it->label);
+      for (auto it = bottomIterator; it != bottom.end(); it++)
+        newComponentBottom.push_back(it->label);
+
+      top.erase(topIterator, top.end());
+      bottom.erase(bottomIterator, bottom.end());
+
       assert(top.size() == bottom.size() && "top and bottom must have the same length");
-      for (auto it = vtop.begin(); it != vtop.end(); it++) labels.erase(*it);
 
-      return IntervalExchangeTransformation<Length>(vtop, vbottom);
+      for (auto it = newComponentTop.begin(); it != newComponentTop.end(); it++)
+        labels.erase(*it);
+
+      return IntervalExchangeTransformation<Length>(newComponentTop, newComponentBottom);
     }
   }
 
@@ -280,65 +284,76 @@ class IntervalExchangeTransformation<Length>::Implementation {
 };
 
 template <typename Length>
-MaybeConnection<Length> IntervalExchangeTransformation<Length>::induce(int limit) {
+InductionStep<Length> IntervalExchangeTransformation<Length>::induce(int limit) {
   using Label = typename IntervalExchangeTransformation<Length>::Label;
+  using Result = typename InductionStep<Length>::Result;
 
-  int test;
-  for (int i = 0; i < limit; i++) {
-    test = impl->zorichInduction();
-    if (test) break;
+  bool foundSaddleConnection = false;
+  for (int i = 0; limit == -1 || i < limit; i++) {
+    foundSaddleConnection = impl->zorichInduction();
+    if (foundSaddleConnection) break;
 
-    std::swap(impl->top, impl->bottom);
-    test = impl->zorichInduction();
-    std::swap(impl->top, impl->bottom);
-    if (test) break;
+    swap();
+    foundSaddleConnection = impl->zorichInduction();
+    swap();
+    if (foundSaddleConnection) break;
   }
 
-  const Interval<Length> ti = *(impl->top.begin());
-  const Interval<Length> bi = *(impl->bottom.begin());
+  const Interval<Length> firstTop = *(impl->top.begin());
+  const Interval<Length> firstBottom = *(impl->bottom.begin());
 
-  if (ti.twin->label == bi.label) {
+  if (firstTop.twin->label == firstBottom.label) {
     // Found a cylinder
-    Cylinder<Length> cyl;
-    cyl.label = ti.label;
     impl->top.erase(impl->top.begin());
     impl->bottom.erase(impl->bottom.begin());
-    impl->labels.erase(ti.label);
-    return cyl;
-  } else if (ti.label.length() == bi.label.length()) {
-    // Found a saddle connection
-    // 1. merge the labels on top and bottom (by removing the one on top)
-    impl->top.erase(impl->top.begin());
-    impl->bottom.insert(ti.twin, bi);
-    auto x = bi.label;
-    impl->bottom.erase(impl->bottom.begin());
-    impl->bottom.erase(ti.twin);
 
-    // NOTE: we copy the labels since we delete ti.label now and reduce might delete bi
-    const Label til = ti.label;
-    const Label bil = bi.label;
-
-    impl->labels.erase(ti.label);
-
-    // 2. check for reduceness after the merge
-    auto r = impl->reduce();
-    if (r) {
-      SeparatingConnection<Length> c;
-      c.top = til;
-      c.bottom = bil;
-      c.addedIET = std::make_unique<IntervalExchangeTransformation<Length>>(std::move(r.value()));
-      return std::move(c);
-    } else {
-      NonSeparatingConnection<Length> c;
-      c.top = til;
-      c.bottom = bil;
-      return c;
-    }
-  } else if (impl->boshernitzanNoPeriodicTrajectory()) {
-    auto m = NoPeriodicTrajectoryGuarantee();
-    return m;
+    const Label cylinderLabel = firstTop.label;
+    impl->labels.erase(cylinderLabel);
+    return {
+        Result::CYLINDER,
+        {},
+        {},
+        cylinderLabel,
+    };
   }
-  return {};
+
+  auto reducible = impl->reduce();
+  if (reducible) {
+    return {
+        Result::SEPARATING_CONNECTION,
+        std::make_pair(*top().rbegin(), *bottom().rbegin()),
+        std::move(*reducible)};
+  }
+
+  if (firstTop.label.length() == firstBottom.label.length()) {
+    // Found a saddle connection. We merge the labels on top and bottom by
+    // replacing the top one with the bottom one.
+    auto bottomReplacement = impl->bottom.insert(firstTop.twin, firstBottom);
+    impl->bottom.erase(impl->bottom.begin());
+
+    // Fix the twin pointer of the bottom's twin to point to its new location.
+    bottomReplacement->twin->twin = bottomReplacement;
+
+    // Now drop the top label from top and bottom
+    impl->top.erase(impl->top.begin());
+    impl->bottom.erase(firstTop.twin);
+
+    // Since the top label is gone from this IntervalExchangeTransformation, we
+    // do not need to keep it alive anymore.
+    const Label firstTopLabel = firstTop.label;
+    impl->labels.erase(firstTopLabel);
+
+    return {
+        Result::NON_SEPARATING_CONNECTION,
+        std::make_pair(firstTopLabel, firstBottom.label),
+    };
+  }
+
+  if (impl->boshernitzanNoPeriodicTrajectory()) {
+    return {Result::WITHOUT_PERIODIC_TRAJECTORY};
+  }
+
+  return {Result::LIMIT_REACHED};
 }
 
 template <typename Length>
@@ -367,7 +382,6 @@ std::vector<Label<Length>> IntervalExchangeTransformation<Length>::top() const n
 template <typename Length>
 std::vector<Label<Length>> IntervalExchangeTransformation<Length>::bottom() const noexcept {
   std::vector<Label> ret;
-
   for (auto& t : impl->bottom)
     ret.push_back(t.label);
 
@@ -380,7 +394,7 @@ void IntervalExchangeTransformation<Length>::swap() {
 }
 
 template <typename Length>
-bool IntervalExchangeTransformation<Length>::zorichInduction(void) {
+bool IntervalExchangeTransformation<Length>::zorichInduction() {
   return impl->zorichInduction();
 }
 
@@ -397,6 +411,11 @@ std::valarray<mpq_class> IntervalExchangeTransformation<Length>::safInvariant() 
 template <typename Length>
 bool IntervalExchangeTransformation<Length>::boshernitzanNoPeriodicTrajectory() const {
   return impl->boshernitzanNoPeriodicTrajectory();
+}
+
+template <typename Length>
+size_t IntervalExchangeTransformation<Length>::size() const noexcept {
+  return impl->top.size();
 }
 
 template <typename Length>

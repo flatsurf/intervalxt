@@ -18,44 +18,46 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_CONNECTION_HPP
+#define LIBINTERVALXT_CONNECTION_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <boost/operators.hpp>
+#include <iosfwd>
 
-#include <optional>
-#include <variant>
+#include "external/spimpl/spimpl.h"
 
-#include "intervalxt/intervalxt.hpp"
+#include "intervalxt/forward.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
-
 template <typename Length>
-class Label;
+class Connection : boost::equality_comparable<Connection<Length>> {
+  // Connections can not be created directly (other than copying & moving them.)
+  // They are created as products of DynamicalDecomposition.
+  Connection();
 
-template <typename Length>
-class IntervalExchangeTransformation;
+ public:
+  Connection operator-() const noexcept;
 
-template <typename Length>
-class DynamicalDecomposition;
+  MaybeConnection<Length> source() const noexcept;
 
-template <typename Length>
-class Connection;
+  MaybeConnection<Length> nextInBoundary() const noexcept;
 
-template <typename Length>
-class MaybeConnection;
+  bool operator==(const Connection&) const noexcept;
 
-template <typename Length>
-class Component;
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
 
-template <typename Length>
-struct DecompositionStep;
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const Connection<T>&);
 
-template <typename Length>
-struct InductionStep;
+  friend class DynamicalDecomposition<Length>;
+  friend class Component<Length>;
+  friend class MaybeConnection<Length>;
+};
+
+#include "detail/dynamical_decomposition.ipp"
 
 }  // namespace intervalxt
 
