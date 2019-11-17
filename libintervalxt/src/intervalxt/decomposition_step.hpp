@@ -44,10 +44,9 @@ struct DecompositionStep {
 
 template <typename Length>
 std::ostream& operator<<(std::ostream&, const DecompositionStep<Length>&);
-  
-}
+
+}  // namespace intervalxt
 
 #include "detail/decomposition_step.ipp"
 
 #endif
-

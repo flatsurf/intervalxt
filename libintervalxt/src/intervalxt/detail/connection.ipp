@@ -42,7 +42,7 @@ Connection<Length> Connection<Length>::Implementation::make(std::shared_ptr<cons
 
 template <typename Length>
 MaybeConnection<Length> Connection<Length>::source() const noexcept {
-  return MaybeConnection<Length>::Implementation::make(impl->state, impl->connection); 
+  return MaybeConnection<Length>::Implementation::make(impl->state, impl->connection);
 }
 
 template <typename Length>
@@ -57,7 +57,7 @@ Connection<Length> Connection<Length>::operator-() const noexcept {
 
 template <typename Length>
 bool Connection<Length>::operator==(const Connection<Length>& rhs) const noexcept {
-  return impl->connection == rhs.impl->connection;  
+  return impl->connection == rhs.impl->connection;
 }
 
 template <typename Length>
@@ -65,6 +65,6 @@ std::ostream& operator<<(std::ostream& os, const Connection<Length>& self) {
   return os << self.impl->connection->before << " 🔗 " << self.impl->connection->twin->before;
 }
 
-}
+}  // namespace intervalxt
 
 #endif

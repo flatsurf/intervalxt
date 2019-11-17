@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 #define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 
-#include <iosfwd>
 #include <functional>
+#include <iosfwd>
 #include <vector>
 
 #include "external/spimpl/spimpl.h"
@@ -39,10 +39,12 @@ class DynamicalDecomposition {
   DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
   std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
 
-  void decompose(std::function<bool(const Component<Length>&)> target= [](const auto& c) {
-      return c.cylinder() || c.withoutPeriodicTrajectory();
-    }, int limit = -1);
-  
+  void decompose(
+      std::function<bool(const Component<Length>&)> target = [](const auto& c) {
+        return c.cylinder() || c.withoutPeriodicTrajectory();
+      },
+      int limit = -1);
+
   std::vector<Component<Length>> components() const noexcept;
 
   template <typename T>
@@ -57,7 +59,7 @@ class DynamicalDecomposition {
   friend class MaybeConnection<Length>;
 };
 
-}
+}  // namespace intervalxt
 
 #include "detail/dynamical_decomposition.ipp"
 

@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
 #define LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
 
-#include <iosfwd>
 #include <boost/operators.hpp>
+#include <iosfwd>
 
 #include "external/spimpl/spimpl.h"
 
@@ -70,7 +70,6 @@ class MaybeConnection : boost::equality_comparable<MaybeConnection<Length>> {
 
 #include "detail/dynamical_decomposition.ipp"
 
-}
+}  // namespace intervalxt
 
 #endif
-

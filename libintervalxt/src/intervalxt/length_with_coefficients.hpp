@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_LENGTH_WITH_COEFFICIENTS_HPP
 #define LIBINTERVALXT_LENGTH_WITH_COEFFICIENTS_HPP
 
-#include <vector>
 #include <boost/operators.hpp>
+#include <vector>
 
 #include "intervalxt/forward.hpp"
 
@@ -65,4 +65,3 @@ class LengthWithCoefficients : boost::totally_ordered<LengthWithCoefficients<Len
 }  // namespace intervalxt
 
 #endif
-

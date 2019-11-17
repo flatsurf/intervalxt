@@ -43,9 +43,9 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include "intervalxt/detail/rational_linear_subspace.hpp"
+#include "intervalxt/induction_step.hpp"
 #include "intervalxt/interval_exchange_transformation.hpp"
 #include "intervalxt/label.hpp"
-#include "intervalxt/induction_step.hpp"
 
 namespace intervalxt {
 namespace {
@@ -310,20 +310,19 @@ InductionStep<Length> IntervalExchangeTransformation<Length>::induce(int limit) 
     const Label cylinderLabel = firstTop.label;
     impl->labels.erase(cylinderLabel);
     return {
-      Result::CYLINDER,
-      {},
-      {},
-      cylinderLabel,
+        Result::CYLINDER,
+        {},
+        {},
+        cylinderLabel,
     };
   }
 
   auto reducible = impl->reduce();
   if (reducible) {
     return {
-      Result::SEPARATING_CONNECTION,
-      std::make_pair(*top().rbegin(), *bottom().rbegin()),
-      std::move(*reducible)
-    };
+        Result::SEPARATING_CONNECTION,
+        std::make_pair(*top().rbegin(), *bottom().rbegin()),
+        std::move(*reducible)};
   }
 
   if (firstTop.label.length() == firstBottom.label.length()) {
@@ -345,16 +344,16 @@ InductionStep<Length> IntervalExchangeTransformation<Length>::induce(int limit) 
     impl->labels.erase(firstTopLabel);
 
     return {
-      Result::NON_SEPARATING_CONNECTION,
-      std::make_pair(firstTopLabel, firstBottom.label),
+        Result::NON_SEPARATING_CONNECTION,
+        std::make_pair(firstTopLabel, firstBottom.label),
     };
   }
 
   if (impl->boshernitzanNoPeriodicTrajectory()) {
-    return { Result::WITHOUT_PERIODIC_TRAJECTORY };
+    return {Result::WITHOUT_PERIODIC_TRAJECTORY};
   }
 
-  return { Result::LIMIT_REACHED };
+  return {Result::LIMIT_REACHED};
 }
 
 template <typename Length>

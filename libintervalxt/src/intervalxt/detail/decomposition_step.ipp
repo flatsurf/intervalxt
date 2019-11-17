@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_DETAIL_DECOMPOSITION_STEP_IPP
 #define LIBINTERVALXT_DETAIL_DECOMPOSITION_STEP_IPP
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include "../decomposition_step.hpp"
 
@@ -31,7 +31,7 @@ template <typename Length>
 std::ostream& operator<<(std::ostream& os, const DecompositionStep<Length>& self) {
   using Result = typename DecompositionStep<Length>::Result;
 
-  switch(self.result) {
+  switch (self.result) {
     case Result::LIMIT_REACHED:
       return os << "LIMIT_REACHED";
     case Result::CYLINDER:
@@ -52,6 +52,6 @@ std::ostream& operator<<(std::ostream& os, const DecompositionStep<Length>& self
       throw std::logic_error("impossible decomposition step state");
   }
 }
-}
+}  // namespace intervalxt
 
 #endif

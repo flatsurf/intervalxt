@@ -21,15 +21,15 @@
 #ifndef LIBINTERVALXT_DETAIL_DYNAMICAL_DECOMPOSITION_IPP
 #define LIBINTERVALXT_DETAIL_DYNAMICAL_DECOMPOSITION_IPP
 
-#include <map>
 #include <boost/logic/tribool.hpp>
 #include <cassert>
+#include <map>
 
-#include "../dynamical_decomposition.hpp"
 #include "../component.hpp"
 #include "../connection.hpp"
-#include "../maybe_connection.hpp"
+#include "../dynamical_decomposition.hpp"
 #include "../interval_exchange_transformation.hpp"
+#include "../maybe_connection.hpp"
 
 // Consult the rant on top of interval_exchange_transformation.ipp for why we
 // have to put the implementation into this header file.
@@ -185,56 +185,50 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
       int zorichInductionSteps;
       if (limit == -1) {
         zorichInductionSteps = boshernitzanCost;
-      } else if (limit < 2*boshernitzanCost) {
+      } else if (limit < 2 * boshernitzanCost) {
         zorichInductionSteps = limit;
       } else {
         zorichInductionSteps = boshernitzanCost;
       }
 
       step = component->iet.induce(zorichInductionSteps);
-    } while(step.result == InductionResult::LIMIT_REACHED && limit != 0);
+    } while (step.result == InductionResult::LIMIT_REACHED && limit != 0);
 
-    switch(step.result) {
+    switch (step.result) {
       case InductionResult::LIMIT_REACHED:
         return {DecompositionResult::LIMIT_REACHED};
-      case InductionResult::CYLINDER:
-        {
-          bool isAdditionalComponent = component->iet.size();
-          ComponentState* cylinder = component;
-          if (isAdditionalComponent) {
-            components.emplace_back(ComponentState{IntervalExchangeTransformation<Length>()});
-            cylinder = &*components.rbegin();
-          }
+      case InductionResult::CYLINDER: {
+        bool isAdditionalComponent = component->iet.size();
+        ComponentState* cylinder = component;
+        if (isAdditionalComponent) {
+          components.emplace_back(ComponentState{IntervalExchangeTransformation<Length>()});
+          cylinder = &*components.rbegin();
+        }
 
-          cylinder->cylinder = step.cylinder;
-          cylinder->withoutPeriodicTrajectory = false;
-          cylinder->keane = false;
+        cylinder->cylinder = step.cylinder;
+        cylinder->withoutPeriodicTrajectory = false;
+        cylinder->keane = false;
 
-          return DecompositionStep<Length>{
+        return DecompositionStep<Length>{
             DecompositionResult::CYLINDER,
             {},
-            isAdditionalComponent ?
-              std::optional<Component<Length>>(make(cylinder)) :
-              std::optional<Component<Length>>{},
-          };
-        }
+            isAdditionalComponent ? std::optional<Component<Length>>(make(cylinder)) : std::optional<Component<Length>>{},
+        };
+      }
       case InductionResult::SEPARATING_CONNECTION:
         components.emplace_back(ComponentState{std::move(step.additionalIntervalExchangeTransformation).value()});
         return {
-          DecompositionResult::SEPARATING_CONNECTION,
-          make(recordConnection(step.connection->first, step.connection->second)),
-          make(&*components.rbegin())
-        };
+            DecompositionResult::SEPARATING_CONNECTION,
+            make(recordConnection(step.connection->first, step.connection->second)),
+            make(&*components.rbegin())};
       case InductionResult::NON_SEPARATING_CONNECTION:
         return {
-          DecompositionResult::NON_SEPARATING_CONNECTION,
-          make(recordConnection(step.connection->first, step.connection->second))
-        };
+            DecompositionResult::NON_SEPARATING_CONNECTION,
+            make(recordConnection(step.connection->first, step.connection->second))};
       case InductionResult::WITHOUT_PERIODIC_TRAJECTORY:
         component->withoutPeriodicTrajectory = true;
         return {
-          DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY
-        };
+            DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY};
       default:
         throw std::logic_error("invalid enum value");
     }
@@ -246,24 +240,24 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
     auto bottomLabels = iet.bottom();
 
     for (size_t i = 1; i < topLabels.size(); i++) {
-      connections.push_front({topLabels[i], topLabels[i-1], nullptr, nullptr});
+      connections.push_front({topLabels[i], topLabels[i - 1], nullptr, nullptr});
       top[topLabels[i]] = &*connections.begin();
     }
     top[topLabels[0]] = top[bottomLabels[0]];
 
     for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
-      connections.push_front({bottomLabels[i], bottomLabels[i+1], nullptr, nullptr});
+      connections.push_front({bottomLabels[i], bottomLabels[i + 1], nullptr, nullptr});
       bottom[bottomLabels[i]] = &*connections.begin();
     }
     bottom[bottomLabels[bottomLabels.size() - 1]] = bottom[topLabels[topLabels.size() - 1]];
 
     for (size_t i = 1; i < topLabels.size(); i++) {
-      top[topLabels[i]]->previousAtSingularity = bottom[topLabels[i-1]];
-      bottom[topLabels[i-1]]->nextAtSingularity = top[topLabels[i]];
+      top[topLabels[i]]->previousAtSingularity = bottom[topLabels[i - 1]];
+      bottom[topLabels[i - 1]]->nextAtSingularity = top[topLabels[i]];
     }
     for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
-      bottom[bottomLabels[i]]->previousAtSingularity = top[bottomLabels[i+1]];
-      top[bottomLabels[i+1]]->nextAtSingularity = bottom[bottomLabels[i]];
+      bottom[bottomLabels[i]]->previousAtSingularity = top[bottomLabels[i + 1]];
+      top[bottomLabels[i + 1]]->nextAtSingularity = bottom[bottomLabels[i]];
     }
 
     components.emplace_back(ComponentState{std::move(iet)});
@@ -273,7 +267,7 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
 
   ConnectionState* recordConnection(const Label<Length>& afterTop, const Label<Length>& beforeBottom) {
     ConnectionState* bottom = this->bottom[beforeBottom];
-    while(bottom->twin != nullptr)
+    while (bottom->twin != nullptr)
       bottom = this->bottom[bottom->twin->after];
 
     ConnectionState* top = this->bottom[afterTop]->nextAtSingularity;
@@ -312,7 +306,7 @@ std::vector<Component<Length>> DynamicalDecomposition<Length>::components() cons
 template <typename Length>
 DynamicalDecomposition<Length>::DynamicalDecomposition(const IntervalExchangeTransformation<Length>& iet) : impl(spimpl::make_impl<Implementation>(IntervalExchangeTransformation<Length>(iet.top(), iet.bottom()))) {}
 
-}
+}  // namespace intervalxt
 
 #include "./component.ipp"
 #include "./connection.ipp"

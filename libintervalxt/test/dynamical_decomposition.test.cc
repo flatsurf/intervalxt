@@ -23,24 +23,24 @@
 
 #include "catch.hpp"
 
-#include <intervalxt/interval_exchange_transformation.hpp>
-#include <intervalxt/dynamical_decomposition.hpp>
 #include <intervalxt/component.hpp>
 #include <intervalxt/connection.hpp>
-#include <intervalxt/maybe_connection.hpp>
 #include <intervalxt/decomposition_step.hpp>
+#include <intervalxt/dynamical_decomposition.hpp>
+#include <intervalxt/interval_exchange_transformation.hpp>
+#include <intervalxt/maybe_connection.hpp>
 
 using namespace intervalxt;
-using eantic::renf_elem_class;
 using eantic::renf_class;
+using eantic::renf_elem_class;
 
 namespace intervalxt::test {
 template <typename Length>
 std::vector<std::vector<Label<Length>>> asLabels(const std::vector<std::list<Connection<Length>>>& boundaries) {
   std::vector<std::vector<Label<Length>>> ret;
-  for(auto& boundary : boundaries) {
+  for (auto& boundary : boundaries) {
     std::vector<Label<Length>> labels;
-    for(auto& connection : boundary) {
+    for (auto& connection : boundary) {
       labels.push_back(connection.source().before());
       labels.push_back((-connection).source().before());
     }
@@ -82,14 +82,14 @@ TEST_CASE("Manual decomposition of an IET") {
   REQUIRE(indeterminate(component.cylinder()));
   REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
   REQUIRE(indeterminate(component.keane()));
-  REQUIRE(asLabels(component.left()) == Boundaries{ {a, d} });
-  REQUIRE(asLabels(component.right()) == Boundaries{ { d, a} });
+  REQUIRE(asLabels(component.left()) == Boundaries{{a, d}});
+  REQUIRE(asLabels(component.right()) == Boundaries{{d, a}});
 
   auto step1 = component.decompositionStep();
   CAPTURE(step1);
   REQUIRE(step1.result == Result::SEPARATING_CONNECTION);
-  REQUIRE(asLabels(component.left()) == Boundaries{ { a, d } });
-  REQUIRE(asLabels(component.right()) == Boundaries{ { a, d } });
+  REQUIRE(asLabels(component.left()) == Boundaries{{a, d}});
+  REQUIRE(asLabels(component.right()) == Boundaries{{a, d}});
 
   {
     auto cylinder = *step1.additionalComponent;
@@ -122,4 +122,4 @@ TEST_CASE("Manual decomposition of an IET") {
   }
 }
 
-}  // namespace
+}  // namespace intervalxt::test

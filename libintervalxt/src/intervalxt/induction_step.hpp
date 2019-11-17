@@ -44,11 +44,9 @@ struct InductionStep {
 
 template <typename Length>
 std::ostream& operator<<(std::ostream&, const InductionStep<Length>&);
-  
-}
+
+}  // namespace intervalxt
 
 #include "detail/dynamical_decomposition.ipp"
 
 #endif
-
-

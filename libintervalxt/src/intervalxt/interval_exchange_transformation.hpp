@@ -23,9 +23,9 @@
 
 #include <boost/operators.hpp>
 #include <iosfwd>
+#include <map>
 #include <optional>
 #include <vector>
-#include <map>
 
 #include <gmpxx.h>
 

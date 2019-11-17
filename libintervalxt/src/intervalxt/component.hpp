@@ -53,9 +53,11 @@ class Component {
 
   DecompositionStep<Length> decompositionStep(int limit = -1);
 
-  void decompose(std::function<bool(const Component&)> target= [](const auto& c) {
-      return c.cylinder() || c.withoutPeriodicTrajectory();
-    }, int limit=-1);
+  void decompose(
+      std::function<bool(const Component&)> target = [](const auto& c) {
+        return c.cylinder() || c.withoutPeriodicTrajectory();
+      },
+      int limit = -1);
 
   template <typename T>
   friend std::ostream& operator<<(std::ostream&, const Component<T>&);
@@ -67,7 +69,7 @@ class Component {
   friend class DynamicalDecomposition<Length>;
 };
 
-}
+}  // namespace intervalxt
 
 #include "detail/dynamical_decomposition.ipp"
 

@@ -37,11 +37,11 @@ std::list<Connection<Length>> follow(const MaybeConnection<Length>& source) {
     if (!connection) break;
     boundary.push_back(*connection);
     current = connection->nextInBoundary();
-  } while(current != source);
+  } while (current != source);
 
   return boundary;
 }
-}
+}  // namespace
 
 template <typename Length>
 Component<Length>::Component() {
@@ -79,7 +79,7 @@ template <typename Length>
 std::vector<std::list<Connection<Length>>> Component<Length>::left() const {
   std::vector<std::list<Connection<Length>>> boundaries;
 
-  for(auto& label : this->impl->component->iet.top()) {
+  for (auto& label : this->impl->component->iet.top()) {
     auto boundary = follow(impl->state->makeTop(label));
     if (boundary.size()) boundaries.push_back(boundary);
   }
@@ -91,7 +91,7 @@ template <typename Length>
 std::vector<std::list<Connection<Length>>> Component<Length>::right() const {
   std::vector<std::list<Connection<Length>>> boundaries;
 
-  for(auto& label : this->impl->component->iet.bottom()) {
+  for (auto& label : this->impl->component->iet.bottom()) {
     auto boundary = follow(impl->state->makeBottom(label));
     if (boundary.size()) boundaries.push_back(boundary);
   }
@@ -108,6 +108,5 @@ std::ostream& operator<<(std::ostream& os, const Component<Length>& self) {
   }
 }
 
-}
+}  // namespace intervalxt
 #endif
-

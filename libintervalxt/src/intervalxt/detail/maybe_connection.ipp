@@ -61,6 +61,6 @@ std::ostream& operator<<(std::ostream& os, const MaybeConnection<Length>& self) 
   return os << self.impl->connection->label << " → ?";
 }
 
-}
+}  // namespace intervalxt
 
 #endif
