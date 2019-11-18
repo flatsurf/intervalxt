@@ -100,6 +100,18 @@ std::vector<std::list<Connection<Length>>> Component<Length>::right() const {
 }
 
 template <typename Length>
+void Component<Length>::decompose(std::function<bool(const Component<Length>&)> target, int limit) {
+  while (!target(*this)) {
+    auto step = decompositionStep(limit);
+    if (step.result == DecompositionStep<Length>::Result::LIMIT_REACHED)
+      return;
+    if (step.additionalComponent) {
+      step.additionalComponent->decompose(target, limit);
+    }
+  }
+}
+
+template <typename Length>
 std::ostream& operator<<(std::ostream& os, const Component<Length>& self) {
   if (self.impl->component->cylinder) {
     return os << "Cylinder(" << *self.impl->component->cylinder << ")";

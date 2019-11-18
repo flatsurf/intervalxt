@@ -55,7 +55,7 @@ class Component {
 
   void decompose(
       std::function<bool(const Component&)> target = [](const auto& c) {
-        return c.cylinder() || c.withoutPeriodicTrajectory();
+        return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },
       int limit = -1);
 

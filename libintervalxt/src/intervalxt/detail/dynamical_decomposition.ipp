@@ -304,6 +304,12 @@ std::vector<Component<Length>> DynamicalDecomposition<Length>::components() cons
 }
 
 template <typename Length>
+void DynamicalDecomposition<Length>::decompose(std::function<bool(const Component<Length>&)> target, int limit) {
+  for (auto& component : impl->state->components)
+    impl->state->make(&component).decompose(target, limit);
+}
+
+template <typename Length>
 DynamicalDecomposition<Length>::DynamicalDecomposition(const IntervalExchangeTransformation<Length>& iet) : impl(spimpl::make_impl<Implementation>(IntervalExchangeTransformation<Length>(iet.top(), iet.bottom()))) {}
 
 }  // namespace intervalxt
