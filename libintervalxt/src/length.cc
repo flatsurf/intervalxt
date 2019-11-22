@@ -86,22 +86,6 @@ typename Length<T>::Quotient Length<T>::operator/(const Length<T>& rhs) {
 }
 
 template <typename T>
-const T& Length<T>::length() const {
-  return value;
-}
-
-template <typename T>
-size_t Length<T>::degree() const {
-  if constexpr (std::is_integral_v<T> || std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
-    return 1;
-  } else if constexpr (std::is_same_v<T, eantic::renf_elem_class>) {
-    return value.parent()->degree();
-  } else {
-    throw std::logic_error("not implemented: no degree for this type");
-  }
-}
-
-template <typename T>
 std::vector<typename Length<T>::Coefficient> Length<T>::coefficients() const {
   if constexpr (std::is_integral_v<T>) {
     std::vector<mpq_class> ret;
@@ -127,13 +111,6 @@ std::vector<typename Length<T>::Coefficient> Length<T>::coefficients() const {
   } else {
     throw std::logic_error("not implemented; coefficient for non-integral types");
   }
-}
-
-template <typename T>
-T Length<T>::squared() const {
-  auto ret = value * value;
-  assert(ret >= value);
-  return ret;
 }
 
 template <typename T>

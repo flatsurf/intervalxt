@@ -56,22 +56,25 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
 
   explicit operator bool() const noexcept;
 
-  // Return the coefficients as a (fixed length) vector of integers (discarding the denominator)
-  size_t degree() const;
+  // Return the coefficients of this length written as a linear combination in
+  // a suitable basis that makes all coefficients rational, such as a number
+  // field basis, or a basis of random reals.  The coefficients are returned as
+  // integers, discarding the common denominator.
   std::vector<Coefficient> coefficients() const;
 
   // Return the floor of the division of this length by the argument.
   Quotient operator/(const Length&);
 
-  T squared() const;
-
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
 
-  const T& length() const;
-
  private:
   T value;
+
+  template <typename Archive, typename S>
+  friend void load(Archive&, Length<S>&);
+  template <typename Archive, typename S>
+  friend void save(Archive&, const Length<S>&);
 };
 
 }  // namespace intervalxt

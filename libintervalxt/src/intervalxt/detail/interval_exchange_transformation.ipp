@@ -219,33 +219,33 @@ class IntervalExchangeTransformation<Length>::Implementation {
   // The output is a vector of mpq_class with respect to the irrational basis used for
   // the lengths of the iet.
   std::valarray<mpq_class> translation(const Label& i) const {
-    // Note: it would be nice to access the dimension of the module
-    // in some more straightforward way...
-    size_t d = top.begin()->label.length().degree();
-    std::valarray<mpq_class> t;
-    t.resize(d);
+    size_t degree = top.begin()->label.length().coefficients().size();
+
+    std::valarray<mpq_class> translation;
+    translation.resize(degree);
     for (auto j = top.begin(); j->label != i; ++j) {
       std::vector<mpq_class> v = j->label.length().coefficients();
-      t -= std::valarray<mpq_class>(v.data(), v.size());
+      translation -= std::valarray<mpq_class>(v.data(), v.size());
     }
     for (auto j = bottom.begin(); j->label != i; ++j) {
       std::vector<mpq_class> v = j->label.length().coefficients();
-      t += std::valarray<mpq_class>(v.data(), v.size());
+      translation += std::valarray<mpq_class>(v.data(), v.size());
     }
-    return t;
+    return translation;
   }
 
   // Return the Sah-Arnoux-Fathi invariant (as a vector of rationals)
   std::valarray<mpq_class> safInvariant() const {
-    size_t d = top.begin()->label.length().degree();
-    if (d == 1) {
+    size_t degree = top.begin()->label.length().coefficients().size();
+
+    if (degree == 1) {
       // empty vector for integers or rationals
       std::valarray<mpq_class> v;
       return v;
     } else {
       std::valarray<mpq_class> w;
 
-      w.resize(d * (d - 1) / 2);
+      w.resize(degree * (degree - 1) / 2);
 
       for (auto& i : labels) {
         std::vector<mpq_class> v = i.length().coefficients();
@@ -259,26 +259,23 @@ class IntervalExchangeTransformation<Length>::Implementation {
   // Return whether there is no periodic trajectory via Boshernitzan's
   // algorithm.
   bool boshernitzanNoPeriodicTrajectory(void) const {
-    using T = std::decay_t<decltype(std::declval<Length>().length())>;
+    size_t degree = top.begin()->label.length().coefficients().size();
 
-    if constexpr (std::is_integral_v<T> || std::is_same_v<T, mpz_class> || std::is_same_v<T, mpq_class>) {
+    if (degree <= 1) {
       return false;
-    } else if constexpr (std::is_same_v<T, eantic::renf_elem_class>) {
+    } else {
       // Build the QQ-module of relations between translations, that is the space generated
       // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
       // Note: it would be nice to access the dimension of the module
       // in some more straightforward way...
-      size_t d = top.begin()->label.length().degree();
-      std::vector<std::vector<mpq_class>> translations(d);
+      std::vector<std::vector<mpq_class>> translations(degree);
       for (auto& i : labels) {
         auto t = translation(i);
-        assert(t.size() == d);
-        for (size_t j = 0; j < d; j++) translations[j].push_back(t[j]);
+        assert(t.size() == degree && "all lengths must report rational coefficients over the same base");
+        for (size_t j = 0; j < degree; j++) translations[j].push_back(t[j]);
       }
       detail::RationalLinearSubspace R = detail::RationalLinearSubspace::fromEquations(translations);
       return not R.hasNonZeroNonNegativeVector();
-    } else {
-      static_assert(false_t<T>, "not implemented");
     }
   }
 };

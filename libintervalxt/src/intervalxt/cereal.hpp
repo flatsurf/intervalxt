@@ -34,7 +34,7 @@ namespace intervalxt {
 
 template <typename Archive, typename T>
 void save(Archive& archive, const Length<T>& self) {
-  archive(cereal::make_nvp("value", self.length()));
+  archive(cereal::make_nvp("value", self.value));
 }
 
 template <typename Archive, typename T>
