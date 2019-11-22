@@ -119,13 +119,43 @@ Length<T>::operator bool() const noexcept {
 }
 
 template <typename T>
-bool Length<T>::operator<(const Length<T>& rhs) const noexcept {
-  return value < rhs.value;
+bool Length<T>::operator==(const T& rhs) const noexcept {
+  return value == rhs;
+}
+
+template <typename T>
+bool Length<T>::operator<(const T& rhs) const noexcept {
+  return value < rhs;
+}
+
+template <typename T>
+bool Length<T>::operator>(const T& rhs) const noexcept {
+  return value > rhs;
+}
+
+template <typename T>
+bool Length<T>::operator==(const std::pair<T, T>& rhs) const noexcept {
+  return value * value == rhs.first * rhs.first + rhs.second * rhs.second;
+}
+
+template <typename T>
+bool Length<T>::operator<(const std::pair<T, T>& rhs) const noexcept {
+  return value * value < rhs.first * rhs.first + rhs.second * rhs.second;
+}
+
+template <typename T>
+bool Length<T>::operator>(const std::pair<T, T>& rhs) const noexcept {
+  return value * value > rhs.first * rhs.first + rhs.second * rhs.second;
 }
 
 template <typename T>
 bool Length<T>::operator==(const Length<T>& rhs) const noexcept {
   return value == rhs.value;
+}
+
+template <typename T>
+bool Length<T>::operator<(const Length<T>& rhs) const noexcept {
+  return value < rhs.value;
 }
 
 template <typename T>

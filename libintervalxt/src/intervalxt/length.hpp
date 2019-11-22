@@ -21,6 +21,8 @@
 #ifndef LIBINTERVALXT_LENGTH_HPP
 #define LIBINTERVALXT_LENGTH_HPP
 
+#include <utility>
+
 #include <e-antic/renfxx.h>
 #include <gmpxx.h>
 
@@ -35,7 +37,11 @@ using LengthQuotient = std::conditional_t<std::is_integral_v<T>, T, mpz_class>;
 
 // A sample implementation of a length of a vector in ℝ² as a simple T.
 template <typename T>
-class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, boost::multipliable<Length<T>, LengthQuotient<T>> {
+class Length : boost::totally_ordered<Length<T>>,
+               boost::totally_ordered<Length<T>, T>,
+               boost::totally_ordered<Length<T>, std::pair<T, T>>,
+               boost::additive<Length<T>>,
+               boost::multipliable<Length<T>, LengthQuotient<T>> {
  public:
   using Quotient = LengthQuotient<T>;
   // Ideally coefficient should only be mpz_class and the interval exchange
@@ -50,6 +56,13 @@ class Length : boost::totally_ordered<Length<T>>, boost::additive<Length<T>>, bo
 
   bool operator==(const Length&) const noexcept;
   bool operator<(const Length&) const noexcept;
+  bool operator==(const T&) const noexcept;
+  bool operator<(const T&) const noexcept;
+  bool operator>(const T&) const noexcept;
+  // Compare this length with the length of the vector (x, y)
+  bool operator==(const std::pair<T, T>&) const noexcept;
+  bool operator<(const std::pair<T, T>&) const noexcept;
+  bool operator>(const std::pair<T, T>&) const noexcept;
   Length& operator+=(const Length&) noexcept;
   Length& operator-=(const Length&) noexcept;
   Length& operator*=(const Quotient&) noexcept;
