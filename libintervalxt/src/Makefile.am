@@ -1,8 +1,11 @@
 lib_LTLIBRARIES = libintervalxt.la
 
 libintervalxt_la_SOURCES =                   \
-	length.cc                                  \
 	rational_linear_subspace.cc                \
+	length_arithmetic/mpz_class.cc             \
+	length_arithmetic/mpq_class.cc             \
+	length_arithmetic/renf_elem_class.cc       \
+	length_arithmetic/integral.cc              \
 	id.cc                                      \
 	external/unique-factory/unique_factory.hpp
 
@@ -20,6 +23,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/detail/label.ipp                            \
 	intervalxt/detail/id.hpp                               \
 	intervalxt/length.hpp                                  \
+	intervalxt/detail/length.ipp                           \
 	intervalxt/detail/rational_linear_subspace.hpp         \
 	intervalxt/forward.hpp                                 \
 	intervalxt/cppyy.hpp                                   \

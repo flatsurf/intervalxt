@@ -35,7 +35,6 @@
 #include <set>
 #include <valarray>
 
-#include <e-antic/renfxx.h>
 #include <gmpxx.h>
 
 #include <boost/algorithm/string/join.hpp>

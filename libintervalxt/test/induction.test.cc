@@ -22,6 +22,8 @@
 #include <boost/lexical_cast.hpp>
 #include <vector>
 
+#include <e-antic/renfxx.h>
+
 #include <intervalxt/induction_step.hpp>
 #include <intervalxt/interval_exchange_transformation.hpp>
 #include <intervalxt/label.hpp>
@@ -80,25 +82,25 @@ TEST(InductionTest, Induction4) {
 TEST(InductionTest, InductionMpzClass) {
   using Length = Length<mpz_class>;
   using Label = Label<Length>;
-  Label a = Length("14328748557375491835455123393141239398243");
-  Label b = Length("51123145748597134");
+  Label a = Length(mpz_class("14328748557375491835455123393141239398243"));
+  Label b = Length(mpz_class("51123145748597134"));
 
   IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length("15560595195676063"), b = Length("51123145748597134")}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length(mpz_class("15560595195676063")), b = Length(mpz_class("51123145748597134"))}, {1, 0}));
 }
 
 TEST(InductionTest, InductionMpqClass) {
   using Length = Length<mpq_class>;
   using Label = Label<Length>;
-  Label a = Length("3/5");
-  Label b = Length("1/4");
+  Label a = Length(mpq_class("3/5"));
+  Label b = Length(mpq_class("1/4"));
 
   IntervalExchangeTransformation<Length> iet({a, b}, {1, 0});
 
   iet.zorichInduction();
-  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length("1/10"), b = Length("1/4")}, {1, 0}));
+  EXPECT_EQ(iet, IntervalExchangeTransformation<Length>({a = Length(mpq_class("1/10")), b = Length(mpq_class("1/4"))}, {1, 0}));
 }
 
 TEST(InductionTest, InductionRenfElemClass) {

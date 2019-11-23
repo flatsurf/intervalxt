@@ -23,7 +23,6 @@
 
 #include <utility>
 
-#include <e-antic/renfxx.h>
 #include <gmpxx.h>
 
 #include <boost/operators.hpp>
@@ -32,8 +31,15 @@
 
 namespace intervalxt {
 
+// The operations needed to implement a Length<T>.
+// We expect T to support an operator* and operator+, comparison with integers and mpz_class.
 template <typename T>
-using LengthQuotient = std::conditional_t<std::is_integral_v<T>, T, mpz_class>;
+struct LengthArithmetic {
+  static std::vector<mpq_class> coefficients(const T& value);
+  static std::conditional_t<std::is_integral_v<T>, T, mpz_class> floorDivision(const T& divident, const T& divisor);
+
+  using QuotientFloorDivision = typename std::invoke_result_t<decltype(&LengthArithmetic::floorDivision),const T&, const T&>;
+};
 
 // A sample implementation of a length of a vector in ℝ² as a simple T.
 template <typename T>
@@ -41,18 +47,12 @@ class Length : boost::totally_ordered<Length<T>>,
                boost::totally_ordered<Length<T>, T>,
                boost::totally_ordered<Length<T>, std::pair<T, T>>,
                boost::additive<Length<T>>,
-               boost::multipliable<Length<T>, LengthQuotient<T>> {
+               boost::multipliable<Length<T>, typename LengthArithmetic<T>::QuotientFloorDivision> {
  public:
-  using Quotient = LengthQuotient<T>;
-  // Ideally coefficient should only be mpz_class and the interval exchange
-  // transformation keeps track of a common denominator, see https://github.com/flatsurf/intervalxt/issues/48
-  using Coefficient = mpq_class;
-
   Length();
   Length(const T&);
-
-  template <bool enable = !std::is_same_v<T, eantic::renf_elem_class>, std::enable_if_t<enable, int> = 0>
-  Length(const std::string&);
+  template <typename S, typename std::enable_if_t<std::is_convertible_v<S, T>, bool> Enabled = true>
+  Length(const Length<S>&);
 
   bool operator==(const Length&) const noexcept;
   bool operator<(const Length&) const noexcept;
@@ -63,20 +63,19 @@ class Length : boost::totally_ordered<Length<T>>,
   bool operator==(const std::pair<T, T>&) const noexcept;
   bool operator<(const std::pair<T, T>&) const noexcept;
   bool operator>(const std::pair<T, T>&) const noexcept;
-  Length& operator+=(const Length&) noexcept;
-  Length& operator-=(const Length&) noexcept;
-  Length& operator*=(const Quotient&) noexcept;
+  Length& operator+=(const Length<T>&) noexcept;
+  Length& operator-=(const Length<T>&) noexcept;
+  Length& operator*=(const typename LengthArithmetic<T>::QuotientFloorDivision&) noexcept;
 
   explicit operator bool() const noexcept;
 
   // Return the coefficients of this length written as a linear combination in
   // a suitable basis that makes all coefficients rational, such as a number
-  // field basis, or a basis of random reals.  The coefficients are returned as
-  // integers, discarding the common denominator.
-  std::vector<Coefficient> coefficients() const;
+  // field basis, or a basis of random reals.
+  std::vector<mpq_class> coefficients() const;
 
   // Return the floor of the division of this length by the argument.
-  Quotient operator/(const Length&);
+  typename LengthArithmetic<T>::QuotientFloorDivision operator/(const Length<T>&);
 
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
@@ -91,5 +90,7 @@ class Length : boost::totally_ordered<Length<T>>,
 };
 
 }  // namespace intervalxt
+
+#include "intervalxt/detail/length.ipp"
 
 #endif

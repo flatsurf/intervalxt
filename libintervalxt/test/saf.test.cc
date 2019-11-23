@@ -21,6 +21,8 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+#include <e-antic/renfxx.h>
+
 #include <intervalxt/interval_exchange_transformation.hpp>
 #include <intervalxt/label.hpp>
 #include <intervalxt/length.hpp>
