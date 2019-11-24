@@ -40,8 +40,40 @@ Length<T>::Length(const T& value) : value(value) {
 }
 
 template <typename T>
-template <typename S, typename std::enable_if_t<std::is_convertible_v<S, T>, bool>>
-Length<T>::Length(const Length<S>& value) : value(value.value) {}
+template <typename S, typename std::enable_if_t<std::is_convertible_v<T, S>, bool>>
+Length<T>::operator Length<S>() const {
+  return Length<S>(value);
+}
+
+template <typename T>
+template <typename S, typename std::enable_if_t<std::is_constructible_v<S, T>, bool>>
+Length<T>::operator Length<S>() const {
+  return Length<S>(S(value));
+}
+
+template <typename T>
+template <typename S, typename std::enable_if_t<!std::is_constructible_v<S, T> && std::is_integral_v<T> && std::is_constructible_v<S, mpz_class>, bool>>
+Length<T>::operator Length<S>() const {
+  mpz_class value;
+  if constexpr (std::is_signed_v<T>) {
+    if constexpr (std::numeric_limits<T>::max() <= std::numeric_limits<signed int>::max()) {
+      value = this->value;
+    } else if (this->value <= std::numeric_limits<signed int>::max() && this->value >= std::numeric_limits<signed int>::lowest()) {
+      value = static_cast<signed int>(this->value);
+    } else {
+      value = std::to_string(this->value);
+    }
+  } else if constexpr (!std::is_signed_v<T>) {
+    if constexpr (std::numeric_limits<T>::max() <= std::numeric_limits<unsigned int>::max()) {
+      value = this->value;
+    } else if (this->value <= std::numeric_limits<unsigned int>::max()) {
+      value = static_cast<unsigned int>(this->value);
+    } else {
+      value = std::to_string(this->value);
+    }
+  }
+  return Length<S>(S(value));
+}
 
 template <typename T>
 Length<T>& Length<T>::operator+=(const Length<T>& rhs) noexcept {

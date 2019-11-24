@@ -22,6 +22,7 @@
 #define LIBINTERVALXT_LENGTH_HPP
 
 #include <utility>
+#include <vector>
 
 #include <gmpxx.h>
 
@@ -51,11 +52,9 @@ class Length : boost::totally_ordered<Length<T>>,
  public:
   Length();
   Length(const T&);
-  template <typename S, typename std::enable_if_t<std::is_convertible_v<S, T>, bool> Enabled = true>
-  Length(const Length<S>&);
 
-  bool operator==(const Length&) const noexcept;
-  bool operator<(const Length&) const noexcept;
+  bool operator==(const Length<T>&) const noexcept;
+  bool operator<(const Length<T>&) const noexcept;
   bool operator==(const T&) const noexcept;
   bool operator<(const T&) const noexcept;
   bool operator>(const T&) const noexcept;
@@ -69,6 +68,14 @@ class Length : boost::totally_ordered<Length<T>>,
 
   explicit operator bool() const noexcept;
 
+  template <typename S, typename std::enable_if_t<std::is_convertible_v<T, S>, bool> Enabled = true>
+  operator Length<S>() const;
+  template <typename S, typename std::enable_if_t<std::is_constructible_v<S, T>, bool> Enabled = true>
+  explicit operator Length<S>() const;
+  // Conversion from integral S via mpz_class
+  template <typename S, typename std::enable_if_t<!std::is_constructible_v<S, T> && std::is_integral_v<T> && std::is_constructible_v<S, mpz_class>, bool> Enabled = true>
+  explicit operator Length<S>() const;
+
   // Return the coefficients of this length written as a linear combination in
   // a suitable basis that makes all coefficients rational, such as a number
   // field basis, or a basis of random reals.
@@ -80,7 +87,7 @@ class Length : boost::totally_ordered<Length<T>>,
   template <typename C>
   friend std::ostream& operator<<(std::ostream&, const Length<C>&);
 
- private:
+ protected:
   T value;
 
   template <typename Archive, typename S>
