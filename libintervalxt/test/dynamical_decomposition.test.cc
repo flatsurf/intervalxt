@@ -142,4 +142,20 @@ TEST_CASE("Decomposition of an IET") {
   }
 }
 
+
+TEST_CASE("Decomposition of a Trivial IET") {
+  using Length = Length<int>;
+  using Label = Label<Length>;
+
+  auto a = Label(1);
+
+  auto decomposition = DynamicalDecomposition<Length>(IntervalExchangeTransformation<Length>({a}, {a}));
+
+  REQUIRE(decomposition.decompose());
+  REQUIRE(decomposition.components().size() == 1);
+  REQUIRE(decomposition.components()[0].cylinder());
+  REQUIRE(decomposition.components()[0].left().size() == 0);
+  REQUIRE(decomposition.components()[0].right().size() == 0);
+}
+
 }  // namespace intervalxt::test

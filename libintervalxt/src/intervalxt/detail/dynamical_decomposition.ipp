@@ -246,33 +246,51 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
     auto topLabels = iet.top();
     auto bottomLabels = iet.bottom();
 
-    if (*topLabels.begin() == *bottomLabels.begin())
-      throw std::logic_error("not implemented: components starting with trivial cylinders are not supported");
-    if (*topLabels.rbegin() == *bottomLabels.rbegin())
-      throw std::logic_error("not implemented: components ending with trivial cylinders are not supported");
-
-    for (size_t i = 1; i < topLabels.size(); i++) {
-      connections.push_front({topLabels[i], topLabels[i - 1], nullptr, nullptr});
-      top[topLabels[i]] = &*connections.begin();
-    }
-    top[topLabels[0]] = top[bottomLabels[0]];
-
-    for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
-      connections.push_front({bottomLabels[i], bottomLabels[i + 1], nullptr, nullptr});
-      bottom[bottomLabels[i]] = &*connections.begin();
-    }
-    bottom[bottomLabels[bottomLabels.size() - 1]] = bottom[topLabels[topLabels.size() - 1]];
-
-    for (size_t i = 1; i < topLabels.size(); i++) {
-      top[topLabels[i]]->previousAtSingularity = bottom[topLabels[i - 1]];
-      bottom[topLabels[i - 1]]->nextAtSingularity = top[topLabels[i]];
-    }
-    for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
-      bottom[bottomLabels[i]]->previousAtSingularity = top[bottomLabels[i + 1]];
-      top[bottomLabels[i + 1]]->nextAtSingularity = bottom[bottomLabels[i]];
-    }
-
     components.emplace_back(ComponentState{std::move(iet)});
+
+    assert(topLabels.size() == bottomLabels.size() && "top and bottom labels must be the same");
+    assert(topLabels.size() && bottomLabels.size() && "no decomposition can be created from an empty set of labels");
+
+    if (topLabels.size() == 1 && *topLabels.begin() == *bottomLabels.begin()) {
+      // When this is a trivial cylinder, i.e., consisting of the same single
+      // label on the top and bottom contour, then our usual setup does not
+      // really work out that nicely. We try to set up things as much as they
+      // make sense but unfortunately, poking at this object is a source of
+      // segfaults.
+      connections.push_front({*topLabels.begin(), Label<Length>(), nullptr, nullptr});
+      top[topLabels[0]] = &*connections.begin();
+      connections.push_front({*bottomLabels.begin(), Label<Length>(), nullptr, nullptr});
+      bottom[bottomLabels[0]] = &*connections.begin();
+      components.begin()->cylinder = topLabels[0];
+      components.begin()->keane = false;
+      components.begin()->withoutPeriodicTrajectory = false;
+    } else {
+      if (*topLabels.begin() == *bottomLabels.begin())
+        throw std::logic_error("not implemented: components starting with trivial cylinders are not supported");
+      if (*topLabels.rbegin() == *bottomLabels.rbegin())
+        throw std::logic_error("not implemented: components ending with trivial cylinders are not supported");
+
+      for (size_t i = 1; i < topLabels.size(); i++) {
+        connections.push_front({topLabels[i], topLabels[i - 1], nullptr, nullptr});
+        top[topLabels[i]] = &*connections.begin();
+      }
+      top[topLabels[0]] = top[bottomLabels[0]];
+
+      for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
+        connections.push_front({bottomLabels[i], bottomLabels[i + 1], nullptr, nullptr});
+        bottom[bottomLabels[i]] = &*connections.begin();
+      }
+      bottom[bottomLabels[bottomLabels.size() - 1]] = bottom[topLabels[topLabels.size() - 1]];
+
+      for (size_t i = 1; i < topLabels.size(); i++) {
+        top[topLabels[i]]->previousAtSingularity = bottom[topLabels[i - 1]];
+        bottom[topLabels[i - 1]]->nextAtSingularity = top[topLabels[i]];
+      }
+      for (size_t i = 0; i < bottomLabels.size() - 1; i++) {
+        bottom[bottomLabels[i]]->previousAtSingularity = top[bottomLabels[i + 1]];
+        top[bottomLabels[i + 1]]->nextAtSingularity = bottom[bottomLabels[i]];
+      }
+    }
   }
 
   friend class DynamicalDecomposition<Length>;
