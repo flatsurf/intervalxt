@@ -24,11 +24,13 @@
 #include <cassert>
 #include <variant>
 #include <vector>
+#include <ostream>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
 #include "intervalxt/length.hpp"
+#include "intervalxt/external/gmpxxll/mpz_class.hpp"
 
 namespace intervalxt {
 template <typename T>
@@ -54,25 +56,7 @@ Length<T>::operator Length<S>() const {
 template <typename T>
 template <typename S, typename std::enable_if_t<!std::is_constructible_v<S, T> && std::is_integral_v<T> && std::is_constructible_v<S, mpz_class>, bool>>
 Length<T>::operator Length<S>() const {
-  mpz_class value;
-  if constexpr (std::is_signed_v<T>) {
-    if constexpr (std::numeric_limits<T>::max() <= std::numeric_limits<signed int>::max()) {
-      value = this->value;
-    } else if (this->value <= std::numeric_limits<signed int>::max() && this->value >= std::numeric_limits<signed int>::lowest()) {
-      value = static_cast<signed int>(this->value);
-    } else {
-      value = std::to_string(this->value);
-    }
-  } else if constexpr (!std::is_signed_v<T>) {
-    if constexpr (std::numeric_limits<T>::max() <= std::numeric_limits<unsigned int>::max()) {
-      value = this->value;
-    } else if (this->value <= std::numeric_limits<unsigned int>::max()) {
-      value = static_cast<unsigned int>(this->value);
-    } else {
-      value = std::to_string(this->value);
-    }
-  }
-  return Length<S>(S(value));
+  return Length<S>(S(gmpxxll::mpz_class(value)));
 }
 
 template <typename T>

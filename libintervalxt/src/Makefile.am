@@ -34,6 +34,7 @@ nobase_include_HEADERS =                                 \
 	intervalxt/connection.hpp                              \
 	intervalxt/maybe_connection.hpp                        \
 	intervalxt/external/spimpl/spimpl.h                    \
+	intervalxt/external/gmpxxll/mpz_class.hpp              \
 	intervalxt/cereal.hpp
 
 $(builddir)/intervalxt/intervalxt.hpp: $(srcdir)/intervalxt/intervalxt.hpp.in Makefile

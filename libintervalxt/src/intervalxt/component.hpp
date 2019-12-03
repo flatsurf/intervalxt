@@ -53,7 +53,9 @@ class Component {
 
   DecompositionStep<Length> decompositionStep(int limit = -1);
 
-  void decompose(
+  // Return whether all resulting components satisfy target, i.e., the limit
+  // was not reached.
+  bool decompose(
       std::function<bool(const Component&)> target = [](const auto& c) {
         return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },

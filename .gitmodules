@@ -10,3 +10,6 @@
 [submodule "libintervalxt/test/external/catch2"]
 	path = libintervalxt/test/external/catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "libintervalxt/src/intervalxt/external/gmpxll"]
+	path = libintervalxt/src/intervalxt/external/gmpxxll
+	url = https://github.com/flatsurf/gmpxxll.git

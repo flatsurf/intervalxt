@@ -39,7 +39,9 @@ class DynamicalDecomposition {
   DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
   std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
 
-  void decompose(
+  // Return whether all resulting components satisfy target, i.e., the limit
+  // was not reached.
+  bool decompose(
       std::function<bool(const Component<Length>&)> target = [](const auto& c) {
         return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },

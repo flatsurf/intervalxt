@@ -65,8 +65,11 @@ class Component<Length>::Implementation {
 
   struct ComponentState;
 
-  Implementation(std::shared_ptr<DecompositionState> state, ComponentState* component) : state(state), component(component) {}
+  Implementation(std::shared_ptr<DecompositionState> state, ComponentState* component) : state(state), component(component) {
+    assert(component != nullptr);
+  }
 
+  // TODO: Instead change the Component constructor to accept an Implementation&&. (same for the others here.) cf. flatsurf Component
   static Component<Length> make(std::shared_ptr<DecompositionState> state, ComponentState* component);
 
  private:
@@ -85,7 +88,9 @@ class Connection<Length>::Implementation {
 
   struct ConnectionState;
 
-  Implementation(std::shared_ptr<const DecompositionState> state, ConnectionState* const connection) : state(state), connection(connection) {}
+  Implementation(std::shared_ptr<const DecompositionState> state, ConnectionState* const connection) : state(state), connection(connection) {
+    assert(connection != nullptr);
+  }
 
   static Connection<Length> make(std::shared_ptr<const DecompositionState> state, ConnectionState* const component);
 
@@ -105,7 +110,9 @@ class MaybeConnection<Length>::Implementation {
   using DecompositionState = typename DynamicalDecomposition<Length>::Implementation::DecompositionState;
   using ConnectionState = typename Connection<Length>::Implementation::ConnectionState;
 
-  Implementation(std::shared_ptr<const DecompositionState> state, ConnectionState* connection) : state(state), connection(connection) {}
+  Implementation(std::shared_ptr<const DecompositionState> state, ConnectionState* connection) : state(state), connection(connection) {
+    assert(connection != nullptr);
+  }
 
   static MaybeConnection<Length> make(std::shared_ptr<const DecompositionState> state, ConnectionState* connection);
 
@@ -239,6 +246,11 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
     auto topLabels = iet.top();
     auto bottomLabels = iet.bottom();
 
+    if (*topLabels.begin() == *bottomLabels.begin())
+      throw std::logic_error("not implemented: components starting with trivial cylinders are not supported");
+    if (*topLabels.rbegin() == *bottomLabels.rbegin())
+      throw std::logic_error("not implemented: components ending with trivial cylinders are not supported");
+
     for (size_t i = 1; i < topLabels.size(); i++) {
       connections.push_front({topLabels[i], topLabels[i - 1], nullptr, nullptr});
       top[topLabels[i]] = &*connections.begin();
@@ -304,9 +316,11 @@ std::vector<Component<Length>> DynamicalDecomposition<Length>::components() cons
 }
 
 template <typename Length>
-void DynamicalDecomposition<Length>::decompose(std::function<bool(const Component<Length>&)> target, int limit) {
+bool DynamicalDecomposition<Length>::decompose(std::function<bool(const Component<Length>&)> target, int limit) {
+  bool limitNotReached = true;
   for (auto& component : impl->state->components)
-    impl->state->make(&component).decompose(target, limit);
+    limitNotReached = limitNotReached && impl->state->make(&component).decompose(target, limit);
+  return limitNotReached;
 }
 
 template <typename Length>
