@@ -22,6 +22,8 @@
 #define LIBINTERVALXT_DETAIL_COMPONENT_IPP
 
 #include <boost/logic/tribool.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/range/adaptor/transformed.hpp>
 
 #include "../dynamical_decomposition.hpp"
 
@@ -76,12 +78,51 @@ Component<Length> Component<Length>::Implementation::make(std::shared_ptr<Decomp
 }
 
 template <typename Length>
+std::vector<Label<Length>> Component<Length>::top() const {
+  std::vector<Label<Length>> top;
+  
+  if (this->cylinder()) {
+    top.push_back(*this->impl->component->cylinder);
+  } else {
+    for (auto& label : this->impl->component->iet.top())
+      top.push_back(label);
+  }
+
+  std::reverse(top.begin(), top.end());
+
+  assert(top.size() && "top contour cannot be empty");
+
+  return top;
+}
+
+template <typename Length>
+std::vector<Label<Length>> Component<Length>::bottom() const {
+  std::vector<Label<Length>> bottom;
+  
+  if (this->cylinder()) {
+    bottom.push_back(*this->impl->component->cylinder);
+  } else {
+    for (auto& label : this->impl->component->iet.bottom())
+      bottom.push_back(label);
+  }
+
+  assert(bottom.size() && "bottom contour cannot be empty");
+
+  return bottom;
+}
+
+template <typename Length>
 std::vector<std::list<Connection<Length>>> Component<Length>::left() const {
   std::vector<std::list<Connection<Length>>> boundaries;
 
-  for (auto& label : this->impl->component->iet.top()) {
-    auto boundary = follow(impl->state->makeTop(label));
+  if (this->cylinder()) {
+    auto boundary = follow(impl->state->makeTop(*impl->component->cylinder));
     if (boundary.size()) boundaries.push_back(boundary);
+  } else {
+    for (auto& label : this->impl->component->iet.top()) {
+      auto boundary = follow(impl->state->makeTop(label));
+      if (boundary.size()) boundaries.push_back(boundary);
+    }
   }
 
   return boundaries;
@@ -91,9 +132,14 @@ template <typename Length>
 std::vector<std::list<Connection<Length>>> Component<Length>::right() const {
   std::vector<std::list<Connection<Length>>> boundaries;
 
-  for (auto& label : this->impl->component->iet.bottom()) {
-    auto boundary = follow(impl->state->makeBottom(label));
+  if (this->cylinder()) {
+    auto boundary = follow(impl->state->makeBottom(*impl->component->cylinder));
     if (boundary.size()) boundaries.push_back(boundary);
+  } else {
+    for (auto& label : this->impl->component->iet.bottom()) {
+      auto boundary = follow(impl->state->makeBottom(label));
+      if (boundary.size()) boundaries.push_back(boundary);
+    }
   }
 
   return boundaries;
@@ -115,10 +161,20 @@ bool Component<Length>::decompose(std::function<bool(const Component<Length>&)> 
 
 template <typename Length>
 std::ostream& operator<<(std::ostream& os, const Component<Length>& self) {
+  const auto format = [](const auto& boundaries) {
+    return "["
+      + boost::algorithm::join(boundaries | boost::adaptors::transformed([](const auto& boundary) {
+        return "[" + boost::algorithm::join(boundary | boost::adaptors::transformed([](const auto& connection) {
+          return boost::lexical_cast<std::string>(connection);
+        }), ", ") + "]";
+      }), ", ")
+      + "]";
+  };
+
   if (self.impl->component->cylinder) {
-    return os << "Cylinder(" << *self.impl->component->cylinder << ")";
+    return os << "Cylinder(" << *self.impl->component->cylinder << ", left=" << format(self.left()) << ", right=" << format(self.right()) << ")";
   } else {
-    return os << self.impl->component->iet;
+    return os << self.impl->component->iet << " with left=" << format(self.left()) << ", right=" << format(self.right());
   }
 }
 

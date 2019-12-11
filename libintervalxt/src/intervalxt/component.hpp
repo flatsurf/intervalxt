@@ -46,6 +46,11 @@ class Component {
   boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
   boost::logic::tribool keane() const noexcept;
 
+  // The labels on the top, going from right to left.
+  std::vector<Label<Length>> top() const;
+  // The labels on the bottom, going from right to left.
+  std::vector<Label<Length>> bottom() const;
+
   // The left boundaries of this component as a linked list going from "top to bottom."
   std::vector<Boundary> left() const;
   // The right boundaries of this component as a linked list going from "bottom to top."

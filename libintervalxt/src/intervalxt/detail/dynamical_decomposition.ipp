@@ -8,7 +8,7 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *t
+ *
  *  intervalxt is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -22,6 +22,8 @@
 #define LIBINTERVALXT_DETAIL_DYNAMICAL_DECOMPOSITION_IPP
 
 #include <boost/logic/tribool.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/range/adaptor/transformed.hpp>
 #include <cassert>
 #include <map>
 
@@ -216,9 +218,14 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
         cylinder->withoutPeriodicTrajectory = false;
         cylinder->keane = false;
 
+        std::optional<Connection<Length>> connection = {};
+
+        if (step.connection)
+          connection = make(recordConnection(step.connection->first, step.connection->second));
+
         return DecompositionStep<Length>{
             DecompositionResult::CYLINDER,
-            {},
+            connection,
             isAdditionalComponent ? std::optional<Component<Length>>(make(cylinder)) : std::optional<Component<Length>>{},
         };
       }
@@ -298,9 +305,9 @@ class DynamicalDecomposition<Length>::Implementation::DecompositionState : publi
   ConnectionState* recordConnection(const Label<Length>& afterTop, const Label<Length>& beforeBottom) {
     ConnectionState* bottom = this->bottom[beforeBottom];
     while (bottom->twin != nullptr)
-      bottom = this->bottom[bottom->twin->after];
+      bottom = this->bottom.at(bottom->twin->after);
 
-    ConnectionState* top = this->bottom[afterTop]->nextAtSingularity;
+    ConnectionState* top = this->bottom.at(afterTop)->nextAtSingularity;
     assert(top->twin == nullptr && "repeated connections can only happen with non-separating connections, but these are always stacked from below");
 
     bottom->twin = top;
@@ -339,6 +346,11 @@ bool DynamicalDecomposition<Length>::decompose(std::function<bool(const Componen
   for (auto& component : impl->state->components)
     limitNotReached = limitNotReached && impl->state->make(&component).decompose(target, limit);
   return limitNotReached;
+}
+
+template <typename Length>
+std::ostream& operator<<(std::ostream& os, const DynamicalDecomposition<Length>& self) {
+  return os << "[" << boost::algorithm::join(self.components() | boost::adaptors::transformed([](auto& c) { return boost::lexical_cast<std::string>(c); }), ", ") << "]";
 }
 
 template <typename Length>

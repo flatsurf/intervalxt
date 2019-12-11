@@ -304,10 +304,15 @@ InductionStep<Length> IntervalExchangeTransformation<Length>::induce(int limit) 
     impl->bottom.erase(impl->bottom.begin());
 
     const Label cylinderLabel = firstTop.label;
+    std::optional<std::pair<Label, Label>> connection = {};
+    if (impl->top.size())
+      connection = std::make_pair(firstTop.label, firstBottom.label);
+
     impl->labels.erase(cylinderLabel);
+
     return {
         Result::CYLINDER,
-        {},
+        connection,
         {},
         cylinderLabel,
     };
@@ -421,8 +426,8 @@ std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation<
   auto id = [&](const Label& query) {
     return boost::lexical_cast<std::string>(query);
   };
-  os << boost::algorithm::join(self.top() | boost::adaptors::transformed(id), " ") << std::endl;
-  os << boost::algorithm::join(self.bottom() | boost::adaptors::transformed(id), " ") << std::endl;
+  os << boost::algorithm::join(self.top() | boost::adaptors::transformed(id), " ") << " / "
+     << boost::algorithm::join(self.bottom() | boost::adaptors::transformed(id), " ");
 
   return os;
 }

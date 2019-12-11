@@ -46,6 +46,16 @@ template <typename Length>
 Label<Length> MaybeConnection<Length>::after() const noexcept { return impl->connection->after; }
 
 template <typename Length>
+MaybeConnection<Length> MaybeConnection<Length>::nextAtSingularity() const noexcept {
+  return Implementation::make(impl->state, impl->connection->nextAtSingularity);
+}
+
+template <typename Length>
+MaybeConnection<Length> MaybeConnection<Length>::previousAtSingularity() const noexcept {
+  return Implementation::make(impl->state, impl->connection->previousAtSingularity);
+}
+
+template <typename Length>
 std::optional<Connection<Length>> MaybeConnection<Length>::connection() const noexcept {
   if (impl->connection->twin == nullptr) return {};
   return impl->state->make(impl->connection);
@@ -58,7 +68,7 @@ bool MaybeConnection<Length>::operator==(const MaybeConnection<Length>& rhs) con
 
 template <typename Length>
 std::ostream& operator<<(std::ostream& os, const MaybeConnection<Length>& self) {
-  return os << self.impl->connection->label << " → ?";
+  return os << "MaybeConnection(before=" << self.impl->connection->before << ", after=" << self.impl->connection->after << ")";
 }
 
 }  // namespace intervalxt

@@ -158,4 +158,142 @@ TEST_CASE("Decomposition of a Trivial IET") {
   REQUIRE(decomposition.components()[0].right().size() == 0);
 }
 
+TEST_CASE("Decomposition of obvious Cylinders") {
+  using Length = Length<int>;
+  using Label = Label<Length>;
+  using boost::logic::indeterminate;
+  using Result = DecompositionStep<Length>::Result;
+  using Boundaries = std::vector<std::vector<Label>>;
+  using Labels = std::vector<Label>;
+
+  auto a = Label(1);
+  auto b = Label(1);
+
+  auto decomposition = DynamicalDecomposition<Length>(IntervalExchangeTransformation<Length>({a, b}, {b, a}));
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  SECTION("Manual Decomposition") {
+    auto component = decomposition.components()[0];
+    CAPTURE(component);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(asLabels(component.left()) == Boundaries{});
+    REQUIRE(asLabels(component.right()) == Boundaries{});
+
+    auto step0 = component.decompositionStep();
+    CAPTURE(step0);
+    REQUIRE(step0.result == Result::NON_SEPARATING_CONNECTION);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(component.bottom() == Labels{b});
+    REQUIRE(component.top() == Labels{b});
+
+    REQUIRE(asLabels(component.right()) == Boundaries{{b, b}});
+    auto right = *component.right().begin()->begin();
+    REQUIRE(right.nextInBoundary() == right.source());
+    REQUIRE(right.source().previousAtSingularity() == (-right).source());
+    REQUIRE((-right).source().after() == a);
+
+    REQUIRE(asLabels(component.left()) == Boundaries{{b, b}});
+    auto left = *component.left().begin()->begin();
+    REQUIRE(left.nextInBoundary() == left.source());
+    REQUIRE(left.source().previousAtSingularity() == (-left).source());
+    REQUIRE((-left).source().after() == a);
+
+    auto step1 = component.decompositionStep();
+    CAPTURE(step1);
+    REQUIRE(step1.result == Result::CYLINDER);
+    REQUIRE(asLabels(component.left()) == Boundaries{{b, b}});
+    REQUIRE(asLabels(component.right()) == Boundaries{{b, b}});
+  }
+
+  SECTION("Automatic Decomposition") {
+    REQUIRE(decomposition.decompose());
+
+    CAPTURE(decomposition);
+
+    REQUIRE(decomposition.components().size() == 1);
+    REQUIRE(decomposition.components()[0].cylinder());
+    REQUIRE(asLabels(decomposition.components()[0].left()) == Boundaries{{b, b}});
+    REQUIRE(asLabels(decomposition.components()[0].right()) == Boundaries{{b, b}});
+  }
+}
+
+TEST_CASE("Decomposition of Nested Cylinders") {
+  using Length = Length<int>;
+  using Label = Label<Length>;
+  using boost::logic::indeterminate;
+  using Result = DecompositionStep<Length>::Result;
+  using Boundaries = std::vector<std::vector<Label>>;
+  using Labels = std::vector<Label>;
+
+  auto a = Label(1);
+  auto b = Label(1);
+  auto c = Label(1);
+
+  auto decomposition = DynamicalDecomposition<Length>(IntervalExchangeTransformation<Length>({a, b, c}, {c, b, a}));
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  SECTION("Manual Decomposition") {
+    auto component = decomposition.components()[0];
+    CAPTURE(component);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(asLabels(component.left()) == Boundaries{});
+    REQUIRE(asLabels(component.right()) == Boundaries{});
+
+    auto step0 = component.decompositionStep();
+    CAPTURE(step0);
+    REQUIRE(step0.result == Result::NON_SEPARATING_CONNECTION);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(component.bottom() == Labels{b, c});
+    REQUIRE(component.top() == Labels{c, b});
+
+    REQUIRE(asLabels(component.right()) == Boundaries{{c, b}});
+    auto right = *component.right().begin()->begin();
+    REQUIRE(right.nextInBoundary() == right.source());
+    REQUIRE(right.source().previousAtSingularity() == (-right).source());
+    REQUIRE((-right).source().after() == a);
+
+    REQUIRE(asLabels(component.left()) == Boundaries{{b, c}});
+    auto left = *component.left().begin()->begin();
+    REQUIRE(left.nextInBoundary() == left.source());
+    REQUIRE(left.source().previousAtSingularity() == (-left).source());
+    REQUIRE((-left).source().after() == b);
+
+    auto step1 = component.decompositionStep();
+    CAPTURE(step1);
+    REQUIRE(step1.result == Result::CYLINDER);
+    REQUIRE(step1.additionalComponent);
+
+    {
+      auto cylinder = *step1.additionalComponent;
+      REQUIRE(cylinder.cylinder());
+      REQUIRE(asLabels(cylinder.left()) == Boundaries{{b, c}});
+      REQUIRE(asLabels(cylinder.right()) == Boundaries{{b, c}});
+    }
+
+    {
+      REQUIRE(indeterminate(component.cylinder()));
+
+      auto step2 = component.decompositionStep();
+      REQUIRE(step2.result == Result::CYLINDER);
+
+      REQUIRE(component.cylinder());
+      REQUIRE(asLabels(component.left()) == Boundaries{{c, b}});
+      REQUIRE(asLabels(component.right()) == Boundaries{{c, b}});
+    }
+  }
+
+  SECTION("Automatic Decomposition") {
+  }
+}
+
 }  // namespace intervalxt::test

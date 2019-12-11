@@ -33,13 +33,14 @@
 // have to put the implementation into this header file.
 
 namespace intervalxt {
+
 template <typename Length>
 class Label<Length>::Implementation {
   std::shared_ptr<const detail::Id> id;
   Length length;
 
  public:
-  Implementation() : Implementation(Length()) {}
+  Implementation() : id(nullptr), length() {}
   Implementation(const Length& length) : id(detail::Id::make()), length(length) {}
 
   template <typename L>
@@ -69,19 +70,29 @@ bool Label<Length>::operator<(const Label<Length>& rhs) const noexcept {
 
 template <typename Length>
 Label<Length>& Label<Length>::operator=(const Length& rhs) noexcept {
+  assert(impl->id != nullptr && "invalid label, maybe after the end of a trivial IET, cannot be assigned to");
   impl->length = rhs;
   return *this;
 }
 
 template <typename Length>
-Length& Label<Length>::length() noexcept { return impl->length; }
+Length& Label<Length>::length() noexcept {
+  assert(impl->id != nullptr && "invalid label, maybe after the end of a trivial IET, has no length");
+  return impl->length;
+}
 
 template <typename Length>
-const Length& Label<Length>::length() const noexcept { return impl->length; }
+const Length& Label<Length>::length() const noexcept {
+  assert(impl->id != nullptr && "invalid label, maybe after the end of a trivial IET, has no length");
+  return impl->length;
+}
 
 template <typename Length>
 std::ostream& operator<<(std::ostream& os, const Label<Length>& self) {
-  return os << self.length() << "[" << *self.impl->id << "]";
+  if (self.impl->id == nullptr)
+    return os << "nil";
+  else
+    return os << self.length() << "[" << *self.impl->id << "]";
 }
 
 }  // namespace intervalxt
