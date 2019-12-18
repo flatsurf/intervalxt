@@ -69,7 +69,7 @@ AS_IF([test "x$with_googletest" != "xno"],
       ], [])
 AM_CONDITIONAL([HAVE_GOOGLETEST], [test "x$with_googletest" = "xyes"])
 
-AC_CONFIG_HEADERS([src/intervalxt/config.h])
+AC_CONFIG_HEADERS([intervalxt/config.h])
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 
 AC_OUTPUT

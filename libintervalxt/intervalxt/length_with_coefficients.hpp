@@ -24,7 +24,7 @@
 #include <boost/operators.hpp>
 #include <vector>
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 

@@ -25,9 +25,9 @@
 
 #include <boost/uuid/uuid.hpp>
 
-#include "intervalxt/detail/id.hpp"
-#include "intervalxt/label.hpp"
-#include "intervalxt/length.hpp"
+#include "id.hpp"
+#include "../label.hpp"
+#include "../length.hpp"
 
 // Consult the rant on top of interval_exchange_transformation.ipp for why we
 // have to put the implementation into this header file.

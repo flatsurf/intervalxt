@@ -23,12 +23,13 @@
 
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 #include <gmpxx.h>
 
 #include <boost/operators.hpp>
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
@@ -98,6 +99,6 @@ class Length : boost::totally_ordered<Length<T>>,
 
 }  // namespace intervalxt
 
-#include "intervalxt/detail/length.ipp"
+#include "detail/length.ipp"
 
 #endif

@@ -31,7 +31,7 @@
 
 #include "external/spimpl/spimpl.h"
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 

@@ -20,7 +20,7 @@
 
 #include <boost/uuid/random_generator.hpp>
 
-#include "intervalxt/detail/id.hpp"
+#include "../intervalxt/detail/id.hpp"
 
 #include "external/unique-factory/unique_factory.hpp"
 

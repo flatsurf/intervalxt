@@ -18,47 +18,62 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
-#define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
+#ifndef LIBINTERVALXT_COMPONENT_HPP
+#define LIBINTERVALXT_COMPONENT_HPP
 
 #include <functional>
-#include <iosfwd>
-#include <vector>
+#include <list>
+#include <utility>
+
+#include <boost/logic/tribool_fwd.hpp>
 
 #include "external/spimpl/spimpl.h"
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
-// Frontend to a decomposition of an IntervalExchangeTransformation into
-// Components.
 template <typename Length>
-class DynamicalDecomposition {
+class Component {
+  // Components can not be created directly (other than copying & moving them.)
+  // They are created as products of a DynamicalDecomposition.
+  Component();
+
  public:
-  DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
-  std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
+  using Boundary = std::list<Connection<Length>>;
+
+  boost::logic::tribool cylinder() const noexcept;
+  boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
+  boost::logic::tribool keane() const noexcept;
+
+  // The labels on the top, going from right to left.
+  std::vector<Label<Length>> top() const;
+  // The labels on the bottom, going from right to left.
+  std::vector<Label<Length>> bottom() const;
+
+  // The left boundaries of this component as a linked list going from "top to bottom."
+  std::vector<Boundary> left() const;
+  // The right boundaries of this component as a linked list going from "bottom to top."
+  std::vector<Boundary> right() const;
+
+  DecompositionStep<Length> decompositionStep(int limit = -1);
 
   // Return whether all resulting components satisfy target, i.e., the limit
   // was not reached.
   bool decompose(
-      std::function<bool(const Component<Length>&)> target = [](const auto& c) {
+      std::function<bool(const Component&)> target = [](const auto& c) {
         return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },
       int limit = -1);
 
-  std::vector<Component<Length>> components() const noexcept;
-
   template <typename T>
-  friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition<T>&);
+  friend std::ostream& operator<<(std::ostream&, const Component<T>&);
 
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
 
-  friend class Component<Length>;
-  friend class Connection<Length>;
-  friend class MaybeConnection<Length>;
+  friend class DynamicalDecomposition<Length>;
 };
 
 }  // namespace intervalxt

@@ -18,22 +18,47 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_CPPYY_HPP
-#define LIBINTERVALXT_CPPYY_HPP
+#ifndef LIBINTERVALXT_CONNECTION_HPP
+#define LIBINTERVALXT_CONNECTION_HPP
 
+#include <boost/operators.hpp>
 #include <iosfwd>
 
-#include "intervalxt/interval_exchange_transformation.hpp"
-#include "intervalxt/label.hpp"
-#include "intervalxt/length.hpp"
+#include "external/spimpl/spimpl.h"
+
+#include "forward.hpp"
 
 namespace intervalxt {
-template <typename T>
-std::ostream &operator<<(std::ostream &, const Length<T> &);
+
 template <typename Length>
-std::ostream &operator<<(std::ostream &, const Label<Length> &);
-template <typename Length>
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length> &);
+class Connection : boost::equality_comparable<Connection<Length>> {
+  // Connections can not be created directly (other than copying & moving them.)
+  // They are created as products of DynamicalDecomposition.
+  Connection();
+
+ public:
+  Connection operator-() const noexcept;
+
+  MaybeConnection<Length> source() const noexcept;
+
+  MaybeConnection<Length> nextInBoundary() const noexcept;
+
+  bool operator==(const Connection&) const noexcept;
+
+ private:
+  class Implementation;
+  spimpl::impl_ptr<Implementation> impl;
+
+  template <typename T>
+  friend std::ostream& operator<<(std::ostream&, const Connection<T>&);
+
+  friend class DynamicalDecomposition<Length>;
+  friend class Component<Length>;
+  friend class MaybeConnection<Length>;
+};
+
+#include "detail/dynamical_decomposition.ipp"
+
 }  // namespace intervalxt
 
 #endif

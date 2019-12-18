@@ -27,8 +27,8 @@
 #include <gmpxx.h>
 #include <boost/operators.hpp>
 
-#include "intervalxt/external/spimpl/spimpl.h"
-#include "intervalxt/intervalxt.hpp"
+#include "../external/spimpl/spimpl.h"
+#include "../intervalxt.hpp"
 
 namespace intervalxt {
 namespace detail {

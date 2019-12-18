@@ -18,30 +18,22 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <vector>
+#ifndef LIBINTERVALXT_CPPYY_HPP
+#define LIBINTERVALXT_CPPYY_HPP
 
-#include <e-antic/renfxx.h>
+#include <iosfwd>
 
-#include "../../intervalxt/length.hpp"
+#include "interval_exchange_transformation.hpp"
+#include "label.hpp"
+#include "length.hpp"
 
 namespace intervalxt {
 template <typename T>
-std::vector<mpq_class> LengthArithmetic<T>::coefficients(const T& value) {
-  std::vector<mpq_class> ret;
-  auto d = value.den();
-  for (auto i : value.num_vector()) {
-    auto dat = mpq_class(i, d);
-    dat.canonicalize();
-    ret.push_back(dat);
-  }
-  return ret;
-}
+std::ostream &operator<<(std::ostream &, const Length<T> &);
+template <typename Length>
+std::ostream &operator<<(std::ostream &, const Label<Length> &);
+template <typename Length>
+std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length> &);
+}  // namespace intervalxt
 
-template <typename T>
-std::conditional_t<std::is_integral_v<T>, T, mpz_class> LengthArithmetic<T>::floorDivision(const T& divident, const T& divisor) {
-  return (divident / divisor).floor();
-}
-
-// Instantiate the above implementation for, so that the linker can find it.
-template struct LengthArithmetic<eantic::renf_elem_class>;
-}
+#endif

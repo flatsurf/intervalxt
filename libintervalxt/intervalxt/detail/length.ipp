@@ -29,8 +29,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-#include "intervalxt/length.hpp"
-#include "intervalxt/external/gmpxxll/mpz_class.hpp"
+#include "../length.hpp"
+#include "../external/gmpxxll/mpz_class.hpp"
 
 namespace intervalxt {
 template <typename T>

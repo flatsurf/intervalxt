@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "intervalxt/length.hpp"
+#include "../../intervalxt/length.hpp"
 
 namespace intervalxt {
 template <typename T>

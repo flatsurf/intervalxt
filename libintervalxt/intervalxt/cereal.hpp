@@ -26,9 +26,9 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/vector.hpp>
 
-#include "intervalxt/interval_exchange_transformation.hpp"
-#include "intervalxt/label.hpp"
-#include "intervalxt/length.hpp"
+#include "interval_exchange_transformation.hpp"
+#include "label.hpp"
+#include "length.hpp"
 
 namespace intervalxt {
 

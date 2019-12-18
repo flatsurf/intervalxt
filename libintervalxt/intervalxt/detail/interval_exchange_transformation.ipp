@@ -41,10 +41,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-#include "intervalxt/detail/rational_linear_subspace.hpp"
-#include "intervalxt/induction_step.hpp"
-#include "intervalxt/interval_exchange_transformation.hpp"
-#include "intervalxt/label.hpp"
+#include "rational_linear_subspace.hpp"
+#include "../induction_step.hpp"
+#include "../interval_exchange_transformation.hpp"
+#include "../label.hpp"
 
 namespace intervalxt {
 namespace {

@@ -24,7 +24,7 @@
 #include <ppl.hh>
 #include <vector>
 
-#include "intervalxt/detail/rational_linear_subspace.hpp"
+#include "../intervalxt/detail/rational_linear_subspace.hpp"
 
 using boost::numeric_cast;
 using Parma_Polyhedra_Library::Constraint;

@@ -1,5 +1,5 @@
 [submodule "src/libintervalxt/intervalxt/external/spimpl"]
-	path = libintervalxt/src/intervalxt/external/spimpl
+	path = libintervalxt/intervalxt/external/spimpl
 	url = https://github.com/oliora/samples.git
 [submodule "libintervalxt/test/external/cereal"]
 	path = libintervalxt/test/external/cereal
@@ -11,5 +11,5 @@
 	path = libintervalxt/test/external/catch2
 	url = https://github.com/catchorg/Catch2.git
 [submodule "libintervalxt/src/intervalxt/external/gmpxll"]
-	path = libintervalxt/src/intervalxt/external/gmpxxll
+	path = libintervalxt/intervalxt/external/gmpxxll
 	url = https://github.com/flatsurf/gmpxxll.git

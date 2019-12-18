@@ -21,12 +21,13 @@
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
 
-#include <boost/operators.hpp>
 #include <vector>
+
+#include <boost/operators.hpp>
 
 #include "external/spimpl/spimpl.h"
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 

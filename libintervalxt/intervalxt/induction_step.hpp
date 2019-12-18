@@ -18,35 +18,35 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_INDUCTION_STEP_HPP
+#define LIBINTERVALXT_INDUCTION_STEP_HPP
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
+// The result of a call to IntervalExchangeTransformation::induce()
 template <typename Length>
-struct DecompositionStep {
+struct InductionStep {
   enum class Result {
     LIMIT_REACHED,
     CYLINDER,
     SEPARATING_CONNECTION,
     NON_SEPARATING_CONNECTION,
     WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
   };
 
   Result result;
-  std::optional<Connection<Length>> connection = {};
-  std::optional<Component<Length>> additionalComponent = {};
+  std::optional<std::pair<Label<Length>, Label<Length>>> connection = {};
+  std::optional<IntervalExchangeTransformation<Length>> additionalIntervalExchangeTransformation = {};
+  std::optional<Label<Length>> cylinder = {};
 };
 
 template <typename Length>
-std::ostream& operator<<(std::ostream&, const DecompositionStep<Length>&);
+std::ostream& operator<<(std::ostream&, const InductionStep<Length>&);
 
 }  // namespace intervalxt
 
-#include "detail/decomposition_step.ipp"
+#include "detail/dynamical_decomposition.ipp"
 
 #endif

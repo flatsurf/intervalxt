@@ -18,43 +18,54 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_CONNECTION_HPP
-#define LIBINTERVALXT_CONNECTION_HPP
+#ifndef LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
+#define LIBINTERVALXT_UNMATCHED_CONNECTION_HPP
 
 #include <boost/operators.hpp>
 #include <iosfwd>
 
 #include "external/spimpl/spimpl.h"
 
-#include "intervalxt/forward.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
 template <typename Length>
-class Connection : boost::equality_comparable<Connection<Length>> {
+class MaybeConnection : boost::equality_comparable<MaybeConnection<Length>> {
   // Connections can not be created directly (other than copying & moving them.)
   // They are created as products of DynamicalDecomposition.
-  Connection();
+  MaybeConnection();
 
  public:
-  Connection operator-() const noexcept;
+  // Return the component that contains this connection on its inside or
+  // boundary, i.e., the component on the left if this is a connection "from
+  // bottom to top" or the connection on its right if this is a connection
+  // "from top to bottom".
+  const Component<Length>& component() const noexcept;
 
-  MaybeConnection<Length> source() const noexcept;
+  // Return the next connection at the source of this singularity in counter-clockwise order.
+  MaybeConnection nextAtSingularity() const noexcept;
 
-  MaybeConnection<Length> nextInBoundary() const noexcept;
+  // Return the next connection at the source of this singularity in clockwise order.
+  MaybeConnection previousAtSingularity() const noexcept;
 
-  bool operator==(const Connection&) const noexcept;
+  Label<Length> before() const noexcept;
+  Label<Length> after() const noexcept;
+
+  bool operator==(const MaybeConnection<Length>&) const noexcept;
+
+  std::optional<Connection<Length>> connection() const noexcept;
 
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
 
   template <typename T>
-  friend std::ostream& operator<<(std::ostream&, const Connection<T>&);
+  friend std::ostream& operator<<(std::ostream&, const MaybeConnection<T>&);
 
   friend class DynamicalDecomposition<Length>;
   friend class Component<Length>;
-  friend class MaybeConnection<Length>;
+  friend class Connection<Length>;
 };
 
 #include "detail/dynamical_decomposition.ipp"
