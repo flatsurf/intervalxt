@@ -18,35 +18,39 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_LABEL_HPP
-#define LIBINTERVALXT_LABEL_HPP
+#include <unordered_set>
 
-#include <boost/operators.hpp>
+#include "external/catch2/include/catch.hpp"
 
-#include "forward.hpp"
+#include "../intervalxt/label.hpp"
 
-namespace intervalxt {
+namespace intervalxt::test {
 
-class Label : public boost::equality_comparable<Label> {
- public:
-  Label();
-  explicit Label(int id);
+TEST_CASE("Labels Can Be Created and Compared", "[label]") {
+  WHEN("Labels Are Created With Different Values") {
+    Label a(1);
+    Label b(2);
+    Label c;
+    Label d;
 
-  bool operator==(const Label&) const noexcept;
+    THEN("They Compare Accordingly") {
+      REQUIRE(a == a);
+      REQUIRE(a != b);
+      REQUIRE(a != c);
+      REQUIRE(a != d);
+      REQUIRE(b == b);
+      REQUIRE(b != c);
+      REQUIRE(b != d);
+      REQUIRE(c == c);
+      REQUIRE(c != d);
+      REQUIRE(d == d);
+    }
 
- private:
-  int id;
-
-  friend std::hash<Label>;
-};
-
-}  // namespace intervalxt
-
-namespace std {
-
-template<>
-struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const noexcept; };
+    THEN("They Can Be Used in Unordered Data Structures") {
+      REQUIRE(std::unordered_set<Label>{a, a, b, c, d}.size() == 4);
+    }
+  }
+}
 
 }
 
-#endif

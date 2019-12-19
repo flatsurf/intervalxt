@@ -18,35 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_LABEL_HPP
-#define LIBINTERVALXT_LABEL_HPP
+#include <stdlib.h>
 
-#include <boost/operators.hpp>
-
-#include "forward.hpp"
+#include "../intervalxt/label.hpp"
 
 namespace intervalxt {
 
-class Label : public boost::equality_comparable<Label> {
- public:
-  Label();
-  explicit Label(int id);
+Label::Label() : id(static_cast<int>(random())) {}
 
-  bool operator==(const Label&) const noexcept;
+Label::Label(int id) : id(id) {}
 
- private:
-  int id;
-
-  friend std::hash<Label>;
-};
-
-}  // namespace intervalxt
-
-namespace std {
-
-template<>
-struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const noexcept; };
+bool Label::operator==(const Label& rhs) const noexcept { return id == rhs.id; }
 
 }
 
-#endif
+namespace std {
+
+using namespace intervalxt;
+
+size_t hash<Label>::operator()(const Label& self) const noexcept {
+  return static_cast<size_t>(self.id);
+}
+
+
+}
