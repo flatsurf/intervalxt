@@ -27,11 +27,11 @@
 #include <gmpxx.h>
 #include <boost/operators.hpp>
 
-#include "../external/spimpl/spimpl.h"
-#include "../intervalxt.hpp"
+#include "../../intervalxt/external/spimpl/spimpl.h"
+
+#include "../../intervalxt/forward.hpp"
 
 namespace intervalxt {
-namespace detail {
 
 // A linear rational subspace of ℚ^d.
 class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace> {
@@ -60,10 +60,10 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   friend std::ostream& operator<<(std::ostream&, const RationalLinearSubspace&);
 
  private:
-  class Implementation;
+  using Implementation = ::intervalxt::Implementation<RationalLinearSubspace>;
   spimpl::impl_ptr<Implementation> impl;
 };
-}  // namespace detail
+
 }  // namespace intervalxt
 
 #endif

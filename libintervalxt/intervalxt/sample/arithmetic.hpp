@@ -18,31 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
 
-#include "forward.hpp"
+#include <type_traits>
+#include <vector>
 
-namespace intervalxt {
+#include <gmpxx.h>
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+namespace intervalxt::sample {
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+template <typename Arithmetic>
+using QuotientFloorDivision = typename std::invoke_result_t<decltype(&Arithmetic::floorDivision),const typename Arithmetic::T&, const typename Arithmetic::T&>;
+
+template <typename S, typename _ = void>
+struct Arithmetic {
+  using T = S;
+
+  static std::vector<mpq_class> coefficients(const T& value) { return value; }
+  static auto floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif

@@ -18,31 +18,29 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_IMPL_HPP
+#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_IMPL_HPP
 
-#include "forward.hpp"
+#include <ppl.hh>
+
+#include "rational_linear_subspace.hpp"
+
+using Parma_Polyhedra_Library::NNC_Polyhedron;
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+template<>
+class Implementation<RationalLinearSubspace> {
+ public:
+  Implementation();
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  Implementation(const std::vector<std::vector<mpq_class>>& vectors, bool equations);
+
+  NNC_Polyhedron subspace;
+  NNC_Polyhedron positive;
+  NNC_Polyhedron nonNegative;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif

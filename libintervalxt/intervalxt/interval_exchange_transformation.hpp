@@ -21,31 +21,30 @@
 #ifndef LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 #define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 
-#include <boost/operators.hpp>
 #include <iosfwd>
 #include <map>
 #include <optional>
 #include <vector>
 
+#include <boost/operators.hpp>
 #include <gmpxx.h>
 
 #include "external/spimpl/spimpl.h"
 
 #include "forward.hpp"
+#include "lengths.hpp"
 
 namespace intervalxt {
 
-template <typename Length>
 class IntervalExchangeTransformation {
  public:
-  using Label = intervalxt::Label<Length>;
   IntervalExchangeTransformation();
-  IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<size_t> &bottom);
-  IntervalExchangeTransformation(const std::vector<Label> &top, const std::vector<Label> &bottom);
+  IntervalExchangeTransformation(Lengths * const, const std::vector<Label> &top, const std::vector<size_t> &bottom);
+  IntervalExchangeTransformation(Lengths * const, const std::vector<Label> &top, const std::vector<Label> &bottom);
 
   // Perform up to limit many steps of full Zorich induction until a connection
   // is found. Set to -1 for no limit on the number of steps.
-  InductionStep<Length> induce(int limit = -1);
+  InductionStep induce(int limit = -1);
 
   // check for reductibility
   std::optional<IntervalExchangeTransformation> reduce();
@@ -77,8 +76,7 @@ class IntervalExchangeTransformation {
   // Return the number of intervals in this interval exchange transformation.
   size_t size() const noexcept;
 
-  template <typename Length_>
-  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length_> &);
+  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation&);
 
  private:
   class Implementation;
@@ -86,7 +84,5 @@ class IntervalExchangeTransformation {
 };
 
 }  // namespace intervalxt
-
-#include "detail/interval_exchange_transformation.ipp"
 
 #endif

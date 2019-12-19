@@ -18,31 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_LENGTHS_HPP
+#define LIBINTERVALXT_LENGTHS_HPP
+
+#include <boost/type_erasure/member.hpp>
+#include <boost/type_erasure/any.hpp>
 
 #include "forward.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+BOOST_TYPE_ERASURE_MEMBER((has_member_push), push, 1)
+BOOST_TYPE_ERASURE_MEMBER((has_member_pop), pop, 0) 
+ 
+namespace te = boost::type_erasure;
+ 
+using LengthsSpecification = boost::mpl::vector<
+  boost::type_erasure::copy_constructible<>,
+  has_member_push<void(const Label&)>,
+  has_member_pop<void()>,
+  boost::type_erasure::relaxed
+>;
+ 
+using Lengths = boost::type_erasure::any<LengthsSpecification>;
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
-};
-
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+

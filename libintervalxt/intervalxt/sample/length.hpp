@@ -18,8 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_LENGTH_HPP
-#define LIBINTERVALXT_LENGTH_HPP
+#ifndef LIBINTERVALXT_SAMPLE_LENGTH_HPP
+#define LIBINTERVALXT_SAMPLE_LENGTH_HPP
 
 #include <utility>
 #include <vector>
@@ -29,33 +29,25 @@
 
 #include <boost/operators.hpp>
 
-#include "forward.hpp"
+#include "arithmetic.hpp"
 
-namespace intervalxt {
-
-// The operations needed to implement a Length<T>.
-// We expect T to support an operator* and operator+, comparison with integers and mpz_class.
-template <typename T>
-struct LengthArithmetic {
-  static std::vector<mpq_class> coefficients(const T& value);
-  static std::conditional_t<std::is_integral_v<T>, T, mpz_class> floorDivision(const T& divident, const T& divisor);
-
-  using QuotientFloorDivision = typename std::invoke_result_t<decltype(&LengthArithmetic::floorDivision),const T&, const T&>;
-};
+namespace intervalxt::sample {
 
 // A sample implementation of a length of a vector in ℝ² as a simple T.
-template <typename T>
-class Length : boost::totally_ordered<Length<T>>,
-               boost::totally_ordered<Length<T>, T>,
-               boost::totally_ordered<Length<T>, std::pair<T, T>>,
-               boost::additive<Length<T>>,
-               boost::multipliable<Length<T>, typename LengthArithmetic<T>::QuotientFloorDivision> {
+template <typename Arithmetic>
+class Length : boost::totally_ordered<Length<Arithmetic>>,
+               boost::totally_ordered<Length<Arithmetic>, typename Arithmetic::T>,
+               boost::totally_ordered<Length<Arithmetic>, std::pair<typename Arithmetic::T, typename Arithmetic::T>>,
+               boost::additive<Length<Arithmetic>>,
+               boost::multipliable<Length<Arithmetic>, QuotientFloorDivision<Arithmetic>> {
  public:
+  using T = typename Arithmetic::T;
+
   Length();
   Length(const T&);
 
-  bool operator==(const Length<T>&) const noexcept;
-  bool operator<(const Length<T>&) const noexcept;
+  bool operator==(const Length&) const noexcept;
+  bool operator<(const Length&) const noexcept;
   bool operator==(const T&) const noexcept;
   bool operator<(const T&) const noexcept;
   bool operator>(const T&) const noexcept;
@@ -63,19 +55,19 @@ class Length : boost::totally_ordered<Length<T>>,
   bool operator==(const std::pair<T, T>&) const noexcept;
   bool operator<(const std::pair<T, T>&) const noexcept;
   bool operator>(const std::pair<T, T>&) const noexcept;
-  Length& operator+=(const Length<T>&) noexcept;
-  Length& operator-=(const Length<T>&) noexcept;
-  Length& operator*=(const typename LengthArithmetic<T>::QuotientFloorDivision&) noexcept;
+  Length& operator+=(const Length&) noexcept;
+  Length& operator-=(const Length&) noexcept;
+  Length& operator*=(const QuotientFloorDivision<Arithmetic>&) noexcept;
 
   explicit operator bool() const noexcept;
 
   template <typename S, typename std::enable_if_t<std::is_convertible_v<T, S>, bool> Enabled = true>
-  operator Length<S>() const;
+  operator Length<::intervalxt::sample::Arithmetic<S>>() const;
   template <typename S, typename std::enable_if_t<std::is_constructible_v<S, T>, bool> Enabled = true>
-  explicit operator Length<S>() const;
+  explicit operator Length<::intervalxt::sample::Arithmetic<S>>() const;
   // Conversion from integral S via mpz_class
   template <typename S, typename std::enable_if_t<!std::is_constructible_v<S, T> && std::is_integral_v<T> && std::is_constructible_v<S, mpz_class>, bool> Enabled = true>
-  explicit operator Length<S>() const;
+  explicit operator Length<::intervalxt::sample::Arithmetic<S>>() const;
 
   // Return the coefficients of this length written as a linear combination in
   // a suitable basis that makes all coefficients rational, such as a number
@@ -83,21 +75,21 @@ class Length : boost::totally_ordered<Length<T>>,
   std::vector<mpq_class> coefficients() const;
 
   // Return the floor of the division of this length by the argument.
-  typename LengthArithmetic<T>::QuotientFloorDivision operator/(const Length<T>&);
+  QuotientFloorDivision<Arithmetic> operator/(const Length&);
 
-  template <typename C>
-  friend std::ostream& operator<<(std::ostream&, const Length<C>&);
+  template <typename A>
+  friend std::ostream& operator<<(std::ostream&, const Length<A>&);
 
  protected:
   T value;
 
-  template <typename Archive, typename S>
-  friend void load(Archive&, Length<S>&);
-  template <typename Archive, typename S>
-  friend void save(Archive&, const Length<S>&);
+  template <typename Archive, typename A>
+  friend void load(Archive&, Length<A>&);
+  template <typename Archive, typename A>
+  friend void save(Archive&, const Length<A>&);
 };
 
-}  // namespace intervalxt
+}  // namespace intervalxt::sample
 
 #include "detail/length.ipp"
 

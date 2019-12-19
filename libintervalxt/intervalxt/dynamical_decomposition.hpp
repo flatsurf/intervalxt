@@ -25,44 +25,38 @@
 #include <iosfwd>
 #include <vector>
 
+#include <boost/logic/tribool.hpp>
+
 #include "external/spimpl/spimpl.h"
 
 #include "forward.hpp"
+#include "component.hpp"
 
 namespace intervalxt {
 
 // Frontend to a decomposition of an IntervalExchangeTransformation into
 // Components.
-template <typename Length>
 class DynamicalDecomposition {
  public:
-  DynamicalDecomposition(const IntervalExchangeTransformation<Length>&);
-  std::unique_ptr<DynamicalDecomposition<Length>> clone() const;
+  DynamicalDecomposition(const IntervalExchangeTransformation&);
 
-  // Return whether all resulting components satisfy target, i.e., the limit
-  // was not reached.
+  // Return whether all resulting components satisfy target, i.e., target could
+  // be established for them all without reaching the limit.
   bool decompose(
-      std::function<bool(const Component<Length>&)> target = [](const auto& c) {
+      std::function<bool(const Component&)> target = [](const auto& c) {
         return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },
       int limit = -1);
 
-  std::vector<Component<Length>> components() const noexcept;
+  std::vector<Component> components() const noexcept;
 
-  template <typename T>
-  friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition<T>&);
+  friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition&);
 
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
-
-  friend class Component<Length>;
-  friend class Connection<Length>;
-  friend class MaybeConnection<Length>;
 };
 
 }  // namespace intervalxt
-
-#include "detail/dynamical_decomposition.ipp"
 
 #endif

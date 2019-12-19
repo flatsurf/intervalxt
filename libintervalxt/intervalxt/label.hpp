@@ -21,54 +21,23 @@
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
 
-#include <vector>
-
 #include <boost/operators.hpp>
-
-#include "external/spimpl/spimpl.h"
 
 #include "forward.hpp"
 
 namespace intervalxt {
 
-// Data attached to a pair of matched intervals in an Interval Exchange
-// Transformation.
-template <typename Length>
-class Label : public boost::equality_comparable<Label<Length>> {
+class Label : public boost::equality_comparable<Label> {
  public:
   Label();
-  Label(const Length& length);
+  explicit Label(int id);
 
-  // Return whether two labels are considered the same. Note that equal labels
-  // might not be identicial, e.g., when creating a copy of a label and the
-  // modifying the lengths of one of the copies, the two instances are still
-  // considered equal.
   bool operator==(const Label&) const noexcept;
 
-  // Compare two labels so they can be used in STL containers. The comparison
-  // has no semantic meaning but is compatible with the operator==.
-  bool operator<(const Label&) const noexcept;
-
-  Label& operator=(const Length& l) noexcept;
-
-  const Length& length() const noexcept;
-  Length& length() noexcept;
-
-  template <typename Length_>
-  friend std::ostream& operator<<(std::ostream&, const Label<Length_>&);
-
  private:
-  class Implementation;
-  spimpl::impl_ptr<Implementation> impl;
-
-  template <typename Archive, typename Len>
-  friend void load(Archive&, Label<Len>&);
-  template <typename Archive, typename Len>
-  friend void save(Archive&, const Label<Len>&);
+  int id;
 };
 
 }  // namespace intervalxt
-
-#include "detail/label.ipp"
 
 #endif

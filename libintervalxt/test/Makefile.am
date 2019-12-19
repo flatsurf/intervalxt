@@ -1,16 +1,14 @@
-if HAVE_GOOGLETEST
-  check_PROGRAMS = dynamical_decomposition rational_linear_subspace interval_exchange_transformation induction saf boshernitzan induction_benchmark cereal
-  TESTS = $(check_PROGRAMS)
-endif
+check_PROGRAMS = rational_linear_subspace # dynamical_decomposition interval_exchange_transformation induction saf boshernitzan induction_benchmark cereal
+TESTS = $(check_PROGRAMS)
 
-rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.hpp
-interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.hpp
-induction_SOURCES = induction.test.cc main.hpp
-saf_SOURCES = saf.test.cc main.hpp
-boshernitzan_SOURCES = boshernitzan.test.cc main.hpp
-induction_benchmark_SOURCES = induction.benchmark.cc main.hpp
-cereal_SOURCES = cereal.test.cc main.hpp
-dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
+rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc
+# interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
+# induction_SOURCES = induction.test.cc main.cc
+# saf_SOURCES = saf.test.cc main.cc
+# boshernitzan_SOURCES = boshernitzan.test.cc main.cc
+# induction_benchmark_SOURCES = induction.benchmark.cc main.cc
+# cereal_SOURCES = cereal.test.cc main.cc
+# dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 
 # We vendor the header-only library Cereal (serialization with C++ to be able
 # to run the tests even when cereal is not installed.

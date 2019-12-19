@@ -30,32 +30,26 @@
 
 namespace intervalxt {
 
-template <typename T>
-class Length;
-
-template <typename Length>
 class Label;
 
-template <typename Length>
 class IntervalExchangeTransformation;
 
-template <typename Length>
+/*
 class DynamicalDecomposition;
 
-template <typename Length>
-class Connection;
-
-template <typename Length>
-class MaybeConnection;
-
-template <typename Length>
 class Component;
 
-template <typename Length>
 struct DecompositionStep;
 
-template <typename Length>
 struct InductionStep;
+
+class Connection;
+
+class MaybeConnection;
+*/
+
+template <typename T>
+class Implementation;
 
 }  // namespace intervalxt
 

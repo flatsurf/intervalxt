@@ -18,31 +18,26 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 
-#include "forward.hpp"
+#include "../forward.hpp"
 
-namespace intervalxt {
+namespace intervalxt::sample {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
-
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+template <typename Length>
+class Lengths {
+ public:
+  void push(const Label&);
+  void pop();
+  void clear();
+  int cmp(const Label&);
+  void sub(const Label&);
+  void submul(const Label&);
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
+}
 
-}  // namespace intervalxt
+#include "detail/lengths.ipp"
 
 #endif

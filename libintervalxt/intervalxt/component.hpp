@@ -25,7 +25,7 @@
 #include <list>
 #include <utility>
 
-#include <boost/logic/tribool_fwd.hpp>
+#include <boost/logic/tribool.hpp>
 
 #include "external/spimpl/spimpl.h"
 
@@ -33,18 +33,20 @@
 
 namespace intervalxt {
 
-template <typename Length>
 class Component {
   // Components can not be created directly (other than copying & moving them.)
   // They are created as products of a DynamicalDecomposition.
   Component();
 
  public:
-  using Boundary = std::list<Connection<Length>>;
+  using Boundary = std::list<Connection>;
 
   boost::logic::tribool cylinder() const noexcept;
   boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
   boost::logic::tribool keane() const noexcept;
+
+  /*
+  // TODO: What do we want here?
 
   // The labels on the top, going from right to left.
   std::vector<Label<Length>> top() const;
@@ -55,29 +57,25 @@ class Component {
   std::vector<Boundary> left() const;
   // The right boundaries of this component as a linked list going from "bottom to top."
   std::vector<Boundary> right() const;
+  */
 
-  DecompositionStep<Length> decompositionStep(int limit = -1);
+  DecompositionStep decompositionStep(int limit = -1);
 
-  // Return whether all resulting components satisfy target, i.e., the limit
-  // was not reached.
+  // Return whether all resulting components satisfy target, i.e., target could
+  // be established for them all without reaching the limit.
   bool decompose(
       std::function<bool(const Component&)> target = [](const auto& c) {
         return (c.cylinder() || c.withoutPeriodicTrajectory()) ? true : false;
       },
       int limit = -1);
 
-  template <typename T>
-  friend std::ostream& operator<<(std::ostream&, const Component<T>&);
+  friend std::ostream& operator<<(std::ostream&, const Component&);
 
  private:
   class Implementation;
   spimpl::impl_ptr<Implementation> impl;
-
-  friend class DynamicalDecomposition<Length>;
 };
 
 }  // namespace intervalxt
-
-#include "detail/dynamical_decomposition.ipp"
 
 #endif
