@@ -18,53 +18,24 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_EXACT_REAL_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_ARITHMETIC_EXACT_REAL_ARITHMETIC_HPP
 
-#include <vector>
-#include <tuple>
+#include <exact-real/element.hpp>
 
-#include <gmpxx.h>
-
-#include "../lengths.hpp"
-#include "../label.hpp"
+#include "arithmetic.hpp"
 
 namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
- public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
 
-  template <typename ...L>
-  static auto make(L&&... values);
+template <typename Ring>
+struct Arithmetic<exactreal::Element<Ring>> {
+  using T = exactreal::Element<Ring>;
 
-  std::vector<Label> labels() const;
-
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
+  static std::vector<mpq_class> coefficients(const T& value) { return value.template coefficients<mpq_class>(); }
+  static auto floorDivision(const T&, const T&) { throw std::logic_error("not implemented: floor division"); }
 };
 
 }
 
-#include "detail/lengths.ipp"
-
 #endif
+

@@ -18,53 +18,32 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#ifndef LIBINTERVALXT_LENGTH_HPP
+#define LIBINTERVALXT_LENGTH_HPP
 
-#include <vector>
-#include <tuple>
+#include <string>
 
-#include <gmpxx.h>
+#include <boost/type_erasure/member.hpp>
+#include <boost/type_erasure/operators.hpp>
+#include <boost/type_erasure/any.hpp>
 
-#include "../lengths.hpp"
-#include "../label.hpp"
+namespace intervalxt {
 
-namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
- public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
-
-  template <typename ...L>
-  static auto make(L&&... values);
-
-  std::vector<Label> labels() const;
-
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
-};
+// Arguably, this is a bit incomplete. One could imagine more relevant
+// operations here but we want the implementation to rely on Lengths and not on
+// Length.
+using LengthInterface = boost::mpl::vector<
+  boost::type_erasure::copy_constructible<>,
+  boost::type_erasure::equality_comparable<>,
+  boost::type_erasure::less_than_comparable<>,
+  boost::type_erasure::ostreamable<>,
+  boost::type_erasure::typeid_<>,
+  boost::type_erasure::relaxed
+>;
+ 
+using Length = boost::type_erasure::any<LengthInterface>;
 
 }
 
-#include "detail/lengths.ipp"
-
 #endif
+

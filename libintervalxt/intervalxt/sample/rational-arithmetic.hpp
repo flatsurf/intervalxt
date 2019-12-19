@@ -18,53 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-
-#include <vector>
-#include <tuple>
+#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_RATIONAL_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_ARITHMETIC_RATIONAL_ARITHMETIC_HPP
 
 #include <gmpxx.h>
 
-#include "../lengths.hpp"
-#include "../label.hpp"
+#include "arithmetic.hpp"
 
 namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
- public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
 
-  template <typename ...L>
-  static auto make(L&&... values);
+template <>
+struct Arithmetic<mpq_class> {
+  using T = mpq_class;
 
-  std::vector<Label> labels() const;
+  static std::vector<mpq_class> coefficients(const T& value) { return std::vector{value}; }
 
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
+  static mpz_class floorDivision(const T& divident, const T& divisor) {
+    return (divident.get_num() * divisor.get_den()) / (divident.get_den() * divisor.get_num());
+  }
 };
 
 }
 
-#include "detail/lengths.ipp"
-
 #endif
+

@@ -31,13 +31,11 @@
 *.exe
 *.out
 *.app
-/induction
+/label
 /induction_benchmark
 /interval_exchange_transformation
 /rational_linear_subspace
 /cereal
-/saf
-/boshernitzan
 /dynamical_decomposition
 
 ### Autotools Generated Files

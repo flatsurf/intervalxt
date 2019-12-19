@@ -18,53 +18,36 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#ifndef LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_IMPL_HPP
+#define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_IMPL_HPP
 
-#include <vector>
-#include <tuple>
+#include <list>
 
-#include <gmpxx.h>
+#include "../../intervalxt/interval_exchange_transformation.hpp"
 
-#include "../lengths.hpp"
-#include "../label.hpp"
+#include "interval.hpp"
 
-namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
+namespace intervalxt {
+
+template<>
+class Implementation<IntervalExchangeTransformation> {
  public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
+  Implementation(std::shared_ptr<Lengths>, const std::vector<Label>&, const std::vector<Label>&);
 
-  template <typename ...L>
-  static auto make(L&&... values);
+  // Return the translation vector for the label i
+  // The output is a vector of mpq_class with respect to the irrational basis
+  // used for the lengths of the iet.
+  std::valarray<mpq_class> translation(Label) const;
 
-  std::vector<Label> labels() const;
+  std::valarray<mpq_class> coefficients(Label) const;
 
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
+  std::list<Interval> top;
+  std::list<Interval> bottom;
+  std::shared_ptr<Lengths> lengths;
+  const size_t degree;
 };
 
 }
 
-#include "detail/lengths.ipp"
-
 #endif
+

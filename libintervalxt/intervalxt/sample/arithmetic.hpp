@@ -35,7 +35,7 @@ template <typename S, typename _ = void>
 struct Arithmetic {
   using T = S;
 
-  static std::vector<mpq_class> coefficients(const T& value) { return value; }
+  static std::vector<mpq_class> coefficients(const T& value) { return std::vector<mpq_class>{value}; }
   static auto floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
 

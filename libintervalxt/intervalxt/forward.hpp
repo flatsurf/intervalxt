@@ -34,7 +34,6 @@ class Label;
 
 class IntervalExchangeTransformation;
 
-/*
 class DynamicalDecomposition;
 
 class Component;
@@ -46,7 +45,6 @@ struct InductionStep;
 class Connection;
 
 class MaybeConnection;
-*/
 
 template <typename T>
 class Implementation;

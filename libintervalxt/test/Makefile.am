@@ -1,11 +1,9 @@
-check_PROGRAMS = rational_linear_subspace # dynamical_decomposition interval_exchange_transformation induction saf boshernitzan induction_benchmark cereal
+check_PROGRAMS = rational_linear_subspace label interval_exchange_transformation # dynamical_decomposition induction_benchmark cereal
 TESTS = $(check_PROGRAMS)
 
 rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc
-# interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
-# induction_SOURCES = induction.test.cc main.cc
-# saf_SOURCES = saf.test.cc main.cc
-# boshernitzan_SOURCES = boshernitzan.test.cc main.cc
+label_SOURCES = label.test.cc main.cc
+interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
 # induction_benchmark_SOURCES = induction.benchmark.cc main.cc
 # cereal_SOURCES = cereal.test.cc main.cc
 # dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc

@@ -21,12 +21,13 @@
 #ifndef LIBINTERVALXT_INDUCTION_STEP_HPP
 #define LIBINTERVALXT_INDUCTION_STEP_HPP
 
+#include <optional>
+
 #include "forward.hpp"
 
 namespace intervalxt {
 
 // The result of a call to IntervalExchangeTransformation::induce()
-template <typename Length>
 struct InductionStep {
   enum class Result {
     LIMIT_REACHED,
@@ -37,16 +38,13 @@ struct InductionStep {
   };
 
   Result result;
-  std::optional<std::pair<Label<Length>, Label<Length>>> connection = {};
-  std::optional<IntervalExchangeTransformation<Length>> additionalIntervalExchangeTransformation = {};
-  std::optional<Label<Length>> cylinder = {};
+  std::optional<std::pair<Label, Label>> connection = {};
+  std::optional<IntervalExchangeTransformation> additionalIntervalExchangeTransformation = {};
+  std::optional<Label> cylinder = {};
 };
 
-template <typename Length>
-std::ostream& operator<<(std::ostream&, const InductionStep<Length>&);
+std::ostream& operator<<(std::ostream&, const InductionStep&);
 
 }  // namespace intervalxt
-
-#include "detail/dynamical_decomposition.ipp"
 
 #endif

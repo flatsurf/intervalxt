@@ -25,6 +25,7 @@
 #include <map>
 #include <optional>
 #include <vector>
+#include <memory>
 
 #include <boost/operators.hpp>
 #include <gmpxx.h>
@@ -36,11 +37,11 @@
 
 namespace intervalxt {
 
-class IntervalExchangeTransformation {
+class IntervalExchangeTransformation :
+  boost::equality_comparable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
-  IntervalExchangeTransformation(Lengths * const, const std::vector<Label> &top, const std::vector<size_t> &bottom);
-  IntervalExchangeTransformation(Lengths * const, const std::vector<Label> &top, const std::vector<Label> &bottom);
+  IntervalExchangeTransformation(std::shared_ptr<Lengths>, const std::vector<Label> &top, const std::vector<Label> &bottom);
 
   // Perform up to limit many steps of full Zorich induction until a connection
   // is found. Set to -1 for no limit on the number of steps.
@@ -49,7 +50,8 @@ class IntervalExchangeTransformation {
   // check for reductibility
   std::optional<IntervalExchangeTransformation> reduce();
 
-  // one step of Zorich induction
+  // Perform one step of Zorich induction
+  // Return true if a saddle connection is found and false otherwise
   bool zorichInduction();
 
   // Swap the top and bottom intervals.
@@ -58,7 +60,8 @@ class IntervalExchangeTransformation {
   // Return the Sah-Arnoux-Fathi invariant
   std::valarray<mpq_class> safInvariant() const;
 
-  // Boshernitzan criterion for absence of periodic trajectories
+  // Return whether there is no periodic trajectory via Boshernitzan's
+  // algorithm.
   bool boshernitzanNoPeriodicTrajectory() const;
 
   // Remove the first pair of intervals (assuming that it corresponds to a
@@ -76,10 +79,12 @@ class IntervalExchangeTransformation {
   // Return the number of intervals in this interval exchange transformation.
   size_t size() const noexcept;
 
+  bool operator==(const IntervalExchangeTransformation&) const;
+
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation&);
 
  private:
-  class Implementation;
+  using Implementation = ::intervalxt::Implementation<IntervalExchangeTransformation>;
   spimpl::unique_impl_ptr<Implementation> impl;
 };
 

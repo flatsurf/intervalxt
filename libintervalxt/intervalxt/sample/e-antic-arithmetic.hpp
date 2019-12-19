@@ -18,53 +18,34 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_E_ANTIC_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_ARITHMETIC_E_ANTIC_ARITHMETIC_HPP
 
-#include <vector>
-#include <tuple>
+#include <e-antic/renfxx.h>
 
-#include <gmpxx.h>
-
-#include "../lengths.hpp"
-#include "../label.hpp"
+#include "arithmetic.hpp"
 
 namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
- public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
 
-  template <typename ...L>
-  static auto make(L&&... values);
+template <>
+struct Arithmetic<eantic::renf_elem_class> {
+  using T = eantic::renf_elem_class;
 
-  std::vector<Label> labels() const;
+  static std::vector<mpq_class> coefficients(const T& value) { 
+    std::vector<mpq_class> ret;
+    auto d = value.den();
+    for (auto i : value.num_vector()) {
+      auto dat = mpq_class(i, d);
+      dat.canonicalize();
+      ret.push_back(dat);
+    }
+    return ret;
+  }
 
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
+  static auto floorDivision(const T& divident, const T& divisor) { return (divident / divisor).floor(); }
 };
 
 }
 
-#include "detail/lengths.ipp"
-
 #endif
+

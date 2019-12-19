@@ -4,12 +4,12 @@
 [submodule "libintervalxt/test/external/cereal"]
 	path = libintervalxt/test/external/cereal
 	url = https://github.com/USCiLab/cereal.git
-[submodule "libintervalxt/src/external/unique-factory"]
-	path = libintervalxt/src/external/unique-factory
-	url = https://github.com/flatsurf/unique-factory.git
 [submodule "libintervalxt/test/external/catch2"]
 	path = libintervalxt/test/external/catch2
 	url = https://github.com/catchorg/Catch2.git
 [submodule "libintervalxt/src/intervalxt/external/gmpxll"]
 	path = libintervalxt/intervalxt/external/gmpxxll
 	url = https://github.com/flatsurf/gmpxxll.git
+[submodule "libintervalxt/src/external/range-v3"]
+	path = libintervalxt/src/external/range-v3
+	url = https://github.com/ericniebler/range-v3.git

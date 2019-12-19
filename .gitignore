@@ -245,3 +245,6 @@ dmypy.json
 
 # nvim plugins
 .ccls-cache
+
+# build directories
+/*-build

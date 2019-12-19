@@ -18,53 +18,30 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
-#define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
+#ifndef LIBINTERVALXT_INTERVAL_HPP
+#define LIBINTERVALXT_INTERVAL_HPP
 
-#include <vector>
-#include <tuple>
+#include <list>
+#include <boost/operators.hpp>
 
-#include <gmpxx.h>
+#include "../../intervalxt/label.hpp"
 
-#include "../lengths.hpp"
-#include "../label.hpp"
+namespace intervalxt {
 
-namespace intervalxt::sample {
-  
-template <typename T>
-class Lengths {
- public:
-  Lengths();
-  explicit Lengths(const std::vector<T>&);
+struct Interval :
+  boost::equality_comparable<Interval>,
+  boost::equality_comparable<Interval, Label> {
+  explicit Interval(const Label label) : label(label) {}
 
-  template <typename ...L>
-  static auto make(L&&... values);
+  inline operator Label() const noexcept { return label; }
+  inline bool operator==(const Interval& rhs) const noexcept { return label == rhs.label; }
+  inline bool operator==(const Label rhs) const noexcept { return label == rhs; }
 
-  std::vector<Label> labels() const;
-
-  operator T() const;
-
-  void push(Label);
-  void pop();
-  void clear();
-  int cmp(Label) const;
-  int cmp(Label, Label) const;
-  void subtract(Label);
-  Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
-  std::string render(Label) const;
-  T get(Label) const;
-
- private:
-  T& at(Label);
-  const T& at(Label) const;
-
-  std::vector<Label> stack;
-  std::vector<T> lengths;
+  Label label;
+  typename std::list<Interval>::iterator twin;
 };
 
-}
+}  // namespace
 
-#include "detail/lengths.ipp"
 
 #endif
