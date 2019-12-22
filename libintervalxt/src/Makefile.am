@@ -3,13 +3,16 @@ lib_LTLIBRARIES = libintervalxt.la
 libintervalxt_la_SOURCES =                         \
 	rational_linear_subspace.cc                \
 	label.cc                                   \
-	interval_exchange_transformation.cc
-#	length_arithmetic/mpz_class.cc             \
-#	length_arithmetic/mpq_class.cc             \
-#	length_arithmetic/renf_elem_class.cc       \
-#	length_arithmetic/integral.cc              \
-#	id.cc                                      \
-#	external/unique-factory/unique_factory.hpp
+	interval_exchange_transformation.cc        \
+	dynamical_decomposition.cc                 \
+	component.cc                               \
+	lengths_with_connections.cc                \
+	component_state.cc                         \
+	connection.cc                              \
+	separatrix.cc                              \
+	half_edge.cc                               \
+	decomposition_step.cc                      \
+	decomposition_state.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
@@ -17,26 +20,6 @@ nobase_include_HEADERS =                                          \
 	../intervalxt/forward.hpp                                 \
 	../intervalxt/label.hpp                                   \
 	../intervalxt/interval_exchange_transformation.hpp        
-#	../intervalxt/detail/interval_exchange_transformation.ipp \
-#	../intervalxt/detail/dynamical_decomposition.ipp          \
-#	../intervalxt/detail/decomposition_step.ipp               \
-#	../intervalxt/detail/component.ipp                        \
-#	../intervalxt/detail/connection.ipp                       \
-#	../intervalxt/detail/maybe_connection.ipp                 \
-#	../intervalxt/detail/label.ipp                            \
-#	../intervalxt/detail/id.hpp                               \
-#	../intervalxt/length.hpp                                  \
-#	../intervalxt/detail/length.ipp                           \
-#	../intervalxt/cppyy.hpp                                   \
-#	../intervalxt/induction_step.hpp                          \
-#	../intervalxt/decomposition_step.hpp                      \
-#	../intervalxt/dynamical_decomposition.hpp                 \
-#	../intervalxt/component.hpp                               \
-#	../intervalxt/connection.hpp                              \
-#	../intervalxt/maybe_connection.hpp                        \
-#	../intervalxt/external/spimpl/spimpl.h                    \
-#	../intervalxt/external/gmpxxll/mpz_class.hpp              \
-#	../intervalxt/cereal.hpp
 
 $(builddir)/../intervalxt/intervalxt.hpp: $(srcdir)/../intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/../intervalxt

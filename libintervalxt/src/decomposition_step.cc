@@ -18,40 +18,33 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DETAIL_DECOMPOSITION_STEP_IPP
-#define LIBINTERVALXT_DETAIL_DECOMPOSITION_STEP_IPP
+#include <ostream>
 
-#include <cassert>
-#include <iostream>
-
-#include "../decomposition_step.hpp"
+#include "../intervalxt/decomposition_step.hpp"
 
 namespace intervalxt {
-template <typename Length>
-std::ostream& operator<<(std::ostream& os, const DecompositionStep<Length>& self) {
-  using Result = typename DecompositionStep<Length>::Result;
 
-  switch (self.result) {
+using std::ostream;
+
+ostream& operator<<(ostream& os, const DecompositionStep& self) {
+  using Result = DecompositionStep::Result;
+
+  switch(self.result) {
     case Result::LIMIT_REACHED:
       return os << "LIMIT_REACHED";
     case Result::CYLINDER:
-      if (self.additionalComponent) {
-        return os << "CYLINDER on " << *self.additionalComponent;
-      } else {
-        return os << "CYLINDER";
-      }
+      return os << "CYLINDER";
     case Result::SEPARATING_CONNECTION:
-      return os << "SEPARATING_CONNECTION after " << *self.connection << " giving " << *self.additionalComponent;
+      return os << "SEPARATING_CONNECTION(" << *self.connection << ", " << *self.additionalComponent << ")";
     case Result::NON_SEPARATING_CONNECTION:
-      return os << "NON_SEPARATING_CONNECTION after " << *self.connection;
-    case Result::WITHOUT_PERIODIC_TRAJECTORY:
-      return os << "WITHOUT_PERIODIC_TRAJECTORY";
+      return os << "NON_SEPARATING_CONNECTION(" << *self.connection << ")";
     case Result::KEANE:
       return os << "KEANE";
+    case Result::WITHOUT_PERIODIC_TRAJECTORY:
+      return os << "WITHOUT_PERIODIC_TRAJECTORY";
     default:
-      throw std::logic_error("impossible decomposition step state");
+      throw std::logic_error("invalid enum value");
   }
 }
-}  // namespace intervalxt
 
-#endif
+}

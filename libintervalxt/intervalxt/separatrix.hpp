@@ -18,32 +18,39 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_SEPARATRIX_HPP
+#define LIBINTERVALXT_SEPARATRIX_HPP
+
+#include <boost/operators.hpp>
+#include <iosfwd>
+
+#include "external/spimpl/spimpl.h"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+class Separatrix : boost::equality_comparable<Separatrix> {
+  // Separatrices can not be created directly (other than copying & moving them.)
+  // They are created in the process of a DynamicalDecomposition.
+  Separatrix();
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+ public:
+  // Whether the separatrix goes from bottom to top.
+  bool parallel() const noexcept;
+  // Whether the separatrix goes from top to bottom.
+  bool antiparallel() const noexcept;
+
+  bool operator==(const Separatrix&) const;
+
+  friend std::ostream& operator<<(std::ostream&, const Separatrix&);
+
+ private:
+  using Implementation = ::intervalxt::Implementation<Separatrix>;
+  spimpl::impl_ptr<Implementation> impl;
+  
+  friend Implementation;
 };
-
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
 
 }  // namespace intervalxt
 

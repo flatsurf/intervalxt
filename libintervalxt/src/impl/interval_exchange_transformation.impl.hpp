@@ -34,6 +34,9 @@ class Implementation<IntervalExchangeTransformation> {
  public:
   Implementation(std::shared_ptr<Lengths>, const std::vector<Label>&, const std::vector<Label>&);
 
+  static IntervalExchangeTransformation withLengths(const IntervalExchangeTransformation&, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>&);
+  static std::string render(const IntervalExchangeTransformation&, Label);
+
   // Return the translation vector for the label i
   // The output is a vector of mpq_class with respect to the irrational basis
   // used for the lengths of the iet.
@@ -45,6 +48,7 @@ class Implementation<IntervalExchangeTransformation> {
   std::list<Interval> bottom;
   std::shared_ptr<Lengths> lengths;
   const size_t degree;
+  bool swap = false;
 };
 
 }

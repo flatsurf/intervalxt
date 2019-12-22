@@ -91,7 +91,7 @@ bool IntervalExchangeTransformation::zorichInduction(void) {
     }
     
     lengths.push(*bottom);
-    if (lengths.cmp(*top) >= 1) {
+    if (lengths.cmp(*top) >= 0) {
       lengths.pop();
 
       // partial twist
@@ -146,6 +146,10 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
 InductionStep IntervalExchangeTransformation::induce(int limit) {
   using Result = InductionStep::Result;
 
+  if (size() == 1) {
+    return { Result::CYLINDER };
+  }
+
   bool foundSaddleConnection = false;
 
   for (int i = 0; limit == -1 || i < limit; i++) {
@@ -161,35 +165,16 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
   const Interval firstTop = *begin(impl->top);
   const Interval firstBottom = *begin(impl->bottom);
 
-  if (*firstTop.twin == firstBottom) {
-    // Found a cylinder
-    impl->top.erase(begin(impl->top));
-    impl->bottom.erase(begin(impl->bottom));
-
-    const Label cylinderLabel = firstTop;
-    std::optional<std::pair<Label, Label>> connection = {};
-    if (impl->top.size())
-      connection = std::pair(begin(impl->top)->label, begin(impl->bottom)->label);
-
-    return {
-        Result::CYLINDER,
-        connection,
-        {},
-        cylinderLabel,
-    };
-  }
-
   auto reducible = reduce();
   if (reducible) {
     return {
         Result::SEPARATING_CONNECTION,
-        std::pair(begin(reducible->impl->top)->label, begin(reducible->impl->bottom)->label),
+        std::pair(rbegin(impl->bottom)->label, rbegin(impl->top)->label),
         std::move(*reducible)};
   }
 
   if (impl->lengths->cmp(firstTop, firstBottom) == 0) {
-    // Found a saddle connection.
-    auto connection = std::pair((++begin(impl->top))->label, (++begin(impl->bottom))->label);
+    auto connection = std::pair(begin(impl->bottom)->label, begin(impl->top)->label);
 
     // We merge the labels on top and bottom by
     // replacing the top one with the bottom one.
@@ -233,8 +218,12 @@ vector<Label> IntervalExchangeTransformation::bottom() const noexcept {
 }
 
 void IntervalExchangeTransformation::swap() {
-  using std::swap;
-  swap(impl->top, impl->bottom);
+  impl->top.swap(impl->bottom);
+  impl->swap = not impl->swap;
+}
+
+bool IntervalExchangeTransformation::swapped() const noexcept {
+  return impl->swap;
 }
 
 size_t IntervalExchangeTransformation::size() const noexcept {
@@ -359,6 +348,14 @@ std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::transla
   }
 
   return translation;
+}
+
+IntervalExchangeTransformation Implementation<IntervalExchangeTransformation>::withLengths(const IntervalExchangeTransformation& iet, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>& createLengths) {
+  return IntervalExchangeTransformation(createLengths(iet.impl->lengths), iet.top(), iet.bottom());
+}
+
+std::string Implementation<IntervalExchangeTransformation>::render(const IntervalExchangeTransformation& iet, Label label) {
+  return iet.impl->lengths->render(label);
 }
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {

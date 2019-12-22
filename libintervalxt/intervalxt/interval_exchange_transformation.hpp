@@ -79,6 +79,9 @@ class IntervalExchangeTransformation :
   // Return the number of intervals in this interval exchange transformation.
   size_t size() const noexcept;
 
+  // Return whether swap() has been called an odd number of times.
+  bool swapped() const noexcept;
+
   bool operator==(const IntervalExchangeTransformation&) const;
 
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation&);
@@ -86,6 +89,8 @@ class IntervalExchangeTransformation :
  private:
   using Implementation = ::intervalxt::Implementation<IntervalExchangeTransformation>;
   spimpl::unique_impl_ptr<Implementation> impl;
+
+  friend Implementation;
 };
 
 }  // namespace intervalxt

@@ -26,38 +26,44 @@
 #include <utility>
 
 #include <boost/logic/tribool.hpp>
+#include <boost/operators.hpp>
 
 #include "external/spimpl/spimpl.h"
 
 #include "forward.hpp"
+#include "connection.hpp"
+#include "half_edge.hpp"
 
 namespace intervalxt {
 
-class Component {
+class Component : boost::equality_comparable<Component> {
   // Components can not be created directly (other than copying & moving them.)
-  // They are created as products of a DynamicalDecomposition.
+  // They are created in the process of a DynamicalDecomposition.
   Component();
 
  public:
-  using Boundary = std::list<Connection>;
+  using Side = std::variant<Connection, HalfEdge>;
 
   boost::logic::tribool cylinder() const noexcept;
   boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
   boost::logic::tribool keane() const noexcept;
 
-  /*
-  // TODO: What do we want here?
+  // The half edges that make up the top contour, left to right.
+  std::vector<HalfEdge> topContour() const;
+  // The half edges that make up the bottom contour, left to right.
+  std::vector<HalfEdge> bottomContour() const;
 
-  // The labels on the top, going from right to left.
-  std::vector<Label<Length>> top() const;
-  // The labels on the bottom, going from right to left.
-  std::vector<Label<Length>> bottom() const;
+  // Return a perimeter, walking around this component in counterclockwise order.
+  std::vector<Side> perimeter() const;
 
-  // The left boundaries of this component as a linked list going from "top to bottom."
-  std::vector<Boundary> left() const;
-  // The right boundaries of this component as a linked list going from "bottom to top."
-  std::vector<Boundary> right() const;
-  */
+  // The portion of the perimeter that is on the left end (from top to bottom.)
+  std::vector<Side> left() const;
+  // The portion of the perimeter that is on the right end (from bottom to top.)
+  std::vector<Side> right() const;
+  // The portion of the perimeter that is on the bottom (from left to right.)
+  std::vector<Side> bottom() const;
+  // The portion of the perimeter that is on the top (from right to left.)
+  std::vector<Side> top() const;
 
   DecompositionStep decompositionStep(int limit = -1);
 
@@ -69,12 +75,18 @@ class Component {
       },
       int limit = -1);
 
+  bool operator==(const Component& rhs) const;
+
   friend std::ostream& operator<<(std::ostream&, const Component&);
 
  private:
-  class Implementation;
+  using Implementation = ::intervalxt::Implementation<Component>;
   spimpl::impl_ptr<Implementation> impl;
+
+  friend Implementation;
 };
+
+std::ostream& operator<<(std::ostream&, const Component::Side&);
 
 }  // namespace intervalxt
 

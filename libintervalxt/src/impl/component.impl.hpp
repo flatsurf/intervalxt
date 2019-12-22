@@ -18,33 +18,35 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_COMPONENT_IMPL_HPP
+#define LIBINTERVALXT_COMPONENT_IMPL_HPP
+
+#include <memory>
+
+#include "../../intervalxt/component.hpp"
+
+#include "component_state.hpp"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+template <>
+class Implementation<Component> {
+ public:
+  Implementation(std::shared_ptr<DecompositionState>, ComponentState*);
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  static Component make(std::shared_ptr<DecompositionState>, ComponentState*);
+  static int boshernitzanCost(const IntervalExchangeTransformation&);
+  static std::vector<Component::Side> horizontal(const Component& component, bool top);
+  static void registerSeparating(Component& left, const Connection&, Component& right);
+  static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
+
+  const std::shared_ptr<DecompositionState> decomposition;
+  ComponentState& state;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+

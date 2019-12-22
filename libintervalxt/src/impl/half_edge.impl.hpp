@@ -18,33 +18,41 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_HALF_EDGE_IMPL_HPP
+#define LIBINTERVALXT_HALF_EDGE_IMPL_HPP
+
+#include <memory>
+
+#include "../../intervalxt/half_edge.hpp"
+#include "../../intervalxt/component.hpp"
+#include "../../intervalxt/label.hpp"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
+template <>
+class Implementation<HalfEdge> {
+ public:
+  enum class Contour {
+    TOP = -1,
+    BOTTOM = 1,
   };
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  Implementation(std::shared_ptr<DecompositionState>, const Component&, Label, Contour);
+
+  static HalfEdge make(std::shared_ptr<DecompositionState>, const Component&, Label, Contour);
+  static void check(const HalfEdge&);
+
+  std::shared_ptr<DecompositionState> decomposition;
+  Component component;
+  Label label;
+  Contour contour;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+
+
+

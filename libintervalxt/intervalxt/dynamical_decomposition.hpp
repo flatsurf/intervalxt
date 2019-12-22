@@ -34,8 +34,7 @@
 
 namespace intervalxt {
 
-// Frontend to a decomposition of an IntervalExchangeTransformation into
-// Components.
+// Frontend to decompose an IntervalExchangeTransformation into Components.
 class DynamicalDecomposition {
  public:
   DynamicalDecomposition(const IntervalExchangeTransformation&);
@@ -48,13 +47,13 @@ class DynamicalDecomposition {
       },
       int limit = -1);
 
-  std::vector<Component> components() const noexcept;
+  std::vector<Component> components() const;
 
   friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition&);
 
  private:
-  class Implementation;
-  spimpl::impl_ptr<Implementation> impl;
+  using Implementation = ::intervalxt::Implementation<DynamicalDecomposition>;
+  spimpl::unique_impl_ptr<Implementation> impl;
 };
 
 }  // namespace intervalxt

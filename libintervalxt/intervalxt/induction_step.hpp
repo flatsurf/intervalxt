@@ -24,6 +24,8 @@
 #include <optional>
 
 #include "forward.hpp"
+#include "label.hpp"
+#include "interval_exchange_transformation.hpp"
 
 namespace intervalxt {
 
@@ -40,7 +42,6 @@ struct InductionStep {
   Result result;
   std::optional<std::pair<Label, Label>> connection = {};
   std::optional<IntervalExchangeTransformation> additionalIntervalExchangeTransformation = {};
-  std::optional<Label> cylinder = {};
 };
 
 std::ostream& operator<<(std::ostream&, const InductionStep&);

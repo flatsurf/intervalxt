@@ -18,33 +18,35 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_COMPONENT_STATE_HPP
+#define LIBINTERVALXT_COMPONENT_STATE_HPP
+
+#include <vector>
+
+#include <boost/logic/tribool.hpp>
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
+#include "../../intervalxt/interval_exchange_transformation.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+using std::vector;
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+struct ComponentState {
+  ComponentState(IntervalExchangeTransformation&&);
+  
+  // TODO: I might be leaking memory here. Does this hold a reference to
+  // DecompositionState through the LengthsWithConnections? :(
+  // If so, then this must be stored in the DecompositionState itself.
+  IntervalExchangeTransformation iet;
+
+  boost::logic::tribool cylinder = boost::logic::indeterminate;
+  boost::logic::tribool withoutPeriodicTrajectory = boost::logic::indeterminate;
+  boost::logic::tribool keane = boost::logic::indeterminate;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+
+

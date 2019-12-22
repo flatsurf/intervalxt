@@ -18,11 +18,14 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_CONNECTION_HPP
-#define LIBINTERVALXT_CONNECTION_HPP
+#ifndef LIBINTERVALXT_HALF_EDGE_HPP
+#define LIBINTERVALXT_HALF_EDGE_HPP
+
+#include <functional>
+#include <list>
+#include <utility>
 
 #include <boost/operators.hpp>
-#include <iosfwd>
 
 #include "external/spimpl/spimpl.h"
 
@@ -30,28 +33,38 @@
 
 namespace intervalxt {
 
-class Connection : boost::equality_comparable<Connection> {
-  // Connections can not be created directly (other than copying & moving them.)
+class HalfEdge : boost::equality_comparable<HalfEdge> {
+  // HalfEdges can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
-  Connection();
+  HalfEdge();
 
  public:
-  Connection operator-() const noexcept;
+  Component component() const;
 
-  bool operator==(const Connection&) const noexcept;
+  // Whether this is a HalfEdge in the top contour.
+  bool top() const noexcept;
+  // Whether this is a HalfEdge in the bottom contour.
+  bool bottom() const noexcept;
 
-  // Whether the connection is going from bottom to top.
-  bool parallel() const noexcept;
-  // Whether the connection is going from top to bottom.
-  bool antiparallel() const noexcept;
+  // Return the equally labeled HalfEdge in the other contour.
+  HalfEdge operator-() const noexcept;
 
-  Separatrix source() const noexcept;
-  Separatrix target() const noexcept;
+  // Return the Separatrix following this HalfEdge (if this is not the last one.)
+  std::optional<Separatrix> separatrix() const;
 
-  friend std::ostream& operator<<(std::ostream&, const Connection&);
+  // Return the next HalfEdge in the contour (if this is not the last one.)
+  std::optional<HalfEdge> next() const;
+  // Return the previous HalfEdge in the contour (if this is not the first one.)
+  std::optional<HalfEdge> previous() const;
+
+  operator Label() const noexcept;
+
+  bool operator==(const HalfEdge& rhs) const;
+
+  friend std::ostream& operator<<(std::ostream&, const HalfEdge&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<Connection>;
+  using Implementation = ::intervalxt::Implementation<HalfEdge>;
   spimpl::impl_ptr<Implementation> impl;
 
   friend Implementation;
@@ -60,3 +73,4 @@ class Connection : boost::equality_comparable<Connection> {
 }  // namespace intervalxt
 
 #endif
+

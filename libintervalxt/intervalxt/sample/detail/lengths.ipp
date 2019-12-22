@@ -59,7 +59,7 @@ template <typename T>
 Lengths<T>::Lengths(const std::vector<T>& lengths) :
   stack(),
   lengths(lengths) {
-  assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length > 0; }) && "All Lengths must be positive.");
+  assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length > 0; }) && "all Lengths must be positive.");
 }
 
 template <typename T>
@@ -126,6 +126,7 @@ int Lengths<T>::cmp(Label lhs, Label rhs) const {
 template <typename T>
 void Lengths<T>::subtract(Label from) {
   at(from) -= static_cast<T>(*this);
+  assert(at(from) > 0 && "all lengths must be positive.");
   clear();
 }
 
@@ -152,6 +153,7 @@ Label Lengths<T>::subtractRepeated(Label from) {
 
     stop = label;
     at(from) -= at(label);
+    assert(at(from) > 0 && "all lengths must be positive.");
   }
 
   throw std::logic_error("Floor Division inconsistent with cmp()/subtract()");

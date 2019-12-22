@@ -18,33 +18,32 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_CONNECTION_IMPL_HPP
+#define LIBINTERVALXT_CONNECTION_IMPL_HPP
+
+#include <memory>
+
+#include "../../intervalxt/connection.hpp"
+#include "../../intervalxt/separatrix.hpp"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+template <>
+class Implementation<Connection> {
+ public:
+  Implementation(std::shared_ptr<DecompositionState>, const Separatrix& source, const Separatrix& target);
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  static Connection make(std::shared_ptr<DecompositionState>, const Separatrix& source, const Separatrix& target);
+
+  std::shared_ptr<DecompositionState> decomposition;
+  Separatrix source;
+  Separatrix target;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+
+

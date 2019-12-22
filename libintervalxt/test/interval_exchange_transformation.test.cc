@@ -223,10 +223,14 @@ TEST_CASE("Repeated Induction on an Interval Exchange Transformation", "[interva
     SECTION("But Obvious Cylinders Are Detected") {
       auto&& [lengths, a, b, c] = IntLengths::make(1, 2, 3);
       auto iet = IET(lengths, {a, b, c}, {a, c, b});
-      auto induce = iet.induce(0);
-      REQUIRE(induce.result == Result::CYLINDER);
-      REQUIRE(induce.cylinder == a);
-      REQUIRE(iet == IET(lengths, {b, c}, {c, b}));
+
+      auto step0 = iet.induce(0);
+      REQUIRE(step0.result == Result::SEPARATING_CONNECTION);
+      REQUIRE(*step0.additionalIntervalExchangeTransformation == IET(lengths, {b, c}, {c, b}));
+
+      auto step1 = iet.induce(0);
+      REQUIRE(step1.result == Result::CYLINDER);
+      REQUIRE(iet == IET(lengths, {a}, {a}));
     }
 
     SECTION("But Obvious Non-Separating Connections Are Detected") {
@@ -234,7 +238,7 @@ TEST_CASE("Repeated Induction on an Interval Exchange Transformation", "[interva
       auto iet = IET(lengths, {a, b, c}, {c, b, a});
       auto induce = iet.induce(0);
       REQUIRE(induce.result == Result::NON_SEPARATING_CONNECTION);
-      REQUIRE(*induce.connection == pair{ b, b });
+      REQUIRE(*induce.connection == pair{ c, a });
       REQUIRE(iet == IET(lengths, {b, c}, {b, c}));
     }
 
@@ -261,7 +265,7 @@ TEST_CASE("Repeated Induction on an Interval Exchange Transformation", "[interva
 
       auto step0 = iet.induce(0);
       REQUIRE(step0.result == Result::NON_SEPARATING_CONNECTION);
-      REQUIRE(*step0.connection == pair{b, a});
+      REQUIRE(*step0.connection == pair{c, a});
 
       auto step1 = iet.induce(0);
       REQUIRE(step1.result == Result::NON_SEPARATING_CONNECTION);

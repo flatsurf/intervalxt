@@ -28,7 +28,7 @@
 #include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/any.hpp>
 
-#include "label.hpp"
+#include "forward.hpp"
 #include "length.hpp"
 
 namespace intervalxt {

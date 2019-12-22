@@ -18,33 +18,29 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_IMPL_HPP
+#define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_IMPL_HPP
+
+#include <memory>
+
+#include "../../intervalxt/dynamical_decomposition.hpp"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+template <>
+class Implementation<DynamicalDecomposition> {
+ public:
+  Implementation(const IntervalExchangeTransformation&);
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  static Component createComponent(std::shared_ptr<DecompositionState>, Component& left, const Connection&, IntervalExchangeTransformation&& right);
+  static Component createComponent(std::shared_ptr<DecompositionState>, IntervalExchangeTransformation&&);
+  static std::string render(std::shared_ptr<DecompositionState>, Label);
+
+  std::shared_ptr<DecompositionState> decomposition;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif

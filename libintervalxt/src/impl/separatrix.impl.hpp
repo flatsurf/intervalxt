@@ -18,33 +18,42 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_SEPARATRIX_IMPL_HPP
+#define LIBINTERVALXT_SEPARATRIX_IMPL_HPP
+
+#include <memory>
+
+#include "../../intervalxt/label.hpp"
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
+#include "../../intervalxt/separatrix.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
+template <>
+class Implementation<Separatrix> {
+ public:
+  enum class Orientation {
+    PARALLEL = -1,
+    ANTIPARALLEL = 1,
   };
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+  Implementation(std::shared_ptr<DecompositionState>, Label, Orientation);
+
+  static Separatrix make(std::shared_ptr<DecompositionState>, Label, Orientation);
+
+  // Return the top separatrix that connections created right of the label would report now.
+  static Separatrix atTop(std::shared_ptr<DecompositionState>, Label);
+  // Return the bottom separatrix that connections created right of the label would report now.
+  static Separatrix atBottom(std::shared_ptr<DecompositionState>, Label);
+
+  const std::shared_ptr<DecompositionState> decomposition;
+  Label label;
+  Orientation orientation;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+
+

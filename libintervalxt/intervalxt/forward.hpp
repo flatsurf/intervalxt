@@ -38,13 +38,15 @@ class DynamicalDecomposition;
 
 class Component;
 
+class HalfEdge;
+
+class Separatrix;
+
 struct DecompositionStep;
 
 struct InductionStep;
 
 class Connection;
-
-class MaybeConnection;
 
 template <typename T>
 class Implementation;

@@ -18,33 +18,19 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#include <algorithm>
 
-#include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
+#include "../intervalxt/interval_exchange_transformation.hpp"
+#include "../intervalxt/connection.hpp"
+
+#include "impl/component_state.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+using std::begin;
+using std::end;
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
-};
+ComponentState::ComponentState(IntervalExchangeTransformation&& iet) :
+  iet(std::move(iet)) {}
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
-
-#endif
+}

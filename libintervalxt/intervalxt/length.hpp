@@ -27,6 +27,8 @@
 #include <boost/type_erasure/operators.hpp>
 #include <boost/type_erasure/any.hpp>
 
+#include "forward.hpp"
+
 namespace intervalxt {
 
 // Arguably, this is a bit incomplete. One could imagine more relevant

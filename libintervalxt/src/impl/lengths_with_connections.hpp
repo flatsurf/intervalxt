@@ -18,33 +18,47 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_LENGTHS_WITH_CONNECTIONS_HPP
+#define LIBINTERVALXT_LENGTHS_WITH_CONNECTIONS_HPP
+
+#include <memory>
+#include <vector>
+#include <string>
+
+#include <gmpxx.h>
 
 #include "forward.hpp"
-#include "connection.hpp"
-#include "component.hpp"
+#include "../intervalxt/label.hpp"
+#include "../../intervalxt/lengths.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY,
-    KEANE,
-  };
+class LengthsWithConnections {
+ public:
+  LengthsWithConnections(std::shared_ptr<Lengths>, std::shared_ptr<DecompositionState>);
+ 
+  void push(Label);
+  void pop();
+  void subtract(Label);
+  Label subtractRepeated(Label);
+  std::vector<mpq_class> coefficients(Label) const;
+  int cmp(Label) const;
+  int cmp(Label, Label) const;
+  Length get(Label) const;
+  std::string render(Label) const;
 
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<Component> additionalComponent = {};
+ private:
+  void subtract(Label minuend, Label subtrahend);
+
+  const std::shared_ptr<Lengths> lengths;
+  const std::shared_ptr<DecompositionState> decomposition;
+
+  std::vector<Label> stack;
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif
+
+
+
