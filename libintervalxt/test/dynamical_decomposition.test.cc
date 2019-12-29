@@ -21,7 +21,7 @@
 #include <e-antic/renfxx.h>
 #include <boost/logic/tribool.hpp>
 
-#include "catch.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"

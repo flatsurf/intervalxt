@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include "external/catch2/include/catch.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 #include "../src/impl/rational_linear_subspace.hpp"
 

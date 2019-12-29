@@ -22,7 +22,7 @@
 
 #include <e-antic/renfxx.h>
 
-#include "external/catch2/include/catch.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
