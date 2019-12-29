@@ -36,7 +36,13 @@ template <typename S, typename _ = void>
 struct Arithmetic {
   using T = S;
 
-  static std::vector<mpq_class> coefficients(const T& value) { return std::vector<mpq_class>{value}; }
+  static std::vector<mpq_class> coefficients(const T& value) {
+    if constexpr(std::is_same_v<T, long long> || std::is_same_v<T, unsigned long long>) {
+      return std::vector<mpq_class>{mpq_class(boost::lexical_cast<std::string>(value))};
+    } else {
+      return std::vector<mpq_class>{value};
+    }
+  }
   static auto floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
 
