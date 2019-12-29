@@ -32,12 +32,12 @@ namespace intervalxt {
 class Label : public boost::equality_comparable<Label> {
  public:
   Label();
-  explicit Label(int id);
+  explicit Label(size_t id);
 
   bool operator==(const Label&) const noexcept;
 
  private:
-  int id;
+  size_t id;
 
   friend std::hash<Label>;
 };

@@ -24,9 +24,9 @@
 
 namespace intervalxt {
 
-Label::Label() : id(static_cast<int>(random())) {}
+Label::Label() : id(static_cast<size_t>(random())) {}
 
-Label::Label(int id) : id(id) {}
+Label::Label(size_t id) : id(id) {}
 
 bool Label::operator==(const Label& rhs) const noexcept { return id == rhs.id; }
 
@@ -37,7 +37,7 @@ namespace std {
 using namespace intervalxt;
 
 size_t hash<Label>::operator()(const Label& self) const noexcept {
-  return static_cast<size_t>(self.id);
+  return self.id;
 }
 
 
