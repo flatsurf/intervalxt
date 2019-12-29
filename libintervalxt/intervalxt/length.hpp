@@ -23,8 +23,8 @@
 
 #include <string>
 
-#include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/operators.hpp>
+#include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/any.hpp>
 
 #include "forward.hpp"

@@ -24,6 +24,7 @@
 #include <type_traits>
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
 #include <gmpxx.h>
 
 namespace intervalxt::sample {

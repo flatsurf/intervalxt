@@ -16,10 +16,28 @@ libintervalxt_la_SOURCES =                         \
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
-nobase_include_HEADERS =                                          \
+nobase_pkginclude_HEADERS =                                       \
+	../intervalxt/cereal.hpp                                  \
+	../intervalxt/component.hpp                               \
+	../intervalxt/connection.hpp                              \
+	../intervalxt/cppyy.hpp                                   \
+	../intervalxt/decomposition_step.hpp                      \
+	../intervalxt/dynamical_decomposition.hpp                 \
+	../intervalxt/external/spimpl/spimpl.h                    \
+	../intervalxt/external/gmpxxll/mpz_class.hpp              \
 	../intervalxt/forward.hpp                                 \
+	../intervalxt/half_edge.hpp                               \
+	../intervalxt/induction_step.hpp                          \
+	../intervalxt/interval_exchange_transformation.hpp        \
 	../intervalxt/label.hpp                                   \
-	../intervalxt/interval_exchange_transformation.hpp        
+	../intervalxt/length.hpp                                  \
+	../intervalxt/lengths.hpp                                 \
+	../intervalxt/length_with_coefficients.hpp                \
+	../intervalxt/separatrix.hpp                              \
+	../intervalxt/sample/arithmetic.hpp                       \
+	../intervalxt/sample/e-antic-arithmetic.hpp               \
+	../intervalxt/sample/exact-real-arithmetic.hpp            \
+	../intervalxt/sample/rational-arithmetic.hpp
 
 $(builddir)/../intervalxt/intervalxt.hpp: $(srcdir)/../intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/../intervalxt
