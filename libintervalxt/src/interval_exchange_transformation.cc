@@ -204,10 +204,12 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
 }
 
 IntervalExchangeTransformation::IntervalExchangeTransformation() :
-  IntervalExchangeTransformation(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>()) {}
+  impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
 
 IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
-  impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {}
+  impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
+  ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
+}
 
 vector<Label> IntervalExchangeTransformation::top() const noexcept {
   return impl->top | transform([](auto& i) { return i.label; }) | to<vector<Label>>();
@@ -307,7 +309,6 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
   lengths(std::move(lengths)),
   degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
   ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
-  ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
 
   ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
 
