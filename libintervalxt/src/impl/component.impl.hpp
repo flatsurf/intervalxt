@@ -41,6 +41,9 @@ class Implementation<Component> {
   static std::vector<Component::Side> horizontal(const Component& component, bool top);
   static void registerSeparating(Component& left, const Connection&, Component& right);
   static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
+  static std::optional<HalfEdge> previous(const Component&, const HalfEdge&);
+
+  static std::shared_ptr<DecompositionState> parent(const Component&);
 
   const std::shared_ptr<DecompositionState> decomposition;
   ComponentState& state;

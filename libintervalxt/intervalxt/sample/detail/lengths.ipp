@@ -59,7 +59,7 @@ template <typename T>
 Lengths<T>::Lengths(const std::vector<T>& lengths) :
   stack(),
   lengths(lengths) {
-  assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length > 0; }) && "all Lengths must be positive.");
+  assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length >= 0; }) && "all Lengths must be non-negative");
 }
 
 template <typename T>

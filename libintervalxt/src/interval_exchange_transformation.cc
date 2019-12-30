@@ -324,6 +324,7 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
   }
 
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return this->lengths->coefficients(label).size() == degree; }), "Degrees of elements over Q do not match.");
+  ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
 std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::coefficients(Label label) const {

@@ -20,6 +20,7 @@
 
 #include <ostream>
 #include <vector>
+#include <variant>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/logic/tribool.hpp>
@@ -89,12 +90,12 @@ vector<Component::Side> Component::perimeter() const {
 
 vector<HalfEdge> Component::topContour() const {
   return shared(impl->state.iet.top())
-    | transform([&](const auto& label) { return ::intervalxt::Implementation<HalfEdge>::make(impl->decomposition, *this, label, Contour::TOP); });
+    | transform([&](const auto& label) { return HalfEdge(*this, label); });
 }
 
 vector<HalfEdge> Component::bottomContour() const {
   return shared(impl->state.iet.bottom())
-    | transform([&](const auto& label) { return ::intervalxt::Implementation<HalfEdge>::make(impl->decomposition, *this, label, Contour::BOTTOM); });
+    | transform([&](const auto& label) { return -HalfEdge(*this, label); });
 }
 
 vector<Component::Side> Component::left() const {
@@ -183,13 +184,11 @@ DecompositionStep Component::decompositionStep(int limit) {
         ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
 
       // Register the new connection right of b.
-      bottom.at(b).right
-        .push_back(connection);
-      bottom.at(*begin(impl->state.iet.bottom())).left
-        .push_back(-connection);
+      bottom.at(b).right.push_back(connection);
+      top.at(*begin(impl->state.iet.top())).left.push_front(-connection);
 
       // The label t has been eliminated by moving the initial section to
-      // where t is in the bottom contour. Beforre we perform this move of
+      // where t is in the bottom contour. Before we perform this move of
       // connections, make sure no connections are associated to t anymore.
       bottom.at(b).left.splice(end(bottom.at(b).left), top.at(t).left);
       bottom.at(b).right.splice(end(bottom.at(b).right), top.at(t).right);
@@ -227,6 +226,52 @@ bool Component::decompose(std::function<bool(const Component&)> target, int limi
   return not limitReached;
 }
 
+void Component::inject(const HalfEdge& at, const vector<std::pair<Label, Label>>& left_, const vector<std::pair<Label, Label>>& right_) {
+  using Orientation = ::intervalxt::Implementation<Separatrix>::Orientation;
+
+  auto& state = impl->decomposition;
+
+  state->check();
+
+  const bool top = at.top();
+
+  auto & connections = top ? state->top.at(at) : state->bottom.at(at);
+
+  // Inject left connections.
+  {
+    auto left = left_;
+
+    if (top) std::reverse(left.begin(), left.end());
+
+    ASSERT(left.empty() || connections.left.empty(), "cannot inject into a component with existing connections");
+
+    for (const auto& [source, target] : left) {
+      auto connection = ::intervalxt::Implementation<Connection>::make(state,
+        ::intervalxt::Implementation<Separatrix>::make(state, top ? target : source, Orientation::ANTIPARALLEL),
+        ::intervalxt::Implementation<Separatrix>::make(state, top ? source : target, Orientation::PARALLEL));
+      connections.left.push_back(connection);
+    }
+  }
+
+  // Inject right connections.
+  {
+    auto right = right_;
+
+    if (top) std::reverse(right.begin(), right.end());
+
+    ASSERT(right.empty() || connections.right.empty(), "cannot inject into a component with existing connections");
+
+    for (const auto& [source, target] : right) {
+      auto connection = ::intervalxt::Implementation<Connection>::make(state,
+        ::intervalxt::Implementation<Separatrix>::make(state, top ? target : source, Orientation::PARALLEL),
+        ::intervalxt::Implementation<Separatrix>::make(state, top ? source : target, Orientation::ANTIPARALLEL));
+      connections.right.push_back(connection);
+    }
+  }
+
+  state->check();
+}
+
 Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
   decomposition(decomposition),
   state(*state) {}
@@ -242,15 +287,12 @@ vector<Component::Side> Implementation<Component>::horizontal(const Component& c
 
   const auto add = [&](const Connection& connection) {
     assert(not contour.empty());
-    // TODO
-    /*
     if (auto last = std::get_if<Connection>(&*rbegin(contour))) {
       if (*last == -connection) {
         contour.pop_back();
         return;
       }
     }
-    */
     contour.push_back(connection);
   };
 
@@ -277,12 +319,26 @@ int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransforma
   return 1;
 }
 
+std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Component& self) {
+  return self.impl->decomposition;
+}
+
 std::optional<HalfEdge> Implementation<Component>::next(const Component& self, const HalfEdge& edge) {
   auto contour = edge.top() ? self.impl->state.iet.top() : self.impl->state.iet.bottom();
   auto pos = find(contour, static_cast<Label>(edge));
   ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
   if (++pos == end(contour)) return {};
-  return Implementation<HalfEdge>::make(self.impl->decomposition, self, *pos, edge.top() ? Implementation<HalfEdge>::Contour::TOP : Implementation<HalfEdge>::Contour::BOTTOM);
+  HalfEdge next = HalfEdge(self, *pos);
+  return edge.top() ? next : -next;
+}
+
+std::optional<HalfEdge> Implementation<Component>::previous(const Component& self, const HalfEdge& edge) {
+  auto contour = edge.top() ? self.impl->state.iet.top() : self.impl->state.iet.bottom();
+  auto pos = find(contour, static_cast<Label>(edge));
+  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
+  if (pos == begin(contour)) return {};
+  HalfEdge previous = HalfEdge(self, *--pos);
+  return edge.top() ? previous : -previous;
 }
 
 void Implementation<Component>::registerSeparating(Component& left, const Connection& connection, Component& right) {

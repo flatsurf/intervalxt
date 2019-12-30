@@ -75,6 +75,10 @@ class Component : boost::equality_comparable<Component> {
       },
       int limit = -1);
 
+  // Insert (artificial) connections left and right of the given half edge. The
+  // labels specify the source and target separatrices of the new connections.
+  void inject(const HalfEdge&, const std::vector<std::pair<Label, Label>>& left, const std::vector<std::pair<Label, Label>>& right);
+
   bool operator==(const Component& rhs) const;
 
   friend std::ostream& operator<<(std::ostream&, const Component&);

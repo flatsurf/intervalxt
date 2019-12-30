@@ -41,7 +41,6 @@ class Implementation<HalfEdge> {
 
   Implementation(std::shared_ptr<DecompositionState>, const Component&, Label, Contour);
 
-  static HalfEdge make(std::shared_ptr<DecompositionState>, const Component&, Label, Contour);
   static void check(const HalfEdge&);
 
   std::shared_ptr<DecompositionState> decomposition;

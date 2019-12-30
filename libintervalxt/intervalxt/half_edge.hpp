@@ -34,11 +34,11 @@
 namespace intervalxt {
 
 class HalfEdge : boost::equality_comparable<HalfEdge> {
-  // HalfEdges can not be created directly (other than copying & moving them.)
-  // They are created in the process of a DynamicalDecomposition.
-  HalfEdge();
-
  public:
+  // TODO: This might make sense in more places: Allow people to directly create these objects.
+  // The top half edge with the given label.
+  HalfEdge(const Component&, const Label&);
+
   Component component() const;
 
   // Whether this is a HalfEdge in the top contour.
@@ -49,7 +49,9 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
   // Return the equally labeled HalfEdge in the other contour.
   HalfEdge operator-() const noexcept;
 
-  // Return the Separatrix following this HalfEdge (if this is not the last one.)
+  // Return the Separatrix following this HalfEdge (if this is not the last one)
+  // the name of this half edge after skipping over all the collapsed
+  // connections at its right hand end.
   std::optional<Separatrix> separatrix() const;
 
   // Return the next HalfEdge in the contour (if this is not the last one.)

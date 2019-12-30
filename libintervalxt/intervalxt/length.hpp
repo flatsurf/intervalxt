@@ -31,6 +31,18 @@
 
 namespace intervalxt {
 
+template<class T = boost::type_erasure::_self>
+struct boolable { static bool apply(const T& arg) { return static_cast<bool>(arg); } };
+
+}
+
+template<class T, class Base>
+struct boost::type_erasure::concept_interface<intervalxt::boolable<T>, Base, T> : Base {
+  explicit operator bool() const { return ::boost::type_erasure::call(intervalxt::boolable<T>(), *this); }
+};
+
+namespace intervalxt {
+
 // Arguably, this is a bit incomplete. One could imagine more relevant
 // operations here but we want the implementation to rely on Lengths and not on
 // Length.
@@ -39,6 +51,7 @@ using LengthInterface = boost::mpl::vector<
   boost::type_erasure::equality_comparable<>,
   boost::type_erasure::less_than_comparable<>,
   boost::type_erasure::ostreamable<>,
+  intervalxt::boolable<>,
   boost::type_erasure::typeid_<>,
   boost::type_erasure::relaxed
 >;

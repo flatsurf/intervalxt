@@ -37,9 +37,9 @@ namespace intervalxt {
 using std::ostream;
 using Contour = Implementation<HalfEdge>::Contour;
 
-HalfEdge::HalfEdge() :
-  // We assume that the caller is aware that impl needs to be set manually.
-  impl(nullptr) {}
+HalfEdge::HalfEdge(const Component& component, const Label& label) :
+  impl(spimpl::make_impl<Implementation>(::intervalxt::Implementation<Component>::parent(component), component, label, Contour::TOP)) {
+}
 
 Component HalfEdge::component() const {
   Implementation::check(*this);
@@ -56,7 +56,9 @@ bool HalfEdge::bottom() const noexcept {
 
 HalfEdge HalfEdge::operator-() const noexcept {
   Implementation::check(*this);
-  return Implementation::make(impl->decomposition, impl->component, impl->label, top() ? Contour::BOTTOM : Contour::TOP);  
+  HalfEdge ret = *this;
+  ret.impl->contour = ret.impl->contour == Contour::BOTTOM ? Contour::TOP : Contour::BOTTOM;
+  return ret;
 }
 
 std::optional<Separatrix> HalfEdge::separatrix() const {
@@ -70,6 +72,10 @@ std::optional<Separatrix> HalfEdge::separatrix() const {
 
 std::optional<HalfEdge> HalfEdge::next() const {
   return ::intervalxt::Implementation<Component>::next(impl->component, *this);
+}
+
+std::optional<HalfEdge> HalfEdge::previous() const {
+  return ::intervalxt::Implementation<Component>::previous(impl->component, *this);
 }
 
 HalfEdge::operator Label() const noexcept {
@@ -94,12 +100,6 @@ void Implementation<HalfEdge>::check(const HalfEdge& self) {
       return std::find(begin(bottom), end(bottom), self) != end(bottom);
     }
   }(), "half edge " << self << " is not in the component for which it was created anymore");
-}
-
-HalfEdge Implementation<HalfEdge>::make(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) {
-  HalfEdge edge;
-  edge.impl = spimpl::make_impl<Implementation>(decomposition, component, label, contour);
-  return edge;
 }
 
 Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) :

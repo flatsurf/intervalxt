@@ -194,7 +194,6 @@ TEST_CASE("Decomposition of Nested Cylinders") {
   auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c}, {c, b, a});
   auto decomposition = DynamicalDecomposition(iet);
 
-
   REQUIRE(decomposition.components().size() == 1);
 
   SECTION("Manual Decomposition") {
@@ -243,6 +242,29 @@ TEST_CASE("Decomposition of Nested Cylinders") {
     REQUIRE(lexical_cast<string>(decomposition.components()[0]) == "[b] [b+ ⚯ b-] -[b] [a- ⚯ c+]");
     REQUIRE(lexical_cast<string>(decomposition.components()[1]) == "[c] [c+ ⚯ a-] -[c] [b- ⚯ b+]");
   }
+}
+
+TEST_CASE("Decomposition With Injected Connections") {
+  using IntLengths = sample::Lengths<int>;
+
+  auto&& [lengths, a, b, c, d, e, f] = IntLengths::make(1, 1, 0, 0, 0, 0);
+  auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a});
+  auto decomposition = DynamicalDecomposition(iet);
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  auto component = decomposition.components()[0];
+
+  component.inject(HalfEdge(component, a), {{a, c}, {e, f}, {d, a}}, {{a, d}});
+  component.inject(HalfEdge(component, b), {{b, e}}, {});
+  component.inject(-HalfEdge(component, b), {}, {{b, e}, {e, f}});
+  component.inject(-HalfEdge(component, a), {}, {{a, c}});
+
+  REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [a] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d+ ⚯ a-] -[a] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
+
+  component.decompose();
+
+  REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [f+ ⚯ d-] [d+ ⚯ a-] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d- ⚯ f+] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
 }
 
 }  // namespace intervalxt::test

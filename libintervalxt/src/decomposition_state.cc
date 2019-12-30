@@ -28,8 +28,11 @@
 
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/connection.hpp"
+#include "../intervalxt/separatrix.hpp"
 
 #include "impl/decomposition_state.hpp"
+
+#include "util/assert.ipp"
 
 namespace intervalxt {
 
@@ -38,6 +41,33 @@ using boost::algorithm::join;
 using ranges::view::transform;
 using ranges::view::filter;
 using ranges::to;
+
+void DecompositionState::check() const {
+  std::unordered_map<Separatrix, std::vector<Connection>> connections;
+
+  for (const auto& topbottom : { top, bottom }) {
+    for (const auto& [label, leftright] : topbottom) {
+      const auto& [left, right] = leftright;
+      for (const auto& connection : left) {
+        ASSERT(connection.antiparallel(), "left connection must be antiparallel, i.e., going from top to bottom");
+        connections[connection.source()].push_back(connection);
+        connections[connection.target()].push_back(connection);
+      }
+      for (const auto& connection : right) {
+        ASSERT(connection.parallel(), "right connection must be parallel, i.e., going from bottom to top");
+        connections[connection.source()].push_back(connection);
+        connections[connection.target()].push_back(connection);
+      }
+    }
+  }
+
+  for (const auto& [separatrix, atSeparatrix] : connections) {
+    ASSERT(atSeparatrix.size() <= 2, "Only a single connection may begin at separatrix " << separatrix);
+    if (atSeparatrix.size() == 2) {
+      ASSERT(atSeparatrix[0] == -atSeparatrix[1], "Connections at separatrix " << separatrix << " do not match; found " << atSeparatrix[0] << " and " << atSeparatrix[1]);
+    }
+  }
+}
 
 ostream& operator<<(ostream& os, const DecompositionState& self) {
   const auto& render = [&](const auto& state) {

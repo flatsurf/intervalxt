@@ -95,3 +95,14 @@ ostream& operator<<(ostream& os, const Separatrix& self) {
 }
 
 }
+
+namespace std {
+
+using namespace intervalxt;
+
+size_t hash<Separatrix>::operator()(const Separatrix& self) const noexcept {
+  size_t hash = std::hash<Label>()(self.impl->label);
+  return self.parallel() ? hash : -hash;
+}
+
+}

@@ -44,11 +44,9 @@ using std::unordered_map;
 
 struct DecompositionState {
   struct HalfEdgeConnections {
-    // Connections to the left of this half edge, from top to bottom. The half
-    // edge is attached at the top of these connections.
+    // Connections to the left of this half edge, from bottom to top.
     list<Connection> left;
-    // Connections to the right of this half edge, from bottom to top. The half
-    // edge is attached at the bottom of these connections.
+    // Connections to the right of this half edge, from bottom to top.
     list<Connection> right;
   };
 
@@ -57,6 +55,8 @@ struct DecompositionState {
   unordered_map<Label, HalfEdgeConnections> top;
   // Previously detected connections attached to bottom half edges.
   unordered_map<Label, HalfEdgeConnections> bottom;
+
+  void check() const;
 
   friend std::ostream& operator<<(std::ostream&, const DecompositionState&);
 };
