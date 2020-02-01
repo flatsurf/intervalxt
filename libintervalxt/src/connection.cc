@@ -33,9 +33,8 @@ Connection Connection::operator-() const noexcept {
 }
 
 bool Connection::operator==(const Connection& rhs) const noexcept {
-  return impl->decomposition == rhs.impl->decomposition
-    && impl->source == rhs.impl->source
-    && impl->target == rhs.impl->target;
+  // TODO: We currently identify separatrices on different decompositions. That's necessary for flatsurf to work because the lengths are not shared between IET's there.
+  return impl->source == rhs.impl->source && impl->target == rhs.impl->target;
 }
 
 bool Connection::parallel() const noexcept {

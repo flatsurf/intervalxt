@@ -44,9 +44,9 @@ using std::unordered_map;
 
 struct DecompositionState {
   struct HalfEdgeConnections {
-    // Connections to the left of this half edge, from bottom to top.
+    // Connections to the left of this half edge, from bottom to top, each oriented from top to bottom.
     list<Connection> left;
-    // Connections to the right of this half edge, from bottom to top.
+    // Connections to the right of this half edge, from bottom to top, each oriented from bottom to top.
     list<Connection> right;
   };
 

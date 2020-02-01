@@ -154,14 +154,19 @@ DecompositionStep Component::decompositionStep(int limit) {
       return DecompositionStep{ DecompositionResult::CYLINDER, };
     case InductionResult::SEPARATING_CONNECTION:
     {
+      auto [b, t] = *step.connection;
+
+      auto equivalent = impl->walkClockwise(-HalfEdge(*this, *rbegin(bottomContour())), HalfEdge(*this, *rbegin(topContour())));
+
       auto connection = ::intervalxt::Implementation<Connection>::make(
         impl->decomposition,
-        ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, step.connection->first),
-        ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, step.connection->second));
+        ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
+        ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
       auto right = ::intervalxt::Implementation<DynamicalDecomposition>::createComponent(impl->decomposition, *this, connection, std::move(*step.additionalIntervalExchangeTransformation));
       return {
         DecompositionResult::SEPARATING_CONNECTION,
         connection,
+        equivalent,
         right
       };
     }
@@ -210,7 +215,8 @@ DecompositionStep Component::decompositionStep(int limit) {
 
       return {
         DecompositionResult::NON_SEPARATING_CONNECTION,
-        connection
+        connection,
+        equivalent
       };
     }
     case InductionResult::WITHOUT_PERIODIC_TRAJECTORY:
@@ -301,8 +307,8 @@ Component Implementation<Component>::make(std::shared_ptr<DecompositionState> de
   return component;
 }
 
-vector<Component::Side> Implementation<Component>::horizontal(const Component& component, bool top) {
-  vector<Component::Side> contour;
+vector<Side> Implementation<Component>::horizontal(const Component& component, bool top) {
+  vector<Side> contour;
 
   const auto add = [&](const Connection& connection) {
     assert(not contour.empty());
@@ -340,6 +346,75 @@ int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransforma
 
 std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Component& self) {
   return self.impl->decomposition;
+}
+
+// TODO: Walk counterclockwise instead. This would be much easier since cross()
+// is counterclockwise. Then above, do not return equivalent but -equivalent.
+std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge to) const {
+  ASSERT(from.component() == to.component(), "Cannot walk between components");
+
+  const auto& component = from.component();
+
+  std::list<Side> connections;
+
+  if (from.bottom() && to.top()) {
+    connections.splice(end(connections), walkClockwise(from, *begin(component.bottomContour())));
+    connections.splice(end(connections), walkClockwise(*begin(component.topContour()), to));
+  } else if (from.top() && to.bottom()) {
+    connections.splice(end(connections), walkClockwise(from, *rbegin(component.topContour())));
+    connections.splice(end(connections), walkClockwise(*rbegin(component.bottomContour()), to));
+  } else if (from.top() && to.top()) {
+    while(true) {
+      auto cross = from.cross();
+
+      std::reverse(begin(cross), end(cross));
+
+      for (auto& side : cross)
+        if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
+          side = -*connection;
+        } else {
+          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          ;
+        }
+       
+      connections.splice(end(connections), cross);
+
+      if (from == to) {
+        break;
+      } else if (!from.next()) {
+        connections.splice(end(connections), walkClockwise(*rbegin(component.bottomContour()), to));
+        break;
+      } else {
+        from = *from.next();
+      }
+    }
+  } else if (from.bottom() && to.bottom()) {
+    while (true) {
+      auto cross = from.cross();
+      std::reverse(begin(cross), end(cross));
+
+      for (auto& side : cross)
+        if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
+          side = -*connection;
+        } else {
+          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          ;
+        }
+       
+      connections.splice(end(connections), cross);
+
+      if (from == to) {
+        break;
+      } else if (!from.previous()) {
+        connections.splice(end(connections), walkClockwise(*begin(component.topContour()), to));
+        break;
+      } else {
+        from = *from.previous();
+      }
+    }
+  }
+
+  return connections;
 }
 
 std::optional<HalfEdge> Implementation<Component>::next(const Component& self, const HalfEdge& edge) {

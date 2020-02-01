@@ -12,12 +12,12 @@ libintervalxt_la_SOURCES =                         \
 	separatrix.cc                              \
 	half_edge.cc                               \
 	decomposition_step.cc                      \
+	induction_step.cc                          \
 	decomposition_state.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
 nobase_pkginclude_HEADERS =                                       \
-	../intervalxt/cereal.hpp                                  \
 	../intervalxt/component.hpp                               \
 	../intervalxt/connection.hpp                              \
 	../intervalxt/cppyy.hpp                                   \

@@ -66,7 +66,7 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
 
 }
 
-bool IntervalExchangeTransformation::zorichInduction(void) {
+bool IntervalExchangeTransformation::zorichInduction() {
   const auto top = begin(impl->top);
   auto bottom = begin(impl->bottom);
   auto& lengths = *impl->lengths;
@@ -319,7 +319,7 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
     }
   }
 
-  ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return this->lengths->coefficients(label).size() == degree; }), "Degrees of elements over Q do not match.");
+  ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return this->lengths->coefficients(label).size() == degree; }), "Degrees of elements over Q do not match; expected " << degree);
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 

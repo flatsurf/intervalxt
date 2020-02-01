@@ -55,7 +55,6 @@ bool HalfEdge::bottom() const noexcept {
 }
 
 HalfEdge HalfEdge::operator-() const noexcept {
-  Implementation::check(*this);
   HalfEdge ret = *this;
   ret.impl->contour = ret.impl->contour == Contour::BOTTOM ? Contour::TOP : Contour::BOTTOM;
   return ret;
@@ -90,6 +89,39 @@ bool HalfEdge::operator==(const HalfEdge& rhs) const {
   return false;
 }
 
+std::list<Side> HalfEdge::cross() const {
+  std::list<Side> connections;
+  if (top()) {
+    for (auto connection : right())
+      connections.push_back(connection);
+    connections.push_back(*this);
+    auto pos = end(connections);
+    for (auto connection : left())
+      pos = connections.insert(pos, connection);
+  } else {
+    for (auto connection : left())
+      connections.push_front(connection);
+    connections.push_back(*this);
+    for (auto connection : right())
+      connections.push_back(connection);
+  }
+  return connections;
+}
+
+std::list<Connection> HalfEdge::left() const {
+  if (top())
+    return impl->decomposition->top.at(*this).left;
+  else
+    return impl->decomposition->bottom.at(*this).left;
+}
+
+std::list<Connection> HalfEdge::right() const {
+  if (top())
+    return impl->decomposition->top.at(*this).right;
+  else
+    return impl->decomposition->bottom.at(*this).right;
+}
+
 void Implementation<HalfEdge>::check(const HalfEdge& self) {
   ASSERT([&]() {
     if (self.top()) {
@@ -99,7 +131,7 @@ void Implementation<HalfEdge>::check(const HalfEdge& self) {
       auto bottom = self.impl->component.bottomContour();
       return std::find(begin(bottom), end(bottom), self) != end(bottom);
     }
-  }(), "half edge " << self << " is not in the component for which it was created anymore");
+  }(), "half edge " << self << " is not in the component " << self.impl->component << " for which it was created anymore");
 }
 
 Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) :

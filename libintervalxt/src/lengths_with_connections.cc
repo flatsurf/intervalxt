@@ -47,10 +47,11 @@ void LengthsWithConnections::pop() {
 
 void LengthsWithConnections::subtract(Label minuend) {
   if (not stack.empty()) {
+    lengths->subtract(minuend);
+
     subtract(minuend, *begin(stack));
     stack.clear();
   }
-  lengths->subtract(minuend);
 }
 
 void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
@@ -75,11 +76,14 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
 }
 
 Label LengthsWithConnections::subtractRepeated(Label minuend) {
-  if (not stack.empty()) {
-    subtract(minuend, *begin(stack));
-    stack.clear();
-  }
-  return lengths->subtractRepeated(minuend);
+  ASSERT(not stack.empty(), "cannot subtract nothing repeatedly as no return value can be determined");
+
+  Label ret = lengths->subtractRepeated(minuend);
+
+  subtract(minuend, *begin(stack));
+  stack.clear();
+
+  return ret;
 }
 
 std::vector<mpq_class> LengthsWithConnections::coefficients(Label label) const {

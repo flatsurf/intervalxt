@@ -18,41 +18,32 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#include <ostream>
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
-
-#include <optional>
-#include <variant>
-
-#include "intervalxt.hpp"
+#include "../intervalxt/induction_step.hpp"
 
 namespace intervalxt {
 
-class Label;
+using std::ostream;
 
-class IntervalExchangeTransformation;
+ostream& operator<<(ostream& os, const InductionStep& self) {
+  using Result = InductionStep::Result;
 
-class DynamicalDecomposition;
+  switch(self.result) {
+    case Result::LIMIT_REACHED:
+      return os << "LIMIT_REACHED";
+    case Result::CYLINDER:
+      return os << "CYLINDER";
+    case Result::SEPARATING_CONNECTION:
+      return os << "SEPARATING_CONNECTION()";
+    case Result::NON_SEPARATING_CONNECTION:
+      return os << "NON_SEPARATING_CONNECTION()";
+    case Result::WITHOUT_PERIODIC_TRAJECTORY:
+      return os << "WITHOUT_PERIODIC_TRAJECTORY";
+    default:
+      throw std::logic_error("invalid enum value");
+  }
+}
 
-class Component;
+}
 
-class HalfEdge;
-
-class Separatrix;
-
-struct DecompositionStep;
-
-struct InductionStep;
-
-class Connection;
-
-using Side = std::variant<Connection, HalfEdge>;
-
-template <typename T>
-class Implementation;
-
-}  // namespace intervalxt
-
-#endif

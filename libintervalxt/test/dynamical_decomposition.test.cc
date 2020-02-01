@@ -244,6 +244,57 @@ TEST_CASE("Decomposition of Nested Cylinders") {
   }
 }
 
+TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
+  using IntLengths = sample::Lengths<int>;
+
+  auto&& [lengths, a, b, c, d] = IntLengths::make(1, 1, 1, 1);
+  auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, a, c, b});
+  auto decomposition = DynamicalDecomposition(iet);
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  SECTION("Manual Decomposition") {
+    auto component = decomposition.components()[0];
+    CAPTURE(component);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    // TODO: It's quite counterintuitive, that the default HalfEdge is TOP but the TOP ones are displayed with a -. I guess having a HalfEdge constructor without specifying TOP/BOTTOM was not a good idea. We should change this to a factory approach.
+    REQUIRE(lexical_cast<string>(component) == "[d] [a] [c] [b] -[d] -[c] -[b] -[a]");
+
+    auto step0 = component.decompositionStep();
+    CAPTURE(step0);
+    REQUIRE(step0.result == Result::NON_SEPARATING_CONNECTION);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(lexical_cast<string>(component) == "[d] [d+ ⚯ a-] [c] [b] -[d] -[c] -[b] [a- ⚯ d+]");
+
+    auto step1 = component.decompositionStep();
+    CAPTURE(step1);
+    REQUIRE(step1.result == Result::NON_SEPARATING_CONNECTION);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(lexical_cast<string>(component) == "[c] [a- ⚯ d+] [d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] -[c] [b- ⚯ a+]");
+
+    auto step2 = component.decompositionStep();
+    CAPTURE(step2);
+    REQUIRE(step2.result == Result::SEPARATING_CONNECTION);
+    REQUIRE(indeterminate(component.cylinder()));
+    REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
+    REQUIRE(indeterminate(component.keane()));
+    REQUIRE(lexical_cast<string>(component) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
+  }
+
+  SECTION("Automatic Decomposition") {
+    REQUIRE(decomposition.decompose());
+
+    REQUIRE(lexical_cast<string>(decomposition.components()[0]) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
+    REQUIRE(lexical_cast<string>(decomposition.components()[1]) == "[d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] [c- ⚯ c+] [a- ⚯ d+]");
+  }
+}
+
 TEST_CASE("Decomposition With Injected Connections") {
   using IntLengths = sample::Lengths<int>;
 
@@ -255,8 +306,8 @@ TEST_CASE("Decomposition With Injected Connections") {
 
   auto component = decomposition.components()[0];
 
-  component.inject(HalfEdge(component, a), {{a, c}, {e, f}, {d, a}}, {{a, d}});
-  component.inject(HalfEdge(component, b), {{b, e}}, {});
+  component.inject(HalfEdge(component, a), {{c, a}, {f, e}, {a, d}}, {{d, a}});
+  component.inject(HalfEdge(component, b), {{e, b}}, {});
   component.inject(-HalfEdge(component, b), {}, {{b, e}, {e, f}});
   component.inject(-HalfEdge(component, a), {}, {{a, c}});
 
@@ -265,6 +316,25 @@ TEST_CASE("Decomposition With Injected Connections") {
   component.decompose();
 
   REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [f+ ⚯ d-] [d+ ⚯ a-] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d- ⚯ f+] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
+}
+
+TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
+  using namespace eantic;
+  using EAnticLengths = sample::Lengths<renf_elem_class>;
+  auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
+  auto x = K->gen();
+
+  auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747*x/5000000000, 150057*x/100000, 50057*x/100000, 150057*x/100000);
+  auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, b, a, c});
+  auto decomposition = DynamicalDecomposition(iet);
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  auto component = decomposition.components()[0];
+
+  component.decompose();
+
+  REQUIRE(lexical_cast<string>(component) == "[d] [d+ ⚯ b-] [b+ ⚯ a-] [a+ ⚯ c-] -[d] [b- ⚯ d+] [a- ⚯ b+] [c- ⚯ a+]");
 }
 
 }  // namespace intervalxt::test

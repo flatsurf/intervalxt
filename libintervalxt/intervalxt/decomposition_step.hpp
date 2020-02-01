@@ -40,6 +40,7 @@ struct DecompositionStep {
 
   Result result;
   std::optional<Connection> connection = {};
+  std::optional<std::list<Side>> equivalent = {};
   std::optional<Component> additionalComponent = {};
 };
 

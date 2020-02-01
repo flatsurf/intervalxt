@@ -38,12 +38,20 @@ class Implementation<Component> {
 
   static Component make(std::shared_ptr<DecompositionState>, ComponentState*);
   static int boshernitzanCost(const IntervalExchangeTransformation&);
-  static std::vector<Component::Side> horizontal(const Component& component, bool top);
+  static std::vector<Side> horizontal(const Component& component, bool top);
   static void registerSeparating(Component& left, const Connection&, Component& right);
   static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
   static std::optional<HalfEdge> previous(const Component&, const HalfEdge&);
 
   static std::shared_ptr<DecompositionState> parent(const Component&);
+
+  // Return the connections for walking clockwise from the counterclockwise end
+  // of from to the clockwise end of to.
+  std::list<Side> walkClockwise(HalfEdge from, HalfEdge to) const;
+
+  // Return the connections for walking counterclockwise from the clockwise end
+  // of from to the counterclockwise end of to.
+  std::list<Side> walkCounterclockwise(HalfEdge from, HalfEdge to) const;
 
   const std::shared_ptr<DecompositionState> decomposition;
   ComponentState& state;

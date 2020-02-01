@@ -59,6 +59,14 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
   // Return the previous HalfEdge in the contour (if this is not the first one.)
   std::optional<HalfEdge> previous() const;
 
+  // Return the connections to go (counterclockwise, i.e., inside the component) across this HalfEdge.
+  std::list<Side> cross() const;
+
+  // Connections to the left of this half edge, from bottom to top, each oriented from top to bottom.
+  std::list<Connection> left() const;
+  // Connections to the right of this half edge, from bottom to top, each oriented from bottom to top.
+  std::list<Connection> right() const;
+
   operator Label() const noexcept;
 
   bool operator==(const HalfEdge& rhs) const;
