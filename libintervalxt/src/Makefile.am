@@ -34,10 +34,29 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/lengths.hpp                                 \
 	../intervalxt/length_with_coefficients.hpp                \
 	../intervalxt/separatrix.hpp                              \
+	../intervalxt/sample/lengths.hpp                          \
+	../intervalxt/sample/detail/lengths.ipp                   \
 	../intervalxt/sample/arithmetic.hpp                       \
+	../intervalxt/sample/mpz-arithmetic.hpp                   \
 	../intervalxt/sample/e-antic-arithmetic.hpp               \
 	../intervalxt/sample/exact-real-arithmetic.hpp            \
 	../intervalxt/sample/rational-arithmetic.hpp
+
+noinst_HEADERS =                                                  \
+	impl/component.impl.hpp                                   \
+	impl/component_state.hpp                                  \
+	impl/connection.impl.hpp                                  \
+	impl/decomposition_state.hpp                              \
+	impl/dynamical_decomposition.impl.hpp                     \
+	impl/forward.hpp                                          \
+	impl/half_edge.impl.hpp                                   \
+	impl/interval.hpp                                         \
+	impl/interval_exchange_transformation.impl.hpp            \
+	impl/lengths_with_connections.hpp                         \
+	impl/rational_linear_subspace.hpp                         \
+	impl/rational_linear_subspace.impl.hpp                    \
+	impl/separatrix.impl.hpp                                  \
+	util/assert.ipp
 
 $(builddir)/../intervalxt/intervalxt.hpp: $(srcdir)/../intervalxt/intervalxt.hpp.in Makefile
 	mkdir -p $(builddir)/../intervalxt
@@ -51,6 +70,11 @@ AM_CPPFLAGS = -I../intervalxt
 BUILT_SOURCES = ../intervalxt/intervalxt.hpp
 # Distribute intervalxt.hpp.in as part of the tarball, but not intervalxt.hpp
 EXTRA_DIST = ../intervalxt/intervalxt.hpp.in
+# We vendor the header-only library rx-ranges which we use in some of our .cc
+# files. rx-ranges is basically not packaged in any distribution since it is a
+# header-only library that people always vendor into their source tree.
+EXTRA_DIST += external/rx-ranges/include/rx/ranges.hpp
+
 generatedincludedir = $(includedir)/intervalxt
 nodist_generatedinclude_HEADERS = ../intervalxt/intervalxt.hpp
 
