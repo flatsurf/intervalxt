@@ -41,7 +41,16 @@ HalfEdge::HalfEdge(const Component& component, const Label& label) : impl(spimpl
 }
 
 Component HalfEdge::component() const {
-  Implementation::check(*this);
+  ASSERT([&]() {
+    if (top()) {
+      auto top = impl->component.topContour();
+      return std::find(begin(top), end(top), *this) != end(top);
+    } else {
+      auto bottom = impl->component.bottomContour();
+      return std::find(begin(bottom), end(bottom), *this) != end(bottom);
+    }
+  }(),
+         "half edge " << *this << " is not in the component " << impl->component << " for which it was created anymore");
   return impl->component;
 }
 
@@ -119,19 +128,6 @@ std::list<Connection> HalfEdge::right() const {
     return impl->decomposition->top.at(*this).right;
   else
     return impl->decomposition->bottom.at(*this).right;
-}
-
-void Implementation<HalfEdge>::check(const HalfEdge& self) {
-  ASSERT([&]() {
-    if (self.top()) {
-      auto top = self.impl->component.topContour();
-      return std::find(begin(top), end(top), self) != end(top);
-    } else {
-      auto bottom = self.impl->component.bottomContour();
-      return std::find(begin(bottom), end(bottom), self) != end(bottom);
-    }
-  }(),
-         "half edge " << self << " is not in the component " << self.impl->component << " for which it was created anymore");
 }
 
 Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) : decomposition(decomposition),
