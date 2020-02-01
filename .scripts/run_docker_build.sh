@@ -39,7 +39,7 @@ if [ -z "$CONFIG" ]; then
 fi
 
 if [ -z "${DOCKER_IMAGE}" ]; then
-    SHYAML_INSTALLED="$(shyaml --version || echo NO)"
+    SHYAML_INSTALLED="$(shyaml -h || echo NO)"
     if [ "${SHYAML_INSTALLED}" == "NO" ]; then
         echo "WARNING: DOCKER_IMAGE variable not set and shyaml not installed. Falling back to condaforge/linux-anvil-comp7"
         DOCKER_IMAGE="condaforge/linux-anvil-comp7"
@@ -56,6 +56,8 @@ if [ -z "${CI}" ]; then
     DOCKER_RUN_ARGS="-it "
 fi
 
+cp -Rv ${PIPELINE_WORKSPACE}/linux_*/* ${ARTIFACTS}/ || true
+
 export UPLOAD_PACKAGES="${UPLOAD_PACKAGES:-True}"
 docker run ${DOCKER_RUN_ARGS} \
            -v "${RECIPE_ROOT}":/home/conda/recipe_root:ro,z \
@@ -63,15 +65,17 @@ docker run ${DOCKER_RUN_ARGS} \
            -e CONFIG \
            -e BINSTAR_TOKEN \
            -e HOST_USER_ID \
-           -e COVERALLS_REPO_TOKEN \
+           -e CODECOV_TOKEN \
            -e ASV_SECRET_KEY \
-           -e VCS_PULL_REQUEST \
-           -e VCS_BRANCH_NAME \
            -e UPLOAD_PACKAGES \
+           -e GIT_BRANCH \
+           -e UPLOAD_ON_BRANCH \
            -e CI \
            $DOCKER_IMAGE \
            bash \
            /home/conda/feedstock_root/${PROVIDER_DIR}/build_steps.sh
+
+cp ${PROVIDER_DIR}/artifactignore ${ARTIFACTS}/.artifactignore
 
 # verify that the end of the script was reached
 test -f "$DONE_CANARY"
