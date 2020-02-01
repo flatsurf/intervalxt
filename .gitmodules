@@ -10,6 +10,6 @@
 [submodule "libintervalxt/src/intervalxt/external/gmpxll"]
 	path = libintervalxt/intervalxt/external/gmpxxll
 	url = https://github.com/flatsurf/gmpxxll.git
-[submodule "libintervalxt/src/external/range-v3"]
-	path = libintervalxt/src/external/range-v3
-	url = https://github.com/ericniebler/range-v3.git
+[submodule "libintervalxt/src/external/rx-ranges"]
+	path = libintervalxt/src/external/rx-ranges
+	url = https://github.com/simonask/rx-ranges

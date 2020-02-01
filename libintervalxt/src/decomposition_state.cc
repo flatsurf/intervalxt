@@ -22,9 +22,6 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/filter.hpp>
-#include <range/v3/to_container.hpp>
 
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/connection.hpp"
@@ -32,22 +29,21 @@
 
 #include "impl/decomposition_state.hpp"
 
+#include "external/rx-ranges/include/rx/ranges.hpp"
+
 #include "util/assert.ipp"
 
 namespace intervalxt {
 
 using std::ostream;
 using boost::algorithm::join;
-using ranges::view::transform;
-using ranges::view::filter;
-using ranges::to;
 
 void DecompositionState::check() const {
   std::unordered_map<Separatrix, std::vector<Connection>> connections;
 
   for (const auto& topbottom : { top, bottom }) {
-    for (const auto& [label, leftright] : topbottom) {
-      const auto& [left, right] = leftright;
+    for (const auto& item : topbottom) {
+      const auto& [left, right] = item.second;
       for (const auto& connection : left) {
         ASSERT(connection.antiparallel(), "left connection must be antiparallel, i.e., going from top to bottom");
         connections[connection.source()].push_back(connection);
@@ -72,16 +68,16 @@ void DecompositionState::check() const {
 ostream& operator<<(ostream& os, const DecompositionState& self) {
   const auto& render = [&](const auto& state) {
     return join(state
-      | filter([](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); })
-      | transform([](const auto& connections) {
+      | rx::filter([](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); })
+      | rx::transform([](const auto& connections) {
         return boost::lexical_cast<std::string>(std::hash<Label>()(connections.first))
           + ": left=["
-          + join(connections.second.left | transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }), ", ")
+          + join(connections.second.left | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ")
           + "], right=["
-          + join(connections.second.right | transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }), ", ")
+          + join(connections.second.right | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ")
           + "]"; 
         })
-      | to<vector<std::string>> ,
+      | rx::to_vector(),
     ", ");
   };
 

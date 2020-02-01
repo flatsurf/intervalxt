@@ -21,17 +21,13 @@
 #include <ostream>
 #include <vector>
 #include <variant>
+#include <unordered_set>
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/logic/tribool.hpp>
 #include <boost/lexical_cast.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/concat.hpp>
-#include <range/v3/view/reverse.hpp>
-#include <range/v3/experimental/view/shared.hpp>
-#include <range/v3/action/insert.hpp>
-#include <range/v3/algorithm/for_each.hpp>
-#include <range/v3/algorithm/find.hpp>
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/decomposition_step.hpp"
@@ -56,14 +52,6 @@ using std::end;
 
 using boost::lexical_cast;
 
-using ranges::experimental::views::shared;
-using ranges::view::transform;
-using ranges::view::reverse;
-using ranges::for_each;
-using ranges::to;
-using ranges::view::concat;
-using ranges::find;
-
 using InductionResult = InductionStep::Result;
 using DecompositionResult = DecompositionStep::Result;
 using Contour = Implementation<HalfEdge>::Contour;
@@ -84,40 +72,48 @@ boost::logic::tribool Component::keane() const noexcept {
   return impl->state.keane;
 }
 
-vector<Component::Side> Component::perimeter() const {
-  return concat(shared(bottom()), shared(right()), shared(top()), shared(left())) | to<vector<Side>>;
+vector<Side> Component::perimeter() const {
+  auto perimeter = rx::chain(bottom(), right(), top(), left()) | rx::to_vector();
+
+  ASSERT(std::unordered_set<Side>(begin(perimeter), end(perimeter)).size() == perimeter.size(), "Perimeter must not contain duplicates.");
+
+  return perimeter;
 }
 
 vector<HalfEdge> Component::topContour() const {
-  return shared(impl->state.iet.top())
-    | transform([&](const auto& label) { return HalfEdge(*this, label); });
+  return (impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())
+    | rx::transform([&](const auto& label) { return HalfEdge(*this, label); })
+    | rx::to_vector();
 }
 
 vector<HalfEdge> Component::bottomContour() const {
-  return shared(impl->state.iet.bottom())
-    | transform([&](const auto& label) { return -HalfEdge(*this, label); });
+  return (impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())
+    | rx::transform([&](const auto& label) { return -HalfEdge(*this, label); })
+    | rx::to_vector();
 }
 
-vector<Component::Side> Component::left() const {
-  return concat(
-    impl->decomposition->bottom.at(*begin(impl->state.iet.bottom())).left,
-    impl->decomposition->top.at(*begin(impl->state.iet.top())).left)
-    | transform([](const auto& connection) { return Side(connection); })
-    | reverse;
+vector<Side> Component::left() const {
+  return rx::chain(
+    impl->decomposition->bottom.at(*begin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).left,
+    impl->decomposition->top.at(*begin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).left)
+    | rx::transform([](const auto& connection) { return Side(connection); })
+    | rx::reverse()
+    | rx::to_vector();
 }
 
-vector<Component::Side> Component::right() const {
-  return concat(
-    impl->decomposition->bottom.at(*rbegin(impl->state.iet.bottom())).right,
-    impl->decomposition->top.at(*rbegin(impl->state.iet.top())).right)
-    | transform([](const auto& connection) { return Side(connection); });
+vector<Side> Component::right() const {
+  return rx::chain(
+    impl->decomposition->bottom.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).right,
+    impl->decomposition->top.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).right)
+    | rx::transform([](const auto& connection) { return Side(connection); })
+    | rx::to_vector();
 }
 
-vector<Component::Side> Component::bottom() const {
+vector<Side> Component::bottom() const {
   return Implementation::horizontal(*this, false);
 }
 
-vector<Component::Side> Component::top() const {
+vector<Side> Component::top() const {
   return Implementation::horizontal(*this, true);
 }
 
@@ -177,6 +173,19 @@ DecompositionStep Component::decompositionStep(int limit) {
       // We found a non-separating connection b ⚯ t.
       auto [b, t] = *step.connection;
       ASSERT(b != t, "Mistook cylinder for a non-separating connection");
+
+      // t is not valid anymore but we can still use cross() on it.
+      auto equivalent = HalfEdge(*this, t).cross();
+      equivalent.splice(end(equivalent), (-HalfEdge(*this, b)).cross());
+      std::reverse(begin(equivalent), end(equivalent));
+      for (auto& side : equivalent) {
+       if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
+          side = -*connection;
+        } else {
+          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          ;
+        }
+      }
       
       auto connection = ::intervalxt::Implementation<Connection>::make(
         impl->decomposition,
@@ -311,12 +320,12 @@ vector<Component::Side> Implementation<Component>::horizontal(const Component& c
 
   for (auto edge = begin(halfEdges); edge != end(halfEdges); edge++) {
     if (edge != begin(halfEdges))
-      for_each(collapsed.at(*edge).left | reverse, add);
+      collapsed.at(*edge).left | rx::reverse() | rx::for_each(add);
 
     contour.push_back(*edge);
 
     if (edge != --end(halfEdges))
-      for_each(collapsed.at(*edge).right, add);
+      collapsed.at(*edge).right | rx::for_each(add);
   }
 
   if (top) std::reverse(contour.begin(), contour.end());
@@ -335,7 +344,7 @@ std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Comp
 
 std::optional<HalfEdge> Implementation<Component>::next(const Component& self, const HalfEdge& edge) {
   auto contour = edge.top() ? self.impl->state.iet.top() : self.impl->state.iet.bottom();
-  auto pos = find(contour, static_cast<Label>(edge));
+  auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
   ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
   if (++pos == end(contour)) return {};
   HalfEdge next = HalfEdge(self, *pos);
@@ -344,7 +353,7 @@ std::optional<HalfEdge> Implementation<Component>::next(const Component& self, c
 
 std::optional<HalfEdge> Implementation<Component>::previous(const Component& self, const HalfEdge& edge) {
   auto contour = edge.top() ? self.impl->state.iet.top() : self.impl->state.iet.bottom();
-  auto pos = find(contour, static_cast<Label>(edge));
+  auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
   ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
   if (pos == begin(contour)) return {};
   HalfEdge previous = HalfEdge(self, *--pos);
@@ -365,10 +374,10 @@ void Implementation<Component>::registerSeparating(Component& left, const Connec
 
 std::ostream& operator<<(std::ostream& os, const Component& self) {
   return os << boost::algorithm::join(
-    shared(self.perimeter()) | transform([](const auto& side) { return lexical_cast<string>(side); }), " ");
+    self.perimeter() | rx::transform([](const auto& side) { return lexical_cast<string>(side); }) | rx::to_vector(), " ");
 }
 
-std::ostream& operator<<(std::ostream& os, const Component::Side& self) {
+std::ostream& operator<<(std::ostream& os, const Side& self) {
   if (auto edge = std::get_if<HalfEdge>(&self))
     return os << *edge;
   else if (auto connection = std::get_if<Connection>(&self))

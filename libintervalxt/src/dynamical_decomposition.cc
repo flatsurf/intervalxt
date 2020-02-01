@@ -23,7 +23,8 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
-#include <range/v3/view/transform.hpp>
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
@@ -39,8 +40,6 @@
 
 namespace intervalxt {
 
-using ranges::view::transform;
-using ranges::to;
 using boost::lexical_cast;
 using std::string;
 
@@ -54,9 +53,9 @@ bool DynamicalDecomposition::decompose(std::function<bool(const Component&)> tar
 }
 
 std::vector<Component>  DynamicalDecomposition::components() const {
-  return impl->decomposition->components | transform([&](auto& component) {
-    return ::intervalxt::Implementation<Component>::make(impl->decomposition, &component);
-  }) | to<std::vector<Component>>();
+  return impl->decomposition->components | rx::transform([&](auto& component) {
+    return ::intervalxt::Implementation<Component>::make(impl->decomposition, &const_cast<ComponentState&>(component));
+  }) | rx::to_vector();
 }
 
 Implementation<DynamicalDecomposition>::Implementation(const IntervalExchangeTransformation& iet) :
@@ -93,7 +92,7 @@ std::string Implementation<DynamicalDecomposition>::render(std::shared_ptr<Decom
 std::ostream& operator<<(std::ostream& os, const DynamicalDecomposition& self) {
   auto components = self.components();
   return os << "DynamicalDecomposition(" << boost::algorithm::join(
-    components | transform([](const auto& component) { return lexical_cast<string>(component); }), ", ");
+    components | rx::transform([](const auto& component) { return lexical_cast<string>(component); }) | rx::to_vector(), ", ");
 }
 
 }

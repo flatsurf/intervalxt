@@ -20,20 +20,17 @@
 
 #include <ostream>
 
-#include "range/v3/algorithm/for_each.hpp"
-#include "range/v3/algorithm/reverse.hpp"
-
 #include "impl/separatrix.impl.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/decomposition_state.hpp"
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include "util/assert.ipp"
 
 namespace intervalxt {
 
 using std::ostream;
-using ranges::for_each;
-using ranges::reverse;
 using Orientation = Implementation<Separatrix>::Orientation;
 
 Separatrix::Separatrix() :
@@ -67,9 +64,7 @@ Separatrix Implementation<Separatrix>::make(std::shared_ptr<DecompositionState> 
 
 Separatrix Implementation<Separatrix>::atTop(std::shared_ptr<DecompositionState> decomposition, Label label) {
   Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::ANTIPARALLEL); 
-  auto connections = decomposition->top.at(label).right;
-  reverse(connections);
-  for_each(connections, [&](const auto& connection) {
+  decomposition->top.at(label).right | rx::reverse() | rx::for_each([&](const auto& connection) {
     ASSERT(separatrix == connection.target(), "connection separatrices do not form a continuous chain");
     separatrix = connection.source();
     separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, separatrix.impl->label, Orientation::ANTIPARALLEL);
@@ -80,8 +75,7 @@ Separatrix Implementation<Separatrix>::atTop(std::shared_ptr<DecompositionState>
 
 Separatrix Implementation<Separatrix>::atBottom(std::shared_ptr<DecompositionState> decomposition, Label label) {
   Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::PARALLEL); 
-  auto connections = decomposition->bottom.at(label).right;
-  for_each(connections, [&](const auto& connection) {
+  decomposition->bottom.at(label).right | rx::for_each([&](const auto& connection) {
     ASSERT(separatrix == connection.source(), "connection separatrices do not form a continuous chain");
     separatrix = connection.target();
     separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, separatrix.impl->label, Orientation::PARALLEL);

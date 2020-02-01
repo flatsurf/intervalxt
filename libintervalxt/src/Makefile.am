@@ -43,10 +43,10 @@ $(builddir)/../intervalxt/intervalxt.hpp: $(srcdir)/../intervalxt/intervalxt.hpp
 	mkdir -p $(builddir)/../intervalxt
 	sed -e 's,[@]libdir[@],$(libdir),g' < $< > $@
 
-AM_CPPFLAGS = -isystem $(srcdir)/external/range-v3/include/
-
 # Since we generate intervalxt.hpp, we need to search $(builddir) during out-of-tree builds aka VPATH builds
 VPATH = $(srcdir) $(builddir)
+# Search intervalxt.hpp and config.h in the builddir during VPATH builds
+AM_CPPFLAGS = -I../intervalxt
 # Generate intervalxt.hpp before performing any compilation
 BUILT_SOURCES = ../intervalxt/intervalxt.hpp
 # Distribute intervalxt.hpp.in as part of the tarball, but not intervalxt.hpp

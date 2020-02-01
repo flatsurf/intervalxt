@@ -28,7 +28,7 @@
 #include <gmpxx.h>
 
 #include "forward.hpp"
-#include "../intervalxt/label.hpp"
+#include "../../intervalxt/label.hpp"
 #include "../../intervalxt/lengths.hpp"
 
 namespace intervalxt {

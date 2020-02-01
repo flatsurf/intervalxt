@@ -27,9 +27,8 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/zip.hpp>
-#include <range/v3/view/transform.hpp>
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
@@ -42,9 +41,6 @@
 #include "util/assert.ipp"
 
 using std::vector;
-using ranges::views::zip;
-using ranges::views::transform;
-using ranges::to;
 
 namespace intervalxt {
 
@@ -212,11 +208,11 @@ IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<L
 }
 
 vector<Label> IntervalExchangeTransformation::top() const noexcept {
-  return impl->top | transform([](auto& i) { return i.label; }) | to<vector<Label>>();
+  return impl->top | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
 }
 
 vector<Label> IntervalExchangeTransformation::bottom() const noexcept {
-  return impl->bottom | transform([](auto& i) { return i.label; }) | to<vector<Label>>();
+  return impl->bottom | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
 }
 
 void IntervalExchangeTransformation::swap() {
@@ -292,7 +288,7 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
 }
 
 bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransformation& rhs) const {
-  const std::vector<Label> labels = impl->top | transform([](const auto& interval) { return interval.label; }) | to<std::vector<Label>>;
+  const std::vector<Label> labels = impl->top | rx::transform([](const auto& interval) { return interval.label; }) | rx::to_vector();
   if (impl->top != rhs.impl->top || impl->bottom != rhs.impl->bottom)
     return false;
 
@@ -304,8 +300,8 @@ bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransforma
 }
 
 Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
-  top(top | transform([](const Label label) { return Interval(label); }) | to<std::list<Interval>>()),
-  bottom(bottom | transform([](const Label label) { return Interval(label); }) | to<std::list<Interval>>()),
+  top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
+  bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   lengths(std::move(lengths)),
   degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
   ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
@@ -361,11 +357,11 @@ std::string Implementation<IntervalExchangeTransformation>::render(const Interva
 }
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {
-  return os << boost::algorithm::join(self.impl->top | transform([&](const auto& interval) {
+  return os << boost::algorithm::join(self.impl->top | rx::transform([&](const auto& interval) {
       return "[" + self.impl->lengths->render(interval) + ": " + boost::lexical_cast<std::string>(self.impl->lengths->get(interval)) + "]";
-    }), " ") << " / " << boost::algorithm::join(self.impl->bottom | transform([&](const auto& interval){
+    }) | rx::to_vector(), " ") << " / " << boost::algorithm::join(self.impl->bottom | rx::transform([&](const auto& interval){
       return "[" + self.impl->lengths->render(interval) + "]";
-    }), " ");
+    }) | rx::to_vector() , " ");
 }
 
 }  // namespace intervalxt
