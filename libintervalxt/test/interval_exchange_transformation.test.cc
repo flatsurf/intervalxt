@@ -19,6 +19,7 @@
  *********************************************************************/
 
 #include <vector>
+#include <valarray>
 
 #include <e-antic/renfxx.h>
 
@@ -291,110 +292,108 @@ TEST_CASE("Repeated Induction on an Interval Exchange Transformation", "[interva
 }
 
 TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][saf_invariant]") {
-/* TODO: Enable again
-TEST(IETTest, SAFRational) {
-  using Length = Length<int>;
-  IntervalExchangeTransformation<Length> iet({Length(18), Length(3), Length(1), Length(1)}, {3, 0, 1, 2});
-  std::valarray<mpq_class> v = iet.safInvariant();
-}
+  using namespace eantic;
+  using EAnticLengths = sample::Lengths<renf_elem_class>;
 
-TEST(IETTest, NonZeroSAF1) {
-  using Length = Length<eantic::renf_elem_class>;
-
-  auto K = eantic::renf_class::make("a^3 - 2*a^2 - 3*a - 1", "a", "3.07 +/- 0.01");
-  auto a = K->gen();
-  auto one = K->one();
-
-  IntervalExchangeTransformation<Length> iet({Length(a / 2), Length(a * a - mpq_class(1, 13)), Length(4 * a / 7 - 1), Length(2 * one)}, {3, 2, 1, 0});
-
-  std::valarray<mpq_class> v = iet.safInvariant();
-  EXPECT_TRUE(v.min() != 0 || v.max() != 0);
-
-  int sign = 1;
-
-  for (int i = 0; i < 10; i++) {
-    iet.zorichInduction();
-    iet.swap();
-    std::valarray<mpq_class> vv;
-    if (sign)
-      vv = -iet.safInvariant();
-    else
-      vv = iet.safInvariant();
-    EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-    sign ^= 1;
+  SECTION("Integer Lengths") {
+    auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
+    auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
+    (void)iet.safInvariant();
   }
-}
 
-TEST(IETTest, NonZeroSAF2) {
-  using Length = Length<eantic::renf_elem_class>;
+  SECTION("Non-zero Invariants") {
+    {
+      auto K = eantic::renf_class::make("a^3 - 2*a^2 - 3*a - 1", "a", "3.07 +/- 0.01");
+      auto x = K->gen();
+      auto one = K->one();
 
-  auto K = eantic::renf_class::make("5*a^3 - 2*a^2 - 3*a - 13", "a", "1.68 +/- 0.01");
-  auto a = K->gen();
-  auto one = K->one();
+      auto&& [lengths, a, b, c, d] = EAnticLengths::make(x / 2, x * x - mpq_class(1, 13), 4 * x / 7 - 1, 2 * one);
+      auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
 
-  IntervalExchangeTransformation<Length> iet({Length(2 * a / 17), Length(5 * a * a / 3 - mpq_class(1, 18)), Length(5 * a * a / 2 - 3), Length(3 * one)}, {3, 2, 1, 0});
-  std::valarray<mpq_class> v = iet.safInvariant();
-  EXPECT_TRUE(v.min() != 0 || v.max() != 0);
+      auto v = iet.safInvariant();
 
-  int sign = 1;
+      REQUIRE((v.min() != 0 || v.max() != 0));
 
-  for (int i = 0; i < 10; i++) {
-    iet.zorichInduction();
-    iet.swap();
-    std::valarray<mpq_class> vv;
-    if (sign)
-      vv = -iet.safInvariant();
-    else
-      vv = iet.safInvariant();
-    EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-    sign ^= 1;
+      int sign = 1;
+
+      for (int i = 0; i < 10; i++) {
+        iet.zorichInduction();
+        iet.swap();
+        std::valarray<mpq_class> vv;
+        if (sign)
+          vv = -iet.safInvariant();
+        else
+          vv = iet.safInvariant();
+        REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
+        sign ^= 1;
+      }
+    }
+    {
+      auto K = eantic::renf_class::make("5*a^3 - 2*a^2 - 3*a - 13", "a", "1.68 +/- 0.01");
+      auto x = K->gen();
+      auto one = K->one();
+
+      auto&& [lengths, a, b, c, d] = EAnticLengths::make(2 * x / 17, 5 * x * x / 3 - mpq_class(1, 18), 5 * x * x / 2 - 3, 3 * one);
+      auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
+      
+      auto v = iet.safInvariant();
+      REQUIRE((v.min() != 0 || v.max() != 0));
+
+      int sign = 1;
+
+      for (int i = 0; i < 10; i++) {
+        iet.zorichInduction();
+        iet.swap();
+        std::valarray<mpq_class> vv;
+        if (sign)
+          vv = -iet.safInvariant();
+        else
+          vv = iet.safInvariant();
+        REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
+        sign ^= 1;
+      }
+    }
+
+    SECTION("Arnoux Yoccoz 3") {
+      auto K = eantic::renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.01");
+      auto x = K->gen();
+      auto one = K->one();
+
+      auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x * x - x - 1, x * x, x, x, one, one);
+      auto iet = IET(lengths, {a, b, c, d, e, f, g}, {b, e, d, g, f, c, a});
+
+      auto v = iet.safInvariant();
+      REQUIRE(v.min() == 0);
+      REQUIRE(v.max() == 0);
+
+      for (int i = 0; i < 10; i++) {
+        iet.zorichInduction();
+        iet.swap();
+        std::valarray<mpq_class> vv = iet.safInvariant();
+        REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
+      }
+    }
+
+    SECTION("Arnoux Yoccoz 4") {
+      auto K = eantic::renf_class::make("a^4 - a^3 - a^2 - a - 1", "a", "1.92 +/- 0.01");
+      auto x = K->gen();
+      auto one = K->one();
+
+      auto&& [lengths, a, b, c, d, e, f, g, h, i] = EAnticLengths::make(x.pow(4) - x.pow(3), 2 * x.pow(3) - x.pow(4), x.pow(3), x.pow(2), x.pow(2), x, x, one, one);
+      auto iet = IET(lengths, {a, b, c, d, e, f, g, h, i}, {b, e, d, g, f, i, h, c, a});
+
+      auto v = iet.safInvariant();
+      REQUIRE(v.min() == 0);
+      REQUIRE(v.max() == 0);
+
+      for (int i = 0; i < 10; i++) {
+        iet.zorichInduction();
+        iet.swap();
+        std::valarray<mpq_class> vv = iet.safInvariant();
+        REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
+      }
+    }
   }
-}
-
-TEST(IETTest, SAFArnouxYoccoz3) {
-  using Length = Length<eantic::renf_elem_class>;
-
-  auto K = eantic::renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.01");
-  auto a = K->gen();
-  auto one = K->one();
-
-  IntervalExchangeTransformation<Length> iet({Length(a + 1), Length(a * a - a - 1), Length(a * a), Length(a), Length(a), Length(one), Length(one)}, {1, 4, 3, 6, 5, 2, 0});
-  std::valarray<mpq_class> v = iet.safInvariant();
-  EXPECT_EQ(v.min(), mpq_class(0));
-  EXPECT_EQ(v.max(), mpq_class(0));
-
-  for (int i = 0; i < 10; i++) {
-    iet.zorichInduction();
-    iet.swap();
-    std::valarray<mpq_class> vv = iet.safInvariant();
-    EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-  }
-}
-
-TEST(IETTest, SAFArnouxYoccoz4) {
-  using Length = Length<eantic::renf_elem_class>;
-
-  auto K = eantic::renf_class::make("a^4 - a^3 - a^2 - a - 1", "a", "1.92 +/- 0.01");
-  auto a = K->gen();
-  auto one = K->one();
-
-  IntervalExchangeTransformation<Length> iet({Length(a.pow(4) - a.pow(3)),
-                                              Length(2 * a.pow(3) - a.pow(4)),
-                                              Length(a.pow(3)), Length(a.pow(2)), Length(a.pow(2)),
-                                              Length(a), Length(a), Length(one), Length(one)},
-                                             {1, 4, 3, 6, 5, 8, 7, 2, 0});
-  std::valarray<mpq_class> v = iet.safInvariant();
-  EXPECT_EQ(v.min(), mpq_class(0));
-  EXPECT_EQ(v.max(), mpq_class(0));
-
-  for (int i = 0; i < 10; i++) {
-    iet.zorichInduction();
-    iet.swap();
-    std::valarray<mpq_class> vv = iet.safInvariant();
-    EXPECT_TRUE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-  }
-}
-*/
 }
 
 TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[interval_exchange_transformation][boshernitzan_no_periodic_trajectory]") {

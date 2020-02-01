@@ -35,7 +35,6 @@ namespace intervalxt {
 
 class HalfEdge : boost::equality_comparable<HalfEdge> {
  public:
-  // TODO: This might make sense in more places: Allow people to directly create these objects.
   // The top half edge with the given label.
   HalfEdge(const Component&, const Label&);
 

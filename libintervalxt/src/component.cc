@@ -340,7 +340,7 @@ vector<Side> Implementation<Component>::horizontal(const Component& component, b
 }
 
 int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation &) {
-  // TODO; Implement something non-trivial (see github issue.)
+  // Not implemented: see #60.
   return 1;
 }
 
