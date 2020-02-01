@@ -3,10 +3,11 @@
 # conda-smithy assumes that the build number is >= 1000 when building with the new anaconda compilers,
 # this probably is not important but make_build_number otherwise complains during the build
 {% set build_number = (environ.get('GIT_DESCRIBE_NUMBER')|int + 1000)|string %}
-{% set build_string = "master_" + ((build_flavour + "_") if build_flavour != "release" else "") + build_number %}
+{% set name = name or 'intervalxt' %}
+{% set target = target or 'release' %}
 
 package:
-  name: intervalxt
+  name: {{ name }}
   version: {{ version }}
 
 source:
@@ -14,96 +15,75 @@ source:
 
 build:
   number: {{ build_number }}
-  string: {{ build_string }}
+{%- if name == "libintervalxt" %}
+  string: {{ target }}_{{ build_number }}
+{%- else %}
+  string: {{ target }}_py{{ python }}_{{ build_number }}
+{%- endif %}
   # e-antic is not available on Windows yet
   skip: True  # [win]
   # e-antic is not available on macOS yet
   skip: True  # [osx]
+  # we do not support old versions of Python
+  skip: True  # [py < 36]
+{%- if name != "pyintervalxt" and target != "test" %}
+  # ignore Python version where it does not matter (conda-smithy still renders these but conda-build stops immediately)
+  skip: True  # [py != 37]
+{%- endif %}
+{%- if name == "libintervalxt" %}
+  run_exports:
+    # We pin the version of libintervalxt exactly since we do not want to
+    # bother with incompatibilities in our nightly builds.
+    - {{ pin_subpackage(name, exact=True) }}
+{%- endif %}
 
 requirements:
   build:
     - libtool
-    - autoconf
     - automake
+    - coreutils
     - {{ compiler('cxx') }}
-    # requirements for ASV benchmarks
-    - git
-    # requirements for clang-format
+{%- if target == "style" %}
     - clangdev ==8.0.0
+{%- endif %}
   host:
-    # compile time dependencies of libintervalxt
+{%- if name != "pyintervalxt" %}
+    # compile-time dependencies of libintervalxt
     - boost-cpp
     - e-antic 1.*
     - gmp
     - ppl
-    # We pin to an explicit version of Python here; since the Python part is
-    # noarch:python, the version does not matter. However, we need the same
-    # version when doing "make install" so that files go into the site-packages
-    # directory that was determined by ./configure.
-    - python ==3.7
+{%- endif %}
+{%- if name != "libintervalxt" %}
+    - python
+    - setuptools
+{%- endif %}
+{%- if name == "pyintervalxt" %}
+    - libintervalxt {{ version }} {{ target }}_{{ build_number }}
+{%- endif %}
+{%- if target in ["test", "coverage"] %}
     # enable test/pyintervalxt tests in ./configure
     - pytest
     - cppyy
-    # enable test/libintervalxt tests in ./configure
-    - gtest
-    - benchmark
     # enable check-valgrind in ./configure
-    - valgrind
-    # requirements for ASV benchmarks
-    - asv
+    - valgrind >=3.15.0
+{%- endif %}
+  run:
+{%- if name == "pyintervalxt" %}
+    - python
+    - cppyy
+{%- endif %}
 
 outputs:
-  - name: libintervalxt
-    script: install-libintervalxt.sh
-    build:
-      number: {{ build_number }}
-      string: {{ build_string }}
-{%- if build_flavour and build_flavour != 'release' %}
-      features:
-        - {{ build_flavour }}
-{% endif %}
-    requirements:
-      build:
-        - {{ compiler('cxx') }}
-      host:
-        - boost-cpp
-        - e-antic 1.*
-        - gmp
-        - ppl
-      run:
-        # https://github.com/conda-forge/ppl-feedstock/issues/4
-        - ppl
-    run_exports:
-      # We pin the version of libintervalxt exactly since we do not want to
-      # bother with incompatibilities in our nightly builds.
-      - libintervalxt {{ version }}
-  - name: pyintervalxt
-    build:
-      number: {{ build_number }}
-      string: {{ build_string }}
-{%- if build_flavour and build_flavour != 'release' %}
-      features:
-        - {{ build_flavour }}
-{% endif %}
-      noarch: python
-    script: install-pyintervalxt.sh
-    requirements:
-      host:
-        - python ==3.7
-        - setuptools
-      run:
-        # We pin the version of libintervalxt exactly since we do not want to
-        # bother with incompatibilities in our nightly builds.
-        - {{ pin_subpackage('libintervalxt', exact=True) }}
-        - cppyy
-        - pyeantic
-        - python
-        - boost-cpp
-{%- if build_flavour == 'release' %}
+  - name: {{ name }}
+{%- if target == "release" %}
+    script: install-{{ name }}.sh
+{%- endif %}
+{%- if name == "pyintervalxt" %}
     test:
       imports:
-        - pyintervalxt
-{% endif %}
+        - {{ name }}
+{%- endif %}
 
 about:
   home: https://github.com/flatsurf/intervalxt

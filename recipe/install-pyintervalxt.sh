@@ -1,4 +1,6 @@
 #!/bin/bash
-cd pyintervalxt
+set -ex
 
-make install
+source $RECIPE_DIR/environment.sh
+
+cd pyintervalxt
