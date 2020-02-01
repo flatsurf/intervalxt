@@ -35,9 +35,6 @@ using std::vector;
 struct ComponentState {
   ComponentState(IntervalExchangeTransformation&&);
   
-  // TODO: I might be leaking memory here. Does this hold a reference to
-  // DecompositionState through the LengthsWithConnections? :(
-  // If so, then this must be stored in the DecompositionState itself.
   IntervalExchangeTransformation iet;
 
   boost::logic::tribool cylinder = boost::logic::indeterminate;
