@@ -18,29 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <gmpxx.h>
-#include <boost/numeric/conversion/cast.hpp>
-#include <iostream>
-#include <ppl.hh>
+#include <ostream>
 #include <vector>
 
-#include "intervalxt/detail/rational_linear_subspace.hpp"
+#include <boost/numeric/conversion/cast.hpp>
+
+#include "impl/rational_linear_subspace.hpp"
+#include "impl/rational_linear_subspace.impl.hpp"
+
+using std::ostream;
+using std::vector;
 
 using boost::numeric_cast;
+
 using Parma_Polyhedra_Library::Constraint;
 using Parma_Polyhedra_Library::Constraint_System;
 using Parma_Polyhedra_Library::Generator_System;
 using Parma_Polyhedra_Library::Linear_Expression;
 using Parma_Polyhedra_Library::Linear_System;
-using Parma_Polyhedra_Library::NNC_Polyhedron;
 using Parma_Polyhedra_Library::NOT_NECESSARILY_CLOSED;
 using Parma_Polyhedra_Library::SPARSE;
 using Parma_Polyhedra_Library::Variable;
+
 // Note: there are global point and ray in the ppl header.
 using Parma_Polyhedra_Library::point;
 using Parma_Polyhedra_Library::ray;
-using std::ostream;
-using std::vector;
 
 namespace {
 struct SwapDimensions {
@@ -72,50 +74,43 @@ Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec) 
 }
 
 namespace intervalxt {
-namespace detail {
-class RationalLinearSubspace::Implementation {
- public:
-  Implementation() {}
 
-  Implementation(const vector<vector<mpq_class>>& vectors, bool eqns) {
-    Generator_System generators;
-    Constraint_System constraints;
+Implementation<RationalLinearSubspace>::Implementation() {}
 
-    if (eqns) {
-      // Initialize from equations
-      for (auto equation : vectors) {
-        Linear_Expression linear = linearExpressionFromVector(equation);
-        constraints.insert(linear == 0);
-      }
-      subspace = NNC_Polyhedron(constraints);
+Implementation<RationalLinearSubspace>::Implementation(const vector<vector<mpq_class>>& vectors, bool equations) {
+  Generator_System generators;
+  Constraint_System constraints;
 
-    } else {
-      // Initialize from generators
-      generators.insert(point());
-      for (auto generator : vectors) {
-        Linear_Expression linear = linearExpressionFromVector(generator);
-        if (!linear.is_zero()) generators.insert(ray(linear));
-      }
-      subspace = NNC_Polyhedron(generators);
+  if (equations) {
+    // Initialize from equations
+    for (auto equation : vectors) {
+      Linear_Expression linear = linearExpressionFromVector(equation);
+      constraints.insert(linear == 0);
     }
+    subspace = NNC_Polyhedron(constraints);
 
-    constraints.clear();
-    for (size_t i = 0; i < subspace.space_dimension(); i++) {
-      constraints.insert(Variable(i) >= 0);
+  } else {
+    // Initialize from generators
+    generators.insert(point());
+    for (auto generator : vectors) {
+      Linear_Expression linear = linearExpressionFromVector(generator);
+      if (!linear.is_zero()) generators.insert(ray(linear));
     }
-    nonNegative = NNC_Polyhedron(constraints);
-
-    constraints.clear();
-    for (size_t i = 0; i < subspace.space_dimension(); i++) {
-      constraints.insert(Variable(i) > 0);
-    }
-    positive = NNC_Polyhedron(constraints);
+    subspace = NNC_Polyhedron(generators);
   }
 
-  NNC_Polyhedron subspace;
-  NNC_Polyhedron positive;
-  NNC_Polyhedron nonNegative;
-};
+  constraints.clear();
+  for (size_t i = 0; i < subspace.space_dimension(); i++) {
+    constraints.insert(Variable(i) >= 0);
+  }
+  nonNegative = NNC_Polyhedron(constraints);
+
+  constraints.clear();
+  for (size_t i = 0; i < subspace.space_dimension(); i++) {
+    constraints.insert(Variable(i) > 0);
+  }
+  positive = NNC_Polyhedron(constraints);
+}
 
 RationalLinearSubspace::RationalLinearSubspace() : impl(spimpl::make_impl<Implementation>()) {}
 
@@ -166,5 +161,5 @@ void RationalLinearSubspace::elementaryTransformation(int i, int j, mpq_class c)
 ostream& operator<<(std::ostream& os, const RationalLinearSubspace& self) {
   return Parma_Polyhedra_Library::IO_Operators::operator<<(os, self.impl->subspace);
 }
-}  // namespace detail
+
 }  // namespace intervalxt

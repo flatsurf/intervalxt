@@ -24,7 +24,7 @@ import cppyy
 # whereas cppyy otherwise only reports "segmentation violation" (which is
 # probably what cling provides.)
 import os
-if os.environ.get('PYINTERVALXTL_CYSIGNALS', True):
+if os.environ.get('PYINTERVALXT_CYSIGNALS', True):
     try:
         import cysignals
     except ModuleNotFoundError:
@@ -57,8 +57,6 @@ from cppyy.gbl import intervalxt
 
 def IET(lengths, permutation):
     from cppyy.gbl import std
-    Length = intervalxt.Length[int]
-    Label = intervalxt.Label[Length]
-    return intervalxt.IntervalExchangeTransformation[Length]([Label(l) for l in lengths], permutation);
+    return intervalxt.makeIET(intervalxt.sample.Lengths[int](lengths), permutation)
 
 intervalxt.IET = IET

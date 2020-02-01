@@ -28,9 +28,9 @@ from pyintervalxt import intervalxt
 
 def test_IntervalExchangeTransformation():
     iet = intervalxt.IET((18, 3), (1, 0))
-    assert repr(iet) == "18[a] 3[b]\n3[b] 18[a]\n"
+    assert repr(iet) == "[a: 18] [b: 3] / [b] [a]"
     iet.swap()
-    assert repr(iet) == "3[b] 18[a]\n18[a] 3[b]\n"
+    assert repr(iet) == "[b: 3] [a: 18] / [a] [b]"
 
 def test_reduce():
     iet = intervalxt.IET((18, 3), (1, 0))
@@ -41,19 +41,19 @@ def test_reduce():
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
-    assert repr(iet) == "18[c]\n18[c]\n"
-    assert repr(iet2) == "3[d]\n3[d]\n"
+    assert repr(iet) == "[a: 18] / [a]"
+    assert repr(iet2) == "[b: 3] / [b]"
 
-    iet = intervalxt.IET((4,56,23,11,21,9,65),(1,0,4,3,2,6,5))
+    iet = intervalxt.IET((4, 56, 23, 11, 21, 9, 65),(1, 0, 4, 3, 2, 6, 5))
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
-    assert repr(iet) == "4[e] 56[f]\n56[f] 4[e]\n"
-    assert repr(iet2) == "23[g] 11[h] 21[i] 9[j] 65[k]\n21[i] 11[h] 23[g] 65[k] 9[j]\n"
+    assert repr(iet) == "[a: 4] [b: 56] / [b] [a]"
+    assert repr(iet2) == "[c: 23] [d: 11] [e: 21] [f: 9] [g: 65] / [e] [d] [c] [g] [f]"
     r2 = iet2.reduce()
     assert r2.has_value()
     iet3 = r2.value()
-    assert repr(iet2) == "23[g] 11[h] 21[i]\n21[i] 11[h] 23[g]\n"
-    assert repr(iet3) == "9[j] 65[k]\n65[k] 9[j]\n"
+    assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
+    assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
 
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))

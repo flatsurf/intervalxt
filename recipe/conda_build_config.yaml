@@ -2,6 +2,18 @@ channel_targets:
   - flatsurf main
 channel_sources:
   - flatsurf,conda-forge,defaults
-build_flavour:
+target:
   - release
+  - release
+  - style
+  - test
   - coverage
+name:
+  - libintervalxt
+  - pyintervalxt
+  - intervalxt
+  - intervalxt
+  - intervalxt
+zip_keys:
+  - target
+  - name

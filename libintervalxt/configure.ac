@@ -58,18 +58,7 @@ AX_CXX_CHECK_LIB([eanticxx], [eantic::renf_elem_class], , AC_MSG_ERROR([E-ANTIC 
 AX_CXX_CHECK_LIB([ppl], [Parma_Polyhedra_Library::Constraint_System::print() const], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not found]))
 AC_CHECK_HEADERS([ppl.hh], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not found]))
 
-dnl Our test suite uses googletest and Google's C++ benchmark library.
-dnl We fail if they cannot be found but let the user disable all checks explicitly.
-AC_ARG_WITH([googletest], AS_HELP_STRING([--without-googletest], [Do not build C++ tests that require googletest/benchmark]))
-AS_IF([test "x$with_googletest" != "xno"],
-      [
-       with_googletest=yes
-       AC_CHECK_HEADERS([gtest/gtest.h], , AC_MSG_ERROR([googletest headers for make check not found; run --without-googletest to disable these tests in make check]))
-       AC_CHECK_HEADERS([benchmark/benchmark.h], , AC_MSG_ERROR([benchmark headers for make check not found; run --without-googletest to disable these tests in make check]))
-      ], [])
-AM_CONDITIONAL([HAVE_GOOGLETEST], [test "x$with_googletest" = "xyes"])
-
-AC_CONFIG_HEADERS([src/intervalxt/config.h])
+AC_CONFIG_HEADERS([intervalxt/config.h])
 AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
 
 AC_OUTPUT
