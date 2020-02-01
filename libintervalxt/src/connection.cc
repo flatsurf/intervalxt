@@ -33,7 +33,9 @@ Connection Connection::operator-() const noexcept {
 }
 
 bool Connection::operator==(const Connection& rhs) const noexcept {
-  // TODO: We currently identify separatrices on different decompositions. That's necessary for flatsurf to work because the lengths are not shared between IET's there.
+  // Note that we identify separatrices on different decompositions. This seems
+  // wrong. However, it is currently, necessary because Lenghts are not shared
+  // in libflatsurf between IETs, see #72.
   return impl->source == rhs.impl->source && impl->target == rhs.impl->target;
 }
 
@@ -75,7 +77,7 @@ namespace std {
 using namespace intervalxt;
 
 size_t hash<Connection>::operator()(const Connection& self) const noexcept {
-  // TODO: Use hash_combine
+  // We should use hash_combine here, see https://github.com/flatsurf/intervalxt/issues/67
   return hash<Separatrix>()(self.source()) + (hash<Separatrix>()(self.target()) << 32);
 }
 

@@ -38,10 +38,6 @@ using stable_container = std::deque<T>;
 using std::list;
 using std::unordered_map;
 
-// TODO: When the Labels happen to be hashed continuously, use a vector for
-// top/bottom instead, i.e., build a map with fixed key set and try to hash
-// optimally (at least when that's trivial to do.)
-
 struct DecompositionState {
   struct HalfEdgeConnections {
     // Connections to the left of this half edge, from bottom to top, each oriented from top to bottom.

@@ -259,7 +259,6 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    // TODO: It's quite counterintuitive, that the default HalfEdge is TOP but the TOP ones are displayed with a -. I guess having a HalfEdge constructor without specifying TOP/BOTTOM was not a good idea. We should change this to a factory approach.
     REQUIRE(lexical_cast<string>(component) == "[d] [a] [c] [b] -[d] -[c] -[b] -[a]");
 
     auto step0 = component.decompositionStep();

@@ -56,8 +56,8 @@ void LengthsWithConnections::subtract(Label minuend) {
 
 void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
   // Normalize top and bottom such that the minuend is on top and the
-  // subtrahend on the bottom:
-  // TODO: This is a very inefficient O(n) search on the entire decomposition.
+  // subtrahend on the bottom. Note that this search is very inefficient, see
+  // #71.
   bool minuendOnTop = std::any_of(begin(decomposition->components), end(decomposition->components),
     [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
 

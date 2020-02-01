@@ -46,9 +46,10 @@ bool Separatrix::antiparallel() const noexcept {
 }
 
 bool Separatrix::operator==(const Separatrix& rhs) const {
-  // TODO: We currently identify separatrices on different decompositions. That's necessary for flatsurf to work because the lengths are not shared between IET's there.
-  return impl->label == rhs.impl->label
-    && impl->orientation == rhs.impl->orientation;
+  // Note that we identify separatrices on different decompositions. This seems
+  // wrong. However, it is currently, necessary because Lenghts are not shared
+  // in libflatsurf between IETs, see #72.
+  return impl->label == rhs.impl->label && impl->orientation == rhs.impl->orientation;
 }
 
 Implementation<Separatrix>::Implementation(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) :

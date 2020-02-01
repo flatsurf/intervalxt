@@ -187,7 +187,7 @@ DecompositionStep Component::decompositionStep(int limit) {
        if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
           side = -*connection;
         } else {
-          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          // This should probably change with #68.
           ;
         }
       }
@@ -348,8 +348,7 @@ std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Comp
   return self.impl->decomposition;
 }
 
-// TODO: Walk counterclockwise instead. This would be much easier since cross()
-// is counterclockwise. Then above, do not return equivalent but -equivalent.
+// It would be easier to always walk counterclockwise as that is compatible with the order in cross(), see #69.
 std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge to) const {
   ASSERT(from.component() == to.component(), "Cannot walk between components");
 
@@ -373,7 +372,7 @@ std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge
         if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
           side = -*connection;
         } else {
-          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          // This should probably change with #68.
           ;
         }
        
@@ -397,7 +396,7 @@ std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge
         if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
           side = -*connection;
         } else {
-          // TODO: We should probably allow to properly reverse a half edge. (without going to the other contour.)
+          // This should probably change with #68.
           ;
         }
        
