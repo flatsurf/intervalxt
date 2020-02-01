@@ -42,8 +42,6 @@ class Component : boost::equality_comparable<Component> {
   Component();
 
  public:
-  using Side = std::variant<Connection, HalfEdge>;
-
   boost::logic::tribool cylinder() const noexcept;
   boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
   boost::logic::tribool keane() const noexcept;
@@ -76,8 +74,11 @@ class Component : boost::equality_comparable<Component> {
       int limit = -1);
 
   // Insert (artificial) connections left and right of the given half edge. The
-  // labels specify the source and target separatrices of the new connections.
-  void inject(const HalfEdge&, const std::vector<std::pair<Label, Label>>& left, const std::vector<std::pair<Label, Label>>& right);
+  // labels specify the source and target separatrices of the new connections;
+  // the entries of left and right are proceding towards the interior, the left
+  // ones are oriented top to bottom whereas the right ones are oriented bottom
+  // to top.
+  std::pair<std::list<Connection>, std::list<Connection>> inject(const HalfEdge&, const std::vector<std::pair<Label, Label>>& left, const std::vector<std::pair<Label, Label>>& right);
 
   bool operator==(const Component& rhs) const;
 
@@ -90,7 +91,7 @@ class Component : boost::equality_comparable<Component> {
   friend Implementation;
 };
 
-std::ostream& operator<<(std::ostream&, const Component::Side&);
+std::ostream& operator<<(std::ostream&, const Side&);
 
 }  // namespace intervalxt
 

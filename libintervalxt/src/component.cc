@@ -226,7 +226,7 @@ bool Component::decompose(std::function<bool(const Component&)> target, int limi
   return not limitReached;
 }
 
-void Component::inject(const HalfEdge& at, const vector<std::pair<Label, Label>>& left_, const vector<std::pair<Label, Label>>& right_) {
+std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const HalfEdge& at, const vector<std::pair<Label, Label>>& left_, const vector<std::pair<Label, Label>>& right_) {
   using Orientation = ::intervalxt::Implementation<Separatrix>::Orientation;
 
   auto& state = impl->decomposition;
@@ -236,40 +236,50 @@ void Component::inject(const HalfEdge& at, const vector<std::pair<Label, Label>>
   const bool top = at.top();
 
   auto & connections = top ? state->top.at(at) : state->bottom.at(at);
+  
+  std::list<Connection> leftInjected, rightInjected;
 
   // Inject left connections.
   {
     auto left = left_;
 
-    if (top) std::reverse(left.begin(), left.end());
+    if (top) std::reverse(begin(left), end(left));
 
     ASSERT(left.empty() || connections.left.empty(), "cannot inject into a component with existing connections");
 
     for (const auto& [source, target] : left) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-        ::intervalxt::Implementation<Separatrix>::make(state, top ? target : source, Orientation::ANTIPARALLEL),
-        ::intervalxt::Implementation<Separatrix>::make(state, top ? source : target, Orientation::PARALLEL));
+        ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
+        ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
       connections.left.push_back(connection);
+      leftInjected.push_back(connection);
     }
+
+    if (top) std::reverse(begin(leftInjected), end(leftInjected));
   }
 
   // Inject right connections.
   {
     auto right = right_;
 
-    if (top) std::reverse(right.begin(), right.end());
+    if (top) std::reverse(begin(right), end(right));
 
     ASSERT(right.empty() || connections.right.empty(), "cannot inject into a component with existing connections");
 
     for (const auto& [source, target] : right) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-        ::intervalxt::Implementation<Separatrix>::make(state, top ? target : source, Orientation::PARALLEL),
-        ::intervalxt::Implementation<Separatrix>::make(state, top ? source : target, Orientation::ANTIPARALLEL));
+        ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
+        ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
       connections.right.push_back(connection);
+      rightInjected.push_back(connection);
     }
+
+    if (top) std::reverse(begin(rightInjected), end(rightInjected));
   }
 
   state->check();
+
+  return { leftInjected, rightInjected };
 }
 
 Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
