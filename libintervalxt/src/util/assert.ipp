@@ -20,16 +20,17 @@
 #ifndef LIBFLATSURF_UTIL_ASSERT_IPP
 #define LIBFLATSURF_UTIL_ASSERT_IPP
 
-#include <sstream>
 #include <gmpxx.h>
+#include <sstream>
 
 #include <boost/preprocessor/stringize.hpp>
 
 namespace flatsurf {
 
-template <typename T=mpz_class>
+template <typename T = mpz_class>
 class Amortized {
   T budget;
+
  public:
   Amortized(const T& budget = 1 << 16) : budget(budget) {}
 
@@ -49,17 +50,19 @@ class Amortized {
 template <typename E>
 void throw_for_assert(const E& e) { throw e; }
 
-}
+}  // namespace flatsurf
 
-#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                                   \
-  while (not(CONDITION)) {                                                                       \
-    std::stringstream user_message, assertion_message;                                           \
-    user_message << MESSAGE;                                                                     \
-    assertion_message << (#CONDITION " does not hold");                                          \
-    if (user_message.str().size()) assertion_message << ": " << user_message.str();              \
-    else assertion_message << " ";                                                               \
-    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);                       \
-    ::flatsurf::throw_for_assert(EXCEPTION(assertion_message.str().c_str()));                                \
+#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                \
+  while (not(CONDITION)) {                                                    \
+    std::stringstream user_message, assertion_message;                        \
+    user_message << MESSAGE;                                                  \
+    assertion_message << (#CONDITION " does not hold");                       \
+    if (user_message.str().size())                                            \
+      assertion_message << ": " << user_message.str();                        \
+    else                                                                      \
+      assertion_message << " ";                                               \
+    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);    \
+    ::flatsurf::throw_for_assert(EXCEPTION(assertion_message.str().c_str())); \
   }
 
 // Run a (cheap) check that a (user provided) argument is valid.
@@ -87,6 +90,5 @@ void throw_for_assert(const E& e) { throw e; }
 #define ASSERT(CONDITION, MESSAGE) ASSERT_(CONDITION, std::logic_error, MESSAGE)
 
 #endif
-
 
 #endif
