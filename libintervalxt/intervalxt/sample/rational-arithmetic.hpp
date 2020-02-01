@@ -18,8 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_RATIONAL_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_ARITHMETIC_RATIONAL_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_RATIONAL_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_RATIONAL_ARITHMETIC_HPP
 
 #include <gmpxx.h>
 

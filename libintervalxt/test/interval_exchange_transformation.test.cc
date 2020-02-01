@@ -27,9 +27,9 @@
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/sample/lengths.hpp"
-#include "../intervalxt/sample/exact-real-arithmetic.hpp"
 #include "../intervalxt/sample/e-antic-arithmetic.hpp"
 #include "../intervalxt/sample/rational-arithmetic.hpp"
+#include "../intervalxt/sample/mpz-arithmetic.hpp"
 #include "../intervalxt/induction_step.hpp"
 
 using std::vector;

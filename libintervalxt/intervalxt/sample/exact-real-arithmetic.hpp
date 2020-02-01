@@ -18,8 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_EXACT_REAL_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_ARITHMETIC_EXACT_REAL_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_EXACT_REAL_ARITHMETIC_HPP
+#define LIBINTERVALXT_SAMPLE_EXACT_REAL_ARITHMETIC_HPP
 
 #include <exact-real/element.hpp>
 
@@ -32,7 +32,9 @@ struct Arithmetic<exactreal::Element<Ring>> {
   using T = exactreal::Element<Ring>;
 
   static std::vector<mpq_class> coefficients(const T& value) { return value.template coefficients<mpq_class>(); }
-  static auto floorDivision(const T&, const T&) { throw std::logic_error("not implemented: floor division"); }
+  static auto floorDivision(const T& divident, const T& divisor) {
+    return divident.floordiv(divisor);
+  }
 };
 
 }

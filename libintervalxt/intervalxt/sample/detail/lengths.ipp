@@ -135,7 +135,8 @@ Label Lengths<T>::subtractRepeated(Label from) {
   if (stack.size() == 0)
     throw std::invalid_argument("Cannot subtractRepeated() without push()");
 
-  auto quo = Arithmetic<T>::floorDivision(at(from), *this);
+  auto quo = Arithmetic<T>::floorDivision(at(from), static_cast<T>(*this));
+
   at(from) -= quo * static_cast<T>(*this);
 
   assert(at(from) >= 0 && "Length cannot be negative.");
