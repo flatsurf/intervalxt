@@ -24,8 +24,8 @@
 #include <optional>
 
 #include "forward.hpp"
-#include "label.hpp"
 #include "interval_exchange_transformation.hpp"
+#include "label.hpp"
 
 namespace intervalxt {
 

@@ -18,22 +18,22 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
+#include "../intervalxt/component.hpp"
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
-#include "../intervalxt/component.hpp"
 #include "../intervalxt/label.hpp"
 
-#include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/component.impl.hpp"
 #include "impl/decomposition_state.hpp"
+#include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/interval_exchange_transformation.impl.hpp"
 
 #include "util/assert.ipp"
@@ -43,28 +43,26 @@ namespace intervalxt {
 using boost::lexical_cast;
 using std::string;
 
-DynamicalDecomposition::DynamicalDecomposition(const IntervalExchangeTransformation& iet) :
-  impl(spimpl::make_unique_impl<Implementation>(iet)) {}
+DynamicalDecomposition::DynamicalDecomposition(const IntervalExchangeTransformation& iet) : impl(spimpl::make_unique_impl<Implementation>(iet)) {}
 
 bool DynamicalDecomposition::decompose(std::function<bool(const Component&)> target, int limit) {
   auto components = this->components();
-  return std::all_of(components.begin(), components.end(), [&](auto& component) {
-    return component.decompose(target, limit); });
+  return std::all_of(components.begin(), components.end(), [&](auto& component) { return component.decompose(target, limit); });
 }
 
-std::vector<Component>  DynamicalDecomposition::components() const {
+std::vector<Component> DynamicalDecomposition::components() const {
   return impl->decomposition->components | rx::transform([&](auto& component) {
-    return ::intervalxt::Implementation<Component>::make(impl->decomposition, &const_cast<ComponentState&>(component));
-  }) | rx::to_vector();
+           return ::intervalxt::Implementation<Component>::make(impl->decomposition, &const_cast<ComponentState&>(component));
+         }) |
+         rx::to_vector();
 }
 
-Implementation<DynamicalDecomposition>::Implementation(const IntervalExchangeTransformation& iet) :
-  decomposition(std::make_shared<DecompositionState>()) {
+Implementation<DynamicalDecomposition>::Implementation(const IntervalExchangeTransformation& iet) : decomposition(std::make_shared<DecompositionState>()) {
   createComponent(decomposition, IntervalExchangeTransformation(
-    ::intervalxt::Implementation<IntervalExchangeTransformation>::withLengths(iet,
-    [&](std::shared_ptr<Lengths> original) {
-      return std::make_shared<Lengths>(LengthsWithConnections(original, decomposition));
-    })));
+                                     ::intervalxt::Implementation<IntervalExchangeTransformation>::withLengths(iet,
+                                                                                                               [&](std::shared_ptr<Lengths> original) {
+                                                                                                                 return std::make_shared<Lengths>(LengthsWithConnections(original, decomposition));
+                                                                                                               })));
 
   for (auto label : iet.top())
     decomposition->top[label] = {};
@@ -91,8 +89,7 @@ std::string Implementation<DynamicalDecomposition>::render(std::shared_ptr<Decom
 
 std::ostream& operator<<(std::ostream& os, const DynamicalDecomposition& self) {
   auto components = self.components();
-  return os << "DynamicalDecomposition(" << boost::algorithm::join(
-    components | rx::transform([](const auto& component) { return lexical_cast<string>(component); }) | rx::to_vector(), ", ");
+  return os << "DynamicalDecomposition(" << boost::algorithm::join(components | rx::transform([](const auto& component) { return lexical_cast<string>(component); }) | rx::to_vector(), ", ");
 }
 
-}
+}  // namespace intervalxt

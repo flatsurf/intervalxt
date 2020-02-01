@@ -20,8 +20,8 @@
 
 #include <algorithm>
 
-#include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/connection.hpp"
+#include "../intervalxt/interval_exchange_transformation.hpp"
 
 #include "impl/component_state.hpp"
 
@@ -30,7 +30,6 @@ namespace intervalxt {
 using std::begin;
 using std::end;
 
-ComponentState::ComponentState(IntervalExchangeTransformation&& iet) :
-  iet(std::move(iet)) {}
+ComponentState::ComponentState(IntervalExchangeTransformation&& iet) : iet(std::move(iet)) {}
 
-}
+}  // namespace intervalxt

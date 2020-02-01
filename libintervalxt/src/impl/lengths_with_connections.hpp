@@ -22,21 +22,21 @@
 #define LIBINTERVALXT_LENGTHS_WITH_CONNECTIONS_HPP
 
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <gmpxx.h>
 
-#include "forward.hpp"
 #include "../../intervalxt/label.hpp"
 #include "../../intervalxt/lengths.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
 class LengthsWithConnections {
  public:
   LengthsWithConnections(std::shared_ptr<Lengths>, std::shared_ptr<DecompositionState>);
- 
+
   void push(Label);
   void pop();
   void subtract(Label);
@@ -56,9 +56,6 @@ class LengthsWithConnections {
   std::vector<Label> stack;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-
-
-

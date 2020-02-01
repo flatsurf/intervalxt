@@ -22,16 +22,15 @@
 
 #include "../intervalxt/label.hpp"
 
-#include "impl/lengths_with_connections.hpp"
 #include "impl/decomposition_state.hpp"
+#include "impl/lengths_with_connections.hpp"
 
 #include "util/assert.ipp"
 
 namespace intervalxt {
 
-LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<DecompositionState> decomposition) :
-  lengths(lengths),
-  decomposition(decomposition) {}
+LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<DecompositionState> decomposition) : lengths(lengths),
+                                                                                                                                      decomposition(decomposition) {}
 
 void LengthsWithConnections::push(Label label) {
   ASSERT(std::find(begin(stack), end(stack), label) == end(stack), "label cannot be pushed more than once");
@@ -59,20 +58,21 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
   // subtrahend on the bottom. Note that this search is very inefficient, see
   // #71.
   bool minuendOnTop = std::any_of(begin(decomposition->components), end(decomposition->components),
-    [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
+                                  [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
 
   auto& top = minuendOnTop ? decomposition->top : decomposition->bottom;
   auto& bottom = minuendOnTop ? decomposition->bottom : decomposition->top;
 
   // The subtrahend takes the minuends top (left) list with it (this might be a
   // nop since bottom and top share this initial list of connections.)
-  auto& bottomSubtrahend = bottom.at(subtrahend).left;;
+  auto& bottomSubtrahend = bottom.at(subtrahend).left;
+  ;
   bottomSubtrahend.splice(end(bottomSubtrahend), top.at(minuend).left);
 
   // The subtrahend takes the minuends bottom left list.
   bottomSubtrahend.splice(
-    minuendOnTop ? end(bottomSubtrahend) : begin(bottomSubtrahend),
-    bottom.at(minuend).left);
+      minuendOnTop ? end(bottomSubtrahend) : begin(bottomSubtrahend),
+      bottom.at(minuend).left);
 }
 
 Label LengthsWithConnections::subtractRepeated(Label minuend) {
@@ -106,4 +106,4 @@ std::string LengthsWithConnections::render(Label label) const {
   return lengths->render(label);
 }
 
-}
+}  // namespace intervalxt

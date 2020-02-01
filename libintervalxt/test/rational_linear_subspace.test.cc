@@ -83,4 +83,4 @@ TEST_CASE("Transformations of Rational Linear Subspace", "[rational_linear_subsp
   REQUIRE(S == RationalLinearSubspace::fromEquations({{1, 0}}));
 }
 
-}
+}  // namespace intervalxt::test

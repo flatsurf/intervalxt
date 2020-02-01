@@ -31,7 +31,7 @@ template <>
 struct Arithmetic<eantic::renf_elem_class> {
   using T = eantic::renf_elem_class;
 
-  static std::vector<mpq_class> coefficients(const T& value) { 
+  static std::vector<mpq_class> coefficients(const T& value) {
     std::vector<mpq_class> ret;
     auto d = value.den();
     for (auto i : value.num_vector()) {
@@ -45,7 +45,6 @@ struct Arithmetic<eantic::renf_elem_class> {
   static auto floorDivision(const T& divident, const T& divisor) { return (divident / divisor).floor(); }
 };
 
-}
+}  // namespace intervalxt::sample
 
 #endif
-

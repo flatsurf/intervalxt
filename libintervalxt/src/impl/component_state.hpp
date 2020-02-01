@@ -25,8 +25,8 @@
 
 #include <boost/logic/tribool.hpp>
 
-#include "forward.hpp"
 #include "../../intervalxt/interval_exchange_transformation.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
@@ -34,7 +34,7 @@ using std::vector;
 
 struct ComponentState {
   ComponentState(IntervalExchangeTransformation&&);
-  
+
   IntervalExchangeTransformation iet;
 
   boost::logic::tribool cylinder = boost::logic::indeterminate;
@@ -42,8 +42,6 @@ struct ComponentState {
   boost::logic::tribool keane = boost::logic::indeterminate;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-
-

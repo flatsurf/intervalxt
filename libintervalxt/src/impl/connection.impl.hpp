@@ -42,8 +42,6 @@ class Implementation<Connection> {
   Separatrix target;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-
-

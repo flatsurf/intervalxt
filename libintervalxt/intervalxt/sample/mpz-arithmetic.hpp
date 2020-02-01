@@ -31,14 +31,13 @@ template <>
 struct Arithmetic<mpz_class> {
   using T = mpz_class;
 
-  static std::vector<mpq_class> coefficients(const T& value) { 
+  static std::vector<mpq_class> coefficients(const T& value) {
     return std::vector{mpq_class(value)};
   }
 
   static mpz_class floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
 
-}
+}  // namespace intervalxt::sample
 
 #endif
-

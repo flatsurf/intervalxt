@@ -21,23 +21,23 @@
 #ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 #define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 
-#include <vector>
 #include <tuple>
+#include <vector>
 
 #include <gmpxx.h>
 
-#include "../lengths.hpp"
 #include "../label.hpp"
+#include "../lengths.hpp"
 
 namespace intervalxt::sample {
-  
+
 template <typename T>
 class Lengths {
  public:
   Lengths();
   explicit Lengths(const std::vector<T>&);
 
-  template <typename ...L>
+  template <typename... L>
   static auto make(L&&... values);
 
   std::vector<Label> labels() const;
@@ -64,7 +64,7 @@ class Lengths {
   std::vector<T> lengths;
 };
 
-}
+}  // namespace intervalxt::sample
 
 #include "detail/lengths.ipp"
 

@@ -25,8 +25,8 @@
 
 #include "../../intervalxt/label.hpp"
 
-#include "forward.hpp"
 #include "../../intervalxt/separatrix.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 
@@ -52,8 +52,6 @@ class Implementation<Separatrix> {
   Orientation orientation;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-
-

@@ -38,7 +38,6 @@ struct Arithmetic<mpq_class> {
   }
 };
 
-}
+}  // namespace intervalxt::sample
 
 #endif
-

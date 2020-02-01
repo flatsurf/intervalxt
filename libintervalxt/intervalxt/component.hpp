@@ -30,8 +30,8 @@
 
 #include "external/spimpl/spimpl.h"
 
-#include "forward.hpp"
 #include "connection.hpp"
+#include "forward.hpp"
 #include "half_edge.hpp"
 
 namespace intervalxt {

@@ -29,7 +29,7 @@ using std::ostream;
 ostream& operator<<(ostream& os, const InductionStep& self) {
   using Result = InductionStep::Result;
 
-  switch(self.result) {
+  switch (self.result) {
     case Result::LIMIT_REACHED:
       return os << "LIMIT_REACHED";
     case Result::CYLINDER:
@@ -45,5 +45,4 @@ ostream& operator<<(ostream& os, const InductionStep& self) {
   }
 }
 
-}
-
+}  // namespace intervalxt

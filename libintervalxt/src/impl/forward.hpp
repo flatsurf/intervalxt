@@ -30,6 +30,6 @@ struct ComponentState;
 struct ConnectionState;
 class LengthsWithConnections;
 
-}
+}  // namespace intervalxt
 
 #endif

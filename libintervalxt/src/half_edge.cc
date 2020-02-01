@@ -20,15 +20,15 @@
 
 #include <ostream>
 
-#include "../intervalxt/half_edge.hpp"
 #include "../intervalxt/component.hpp"
+#include "../intervalxt/half_edge.hpp"
 #include "../intervalxt/separatrix.hpp"
 
-#include "impl/half_edge.impl.hpp"
-#include "impl/dynamical_decomposition.impl.hpp"
-#include "impl/separatrix.impl.hpp"
-#include "impl/decomposition_state.hpp"
 #include "impl/component.impl.hpp"
+#include "impl/decomposition_state.hpp"
+#include "impl/dynamical_decomposition.impl.hpp"
+#include "impl/half_edge.impl.hpp"
+#include "impl/separatrix.impl.hpp"
 
 #include "util/assert.ipp"
 
@@ -37,8 +37,7 @@ namespace intervalxt {
 using std::ostream;
 using Contour = Implementation<HalfEdge>::Contour;
 
-HalfEdge::HalfEdge(const Component& component, const Label& label) :
-  impl(spimpl::make_impl<Implementation>(::intervalxt::Implementation<Component>::parent(component), component, label, Contour::TOP)) {
+HalfEdge::HalfEdge(const Component& component, const Label& label) : impl(spimpl::make_impl<Implementation>(::intervalxt::Implementation<Component>::parent(component), component, label, Contour::TOP)) {
 }
 
 Component HalfEdge::component() const {
@@ -64,9 +63,9 @@ std::optional<Separatrix> HalfEdge::separatrix() const {
   if (not next().has_value())
     return {};
 
-  return top() 
-    ? ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, impl->label)
-    : ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, impl->label);
+  return top()
+             ? ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, impl->label)
+             : ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, impl->label);
 }
 
 std::optional<HalfEdge> HalfEdge::next() const {
@@ -131,14 +130,14 @@ void Implementation<HalfEdge>::check(const HalfEdge& self) {
       auto bottom = self.impl->component.bottomContour();
       return std::find(begin(bottom), end(bottom), self) != end(bottom);
     }
-  }(), "half edge " << self << " is not in the component " << self.impl->component << " for which it was created anymore");
+  }(),
+         "half edge " << self << " is not in the component " << self.impl->component << " for which it was created anymore");
 }
 
-Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) :
-  decomposition(decomposition),
-  component(component),
-  label(label),
-  contour(contour) {}
+Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) : decomposition(decomposition),
+                                                                                                                                                        component(component),
+                                                                                                                                                        label(label),
+                                                                                                                                                        contour(contour) {}
 
 ostream& operator<<(ostream& os, const HalfEdge& self) {
   if (self.impl->contour == Contour::TOP)
@@ -146,7 +145,7 @@ ostream& operator<<(ostream& os, const HalfEdge& self) {
   return os << "[" << Implementation<DynamicalDecomposition>::render(self.impl->decomposition, self.impl->label) << "]";
 }
 
-}
+}  // namespace intervalxt
 
 namespace std {
 
@@ -156,5 +155,4 @@ size_t hash<HalfEdge>::operator()(const HalfEdge& self) const noexcept {
   return hash<Label>()(self);
 }
 
-
-}
+}  // namespace std

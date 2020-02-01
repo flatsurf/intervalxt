@@ -24,20 +24,20 @@
 #include <type_traits>
 #include <vector>
 
-#include <boost/lexical_cast.hpp>
 #include <gmpxx.h>
+#include <boost/lexical_cast.hpp>
 
 namespace intervalxt::sample {
 
 template <typename Arithmetic>
-using QuotientFloorDivision = typename std::invoke_result_t<decltype(&Arithmetic::floorDivision),const typename Arithmetic::T&, const typename Arithmetic::T&>;
+using QuotientFloorDivision = typename std::invoke_result_t<decltype(&Arithmetic::floorDivision), const typename Arithmetic::T&, const typename Arithmetic::T&>;
 
 template <typename S, typename _ = void>
 struct Arithmetic {
   using T = S;
 
   static std::vector<mpq_class> coefficients(const T& value) {
-    if constexpr(std::is_same_v<T, long long> || std::is_same_v<T, unsigned long long>) {
+    if constexpr (std::is_same_v<T, long long> || std::is_same_v<T, unsigned long long>) {
       return std::vector<mpq_class>{mpq_class(boost::lexical_cast<std::string>(value))};
     } else {
       return std::vector<mpq_class>{value};
@@ -46,6 +46,6 @@ struct Arithmetic {
   static auto floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
 
-}
+}  // namespace intervalxt::sample
 
 #endif

@@ -21,9 +21,9 @@
 #ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
 #define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
 
-#include "forward.hpp"
-#include "connection.hpp"
 #include "component.hpp"
+#include "connection.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 

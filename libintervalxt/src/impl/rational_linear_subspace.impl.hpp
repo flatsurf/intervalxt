@@ -29,7 +29,7 @@ using Parma_Polyhedra_Library::NNC_Polyhedron;
 
 namespace intervalxt {
 
-template<>
+template <>
 class Implementation<RationalLinearSubspace> {
  public:
   Implementation();
@@ -41,6 +41,6 @@ class Implementation<RationalLinearSubspace> {
   NNC_Polyhedron nonNegative;
 };
 
-}
+}  // namespace intervalxt
 
 #endif

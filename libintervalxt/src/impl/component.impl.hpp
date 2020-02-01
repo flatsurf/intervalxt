@@ -57,7 +57,6 @@ class Implementation<Component> {
   ComponentState& state;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-

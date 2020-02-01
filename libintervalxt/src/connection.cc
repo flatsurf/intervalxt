@@ -24,9 +24,8 @@
 
 namespace intervalxt {
 
-Connection::Connection() :
-  // We assume that the caller sets impl.
-  impl(nullptr) {}
+Connection::Connection() :  // We assume that the caller sets impl.
+                           impl(nullptr) {}
 
 Connection Connection::operator-() const noexcept {
   return Implementation::make(impl->decomposition, impl->target, impl->source);
@@ -55,10 +54,9 @@ Separatrix Connection::target() const noexcept {
   return impl->target;
 }
 
-Implementation<Connection>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Separatrix& source, const Separatrix& target) :
-  decomposition(decomposition),
-  source(source),
-  target(target) {}
+Implementation<Connection>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Separatrix& source, const Separatrix& target) : decomposition(decomposition),
+                                                                                                                                                    source(source),
+                                                                                                                                                    target(target) {}
 
 Connection Implementation<Connection>::make(std::shared_ptr<DecompositionState> decomposition, const Separatrix& source, const Separatrix& target) {
   Connection connection;
@@ -70,7 +68,7 @@ std::ostream& operator<<(std::ostream& os, const Connection& self) {
   return os << "[" << self.impl->source << " ⚯ " << self.impl->target << "]";
 }
 
-}
+}  // namespace intervalxt
 
 namespace std {
 
@@ -81,5 +79,4 @@ size_t hash<Connection>::operator()(const Connection& self) const noexcept {
   return hash<Separatrix>()(self.source()) + (hash<Separatrix>()(self.target()) << 32);
 }
 
-
-}
+}  // namespace std

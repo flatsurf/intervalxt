@@ -22,15 +22,15 @@
 #define LIBINTERVALXT_DETAIL_LENGTH_IPP
 
 #include <cassert>
+#include <ostream>
 #include <variant>
 #include <vector>
-#include <ostream>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
-#include "../length.hpp"
 #include "../external/gmpxxll/mpz_class.hpp"
+#include "../length.hpp"
 
 namespace intervalxt {
 template <typename T>

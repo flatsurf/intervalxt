@@ -23,16 +23,16 @@
 
 #include "external/catch2/single_include/catch2/catch.hpp"
 
+#include "../intervalxt/connection.hpp"
+#include "../intervalxt/decomposition_step.hpp"
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
-#include "../intervalxt/decomposition_step.hpp"
-#include "../intervalxt/connection.hpp"
-#include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/e-antic-arithmetic.hpp"
+#include "../intervalxt/sample/lengths.hpp"
 
+using boost::lexical_cast;
 using eantic::renf_class;
 using eantic::renf_elem_class;
-using boost::lexical_cast;
 using std::string;
 using Result = ::intervalxt::DecompositionStep::Result;
 
@@ -128,7 +128,6 @@ TEST_CASE("Decomposition of an IET") {
     }
   }
 }
-
 
 TEST_CASE("Decomposition of a Trivial IET") {
   using IntLengths = sample::Lengths<int>;
@@ -323,7 +322,7 @@ TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
   auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
   auto x = K->gen();
 
-  auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747*x/5000000000, 150057*x/100000, 50057*x/100000, 150057*x/100000);
+  auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747 * x / 5000000000, 150057 * x / 100000, 50057 * x / 100000, 150057 * x / 100000);
   auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, b, a, c});
   auto decomposition = DynamicalDecomposition(iet);
 

@@ -18,23 +18,23 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <vector>
 #include <valarray>
+#include <vector>
 
 #include <e-antic/renfxx.h>
 
 #include "external/catch2/single_include/catch2/catch.hpp"
 
+#include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
-#include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/e-antic-arithmetic.hpp"
-#include "../intervalxt/sample/rational-arithmetic.hpp"
+#include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/mpz-arithmetic.hpp"
-#include "../intervalxt/induction_step.hpp"
+#include "../intervalxt/sample/rational-arithmetic.hpp"
 
-using std::vector;
 using std::pair;
+using std::vector;
 
 namespace intervalxt::test {
 
@@ -56,7 +56,7 @@ TEST_CASE("Basic Operations on an Interval Exchange Transformation", "[interval_
     }
 
     WHEN("Initialized from Permutation") {
-      auto iet = IET(lengths, {a, b, c, d}, {d, a , b, c});
+      auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
 
       REQUIRE(iet.top() == vector{a, b, c, d});
       REQUIRE(iet.bottom() == vector{d, a, b, c});
@@ -109,18 +109,18 @@ TEST_CASE("Zorich Induction on an Interval Exchange Transformation", "[interval_
   SECTION("An IET that Allows Zorich Induction Speedup") {
     auto&& [lengths, a, b] = IntLengths::make(23, 5);
     auto iet = IET(lengths, {a, b}, {b, a});
-  
+
     iet.zorichInduction();
-  
-    REQUIRE(iet == IET(IntLengths({23 - 4*5, 5}), {a, b}, {b, a}));
+
+    REQUIRE(iet == IET(IntLengths({23 - 4 * 5, 5}), {a, b}, {b, a}));
   }
 
   SECTION("An IET that Has No Zorich Induction Speedup") {
     auto&& [lengths, a, b] = IntLengths::make(5, 3);
     auto iet = IET(lengths, {a, b}, {b, a});
-  
+
     iet.zorichInduction();
-  
+
     REQUIRE(iet == IET(IntLengths({2, 3}), {a, b}, {b, a}));
   }
 
@@ -134,7 +134,7 @@ TEST_CASE("Zorich Induction on an Interval Exchange Transformation", "[interval_
   }
 
   SECTION("Zorich Induction Changes Ordering at the Bottom") {
-    auto&& [lengths, a,  b, c, d] = IntLengths::make(15, 2, 3, 7);
+    auto&& [lengths, a, b, c, d] = IntLengths::make(15, 2, 3, 7);
     auto iet = IET(lengths, {a, d, b, c}, {b, c, a, d});
 
     iet.zorichInduction();
@@ -239,19 +239,19 @@ TEST_CASE("Repeated Induction on an Interval Exchange Transformation", "[interva
       auto iet = IET(lengths, {a, b, c}, {c, b, a});
       auto induce = iet.induce(0);
       REQUIRE(induce.result == Result::NON_SEPARATING_CONNECTION);
-      REQUIRE(*induce.connection == pair{ c, a });
+      REQUIRE(*induce.connection == pair{c, a});
       REQUIRE(iet == IET(lengths, {b, c}, {b, c}));
     }
 
     SECTION("Obvious Connections Are Detected") {
       auto&& [lengths, a, b, c, d, e, f] = IntLengths::make(1, 2, 3, 1, 5, 7);
       auto iet = IET(lengths, {a, b, c, d, e, f}, {d, c, b, f, e, a});
-    
+
       {
         auto induce = iet.induce(0);
         REQUIRE(induce.result == Result::NON_SEPARATING_CONNECTION);
       }
-    
+
       {
         auto induce = iet.induce(0);
         REQUIRE(induce.result == Result::SEPARATING_CONNECTION);
@@ -335,7 +335,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       auto&& [lengths, a, b, c, d] = EAnticLengths::make(2 * x / 17, 5 * x * x / 3 - mpq_class(1, 18), 5 * x * x / 2 - 3, 3 * one);
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
-      
+
       auto v = iet.safInvariant();
       REQUIRE((v.min() != 0 || v.max() != 0));
 
@@ -408,7 +408,7 @@ TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[inter
 
   SECTION("Over the Field Q(√2)") {
     auto K = renf_class::make("a^2 - 2", "a", "1.41 +/- 0.01");
-    
+
     SECTION("Examples Without Periodic Trajectories") {
       auto&& [lengths, a, b, c, d] = EAnticLengths::make(K->gen(), renf_elem_class(K, 1), renf_elem_class(K, 1), renf_elem_class(K, 1));
 
@@ -436,4 +436,4 @@ TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[inter
   }
 }
 
-}
+}  // namespace intervalxt::test

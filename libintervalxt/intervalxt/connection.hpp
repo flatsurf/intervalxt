@@ -61,9 +61,9 @@ class Connection : boost::equality_comparable<Connection> {
 
 namespace std {
 
-template<>
+template <>
 struct hash<intervalxt::Connection> { size_t operator()(const intervalxt::Connection&) const noexcept; };
 
-}
+}  // namespace std
 
 #endif

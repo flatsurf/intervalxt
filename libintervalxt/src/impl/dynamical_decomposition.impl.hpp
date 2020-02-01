@@ -41,6 +41,6 @@ class Implementation<DynamicalDecomposition> {
   std::shared_ptr<DecompositionState> decomposition;
 };
 
-}
+}  // namespace intervalxt
 
 #endif

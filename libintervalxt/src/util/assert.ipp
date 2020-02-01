@@ -31,17 +31,19 @@ namespace flatsurf {
 template <typename E>
 void throw_for_assert(const E& e) { throw e; }
 
-}
+}  // namespace flatsurf
 
-#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                                   \
-  while (not(CONDITION)) {                                                                       \
-    std::stringstream user_message, assertion_message;                                           \
-    user_message << MESSAGE;                                                                     \
-    assertion_message << (#CONDITION " does not hold");                                          \
-    if (user_message.str().size()) assertion_message << ": " << user_message.str();              \
-    else assertion_message << " ";                                                               \
-    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);                       \
-    ::flatsurf::throw_for_assert(EXCEPTION(assertion_message.str().c_str()));                                \
+#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                \
+  while (not(CONDITION)) {                                                    \
+    std::stringstream user_message, assertion_message;                        \
+    user_message << MESSAGE;                                                  \
+    assertion_message << (#CONDITION " does not hold");                       \
+    if (user_message.str().size())                                            \
+      assertion_message << ": " << user_message.str();                        \
+    else                                                                      \
+      assertion_message << " ";                                               \
+    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);    \
+    ::flatsurf::throw_for_assert(EXCEPTION(assertion_message.str().c_str())); \
   }
 
 // Run a (cheap) check that a (user provided) argument is valid.

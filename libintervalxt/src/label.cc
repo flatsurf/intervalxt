@@ -30,7 +30,7 @@ Label::Label(size_t id) : id(id) {}
 
 bool Label::operator==(const Label& rhs) const noexcept { return id == rhs.id; }
 
-}
+}  // namespace intervalxt
 
 namespace std {
 
@@ -40,5 +40,4 @@ size_t hash<Label>::operator()(const Label& self) const noexcept {
   return self.id;
 }
 
-
-}
+}  // namespace std

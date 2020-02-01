@@ -52,5 +52,4 @@ TEST_CASE("Labels Can Be Created and Compared", "[label]") {
   }
 }
 
-}
-
+}  // namespace intervalxt::test

@@ -23,8 +23,8 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "../intervalxt/label.hpp"
 #include "../intervalxt/connection.hpp"
+#include "../intervalxt/label.hpp"
 #include "../intervalxt/separatrix.hpp"
 
 #include "impl/decomposition_state.hpp"
@@ -35,13 +35,13 @@
 
 namespace intervalxt {
 
-using std::ostream;
 using boost::algorithm::join;
+using std::ostream;
 
 void DecompositionState::check() const {
   std::unordered_map<Separatrix, std::vector<Connection>> connections;
 
-  for (const auto& topbottom : { top, bottom }) {
+  for (const auto& topbottom : {top, bottom}) {
     for (const auto& item : topbottom) {
       const auto& [left, right] = item.second;
       for (const auto& connection : left) {
@@ -67,21 +67,13 @@ void DecompositionState::check() const {
 
 ostream& operator<<(ostream& os, const DecompositionState& self) {
   const auto& render = [&](const auto& state) {
-    return join(state
-      | rx::filter([](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); })
-      | rx::transform([](const auto& connections) {
-        return boost::lexical_cast<std::string>(std::hash<Label>()(connections.first))
-          + ": left=["
-          + join(connections.second.left | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ")
-          + "], right=["
-          + join(connections.second.right | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ")
-          + "]"; 
-        })
-      | rx::to_vector(),
-    ", ");
+    return join(state | rx::filter([](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); }) | rx::transform([](const auto& connections) {
+                  return boost::lexical_cast<std::string>(std::hash<Label>()(connections.first)) + ": left=[" + join(connections.second.left | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ") + "], right=[" + join(connections.second.right | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ") + "]";
+                }) | rx::to_vector(),
+                ", ");
   };
 
   return os << "DecompositionState(top=" << render(self.top) << ", bottom=" << render(self.bottom) << ")";
 }
 
-}
+}  // namespace intervalxt

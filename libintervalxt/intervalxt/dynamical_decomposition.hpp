@@ -29,8 +29,8 @@
 
 #include "external/spimpl/spimpl.h"
 
-#include "forward.hpp"
 #include "component.hpp"
+#include "forward.hpp"
 
 namespace intervalxt {
 

@@ -21,14 +21,14 @@
 #ifndef LIBINTERVALXT_SAMPLE_DETAIL_LENGTHS_IPP
 #define LIBINTERVALXT_SAMPLE_DETAIL_LENGTHS_IPP
 
+#include <cassert>
 #include <numeric>
 #include <vector>
-#include <cassert>
 
 #include "../../label.hpp"
 
-#include "../lengths.hpp"
 #include "../arithmetic.hpp"
+#include "../lengths.hpp"
 
 namespace intervalxt::sample {
 
@@ -48,27 +48,25 @@ int cmp(const T& lhs, const T& rhs) {
   return 0;
 }
 
-}
+}  // namespace
 
 template <typename T>
-Lengths<T>::Lengths() :
-  stack(),
-  lengths() {}
+Lengths<T>::Lengths() : stack(),
+                        lengths() {}
 
 template <typename T>
-Lengths<T>::Lengths(const std::vector<T>& lengths) :
-  stack(),
-  lengths(lengths) {
+Lengths<T>::Lengths(const std::vector<T>& lengths) : stack(),
+                                                     lengths(lengths) {
   assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length >= 0; }) && "all Lengths must be non-negative");
 }
 
 template <typename T>
-template <typename ...L>
+template <typename... L>
 auto Lengths<T>::make(L&&... values) {
   auto lengths = Lengths<T>(std::vector{values...});
   return std::tuple_cat(
-    std::make_tuple(lengths),
-    toTuple(lengths.labels(), std::make_index_sequence<sizeof...(L)>()));
+      std::make_tuple(lengths),
+      toTuple(lengths.labels(), std::make_index_sequence<sizeof...(L)>()));
 }
 
 template <typename T>
@@ -169,7 +167,7 @@ template <typename T>
 std::string Lengths<T>::render(Label label) const {
   std::string ret;
   size_t current = index(label);
-  while(current || ret.size() == 0) {
+  while (current || ret.size() == 0) {
     size_t offset = current % (2u * 26u);
     if (offset < 26) {
       ret += static_cast<char>('a' + offset);
@@ -181,6 +179,6 @@ std::string Lengths<T>::render(Label label) const {
   return ret;
 }
 
-}
+}  // namespace intervalxt::sample
 
 #endif

@@ -37,7 +37,6 @@ struct Arithmetic<exactreal::Element<Ring>> {
   }
 };
 
-}
+}  // namespace intervalxt::sample
 
 #endif
-

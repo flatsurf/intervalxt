@@ -18,8 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include <boost/numeric/conversion/cast.hpp>
 

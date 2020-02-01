@@ -29,7 +29,7 @@ using std::ostream;
 ostream& operator<<(ostream& os, const DecompositionStep& self) {
   using Result = DecompositionStep::Result;
 
-  switch(self.result) {
+  switch (self.result) {
     case Result::LIMIT_REACHED:
       return os << "LIMIT_REACHED";
     case Result::CYLINDER:
@@ -47,4 +47,4 @@ ostream& operator<<(ostream& os, const DecompositionStep& self) {
   }
 }
 
-}
+}  // namespace intervalxt

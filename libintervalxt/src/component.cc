@@ -19,15 +19,15 @@
  *********************************************************************/
 
 #include <ostream>
-#include <vector>
-#include <variant>
 #include <unordered_set>
+#include <variant>
+#include <vector>
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include <boost/algorithm/string/join.hpp>
-#include <boost/logic/tribool.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/logic/tribool.hpp>
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/decomposition_step.hpp"
@@ -35,20 +35,20 @@
 #include "../intervalxt/label.hpp"
 
 #include "impl/component.impl.hpp"
+#include "impl/connection.impl.hpp"
 #include "impl/decomposition_state.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/half_edge.impl.hpp"
-#include "impl/connection.impl.hpp"
 #include "impl/separatrix.impl.hpp"
 
 #include "util/assert.ipp"
 
 namespace intervalxt {
 
-using std::string;
-using std::vector;
 using std::begin;
 using std::end;
+using std::string;
+using std::vector;
 
 using boost::lexical_cast;
 
@@ -56,9 +56,8 @@ using InductionResult = InductionStep::Result;
 using DecompositionResult = DecompositionStep::Result;
 using Contour = Implementation<HalfEdge>::Contour;
 
-Component::Component() :
-  // We assume that the caller takes care of initializing impl.
-  impl(nullptr) {}
+Component::Component() :  // We assume that the caller takes care of initializing impl.
+                         impl(nullptr) {}
 
 boost::logic::tribool Component::cylinder() const noexcept {
   return impl->state.cylinder;
@@ -81,32 +80,25 @@ vector<Side> Component::perimeter() const {
 }
 
 vector<HalfEdge> Component::topContour() const {
-  return (impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())
-    | rx::transform([&](const auto& label) { return HalfEdge(*this, label); })
-    | rx::to_vector();
+  return (impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top()) | rx::transform([&](const auto& label) { return HalfEdge(*this, label); }) | rx::to_vector();
 }
 
 vector<HalfEdge> Component::bottomContour() const {
-  return (impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())
-    | rx::transform([&](const auto& label) { return -HalfEdge(*this, label); })
-    | rx::to_vector();
+  return (impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom()) | rx::transform([&](const auto& label) { return -HalfEdge(*this, label); }) | rx::to_vector();
 }
 
 vector<Side> Component::left() const {
   return rx::chain(
-    impl->decomposition->bottom.at(*begin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).left,
-    impl->decomposition->top.at(*begin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).left)
-    | rx::transform([](const auto& connection) { return Side(connection); })
-    | rx::reverse()
-    | rx::to_vector();
+             impl->decomposition->bottom.at(*begin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).left,
+             impl->decomposition->top.at(*begin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).left) |
+         rx::transform([](const auto& connection) { return Side(connection); }) | rx::reverse() | rx::to_vector();
 }
 
 vector<Side> Component::right() const {
   return rx::chain(
-    impl->decomposition->bottom.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).right,
-    impl->decomposition->top.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).right)
-    | rx::transform([](const auto& connection) { return Side(connection); })
-    | rx::to_vector();
+             impl->decomposition->bottom.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.top() : impl->state.iet.bottom())).right,
+             impl->decomposition->top.at(*rbegin(impl->state.iet.swapped() ? impl->state.iet.bottom() : impl->state.iet.top())).right) |
+         rx::transform([](const auto& connection) { return Side(connection); }) | rx::to_vector();
 }
 
 vector<Side> Component::bottom() const {
@@ -119,7 +111,7 @@ vector<Side> Component::top() const {
 
 bool Component::operator==(const Component& rhs) const {
   return impl->decomposition == rhs.impl->decomposition &&
-    &impl->state == &rhs.impl->state;
+         &impl->state == &rhs.impl->state;
 }
 
 DecompositionStep Component::decompositionStep(int limit) {
@@ -151,27 +143,26 @@ DecompositionStep Component::decompositionStep(int limit) {
       self.cylinder = true;
       self.withoutPeriodicTrajectory = false;
       self.keane = false;
-      return DecompositionStep{ DecompositionResult::CYLINDER, };
-    case InductionResult::SEPARATING_CONNECTION:
-    {
+      return DecompositionStep{
+          DecompositionResult::CYLINDER,
+      };
+    case InductionResult::SEPARATING_CONNECTION: {
       auto [b, t] = *step.connection;
 
       auto equivalent = impl->walkClockwise(-HalfEdge(*this, *rbegin(bottomContour())), HalfEdge(*this, *rbegin(topContour())));
 
       auto connection = ::intervalxt::Implementation<Connection>::make(
-        impl->decomposition,
-        ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
-        ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
+          impl->decomposition,
+          ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
+          ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
       auto right = ::intervalxt::Implementation<DynamicalDecomposition>::createComponent(impl->decomposition, *this, connection, std::move(*step.additionalIntervalExchangeTransformation));
       return {
-        DecompositionResult::SEPARATING_CONNECTION,
-        connection,
-        equivalent,
-        right
-      };
+          DecompositionResult::SEPARATING_CONNECTION,
+          connection,
+          equivalent,
+          right};
     }
-    case InductionResult::NON_SEPARATING_CONNECTION:
-    {
+    case InductionResult::NON_SEPARATING_CONNECTION: {
       auto& bottom = impl->decomposition->bottom;
       auto& top = impl->decomposition->top;
 
@@ -184,18 +175,18 @@ DecompositionStep Component::decompositionStep(int limit) {
       equivalent.splice(end(equivalent), (-HalfEdge(*this, b)).cross());
       std::reverse(begin(equivalent), end(equivalent));
       for (auto& side : equivalent) {
-       if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
+        if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
           side = -*connection;
         } else {
           // This should probably change with #68.
           ;
         }
       }
-      
+
       auto connection = ::intervalxt::Implementation<Connection>::make(
-        impl->decomposition,
-        ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
-        ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
+          impl->decomposition,
+          ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
+          ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
 
       // Register the new connection right of b.
       bottom.at(b).right.push_back(connection);
@@ -214,15 +205,14 @@ DecompositionStep Component::decompositionStep(int limit) {
       ASSERT(not left().empty(), "we just added a left boundary so it cannot be empty");
 
       return {
-        DecompositionResult::NON_SEPARATING_CONNECTION,
-        connection,
-        equivalent
-      };
+          DecompositionResult::NON_SEPARATING_CONNECTION,
+          connection,
+          equivalent};
     }
     case InductionResult::WITHOUT_PERIODIC_TRAJECTORY:
       self.withoutPeriodicTrajectory = true;
       self.cylinder = false;
-      return { DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY };
+      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY};
     default:
       throw std::logic_error("not implemented: unknown enum value");
   }
@@ -250,8 +240,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
   const bool top = at.top();
 
-  auto & connections = top ? state->top.at(at) : state->bottom.at(at);
-  
+  auto& connections = top ? state->top.at(at) : state->bottom.at(at);
+
   std::list<Connection> leftInjected, rightInjected;
 
   // Inject left connections.
@@ -264,8 +254,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : left) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-        ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
-        ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
+                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
+                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
       connections.left.push_back(connection);
       leftInjected.push_back(connection);
     }
@@ -283,8 +273,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : right) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-        ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
-        ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
+                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
+                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
       connections.right.push_back(connection);
       rightInjected.push_back(connection);
     }
@@ -294,12 +284,11 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
   state->check();
 
-  return { leftInjected, rightInjected };
+  return {leftInjected, rightInjected};
 }
 
-Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
-  decomposition(decomposition),
-  state(*state) {}
+Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) : decomposition(decomposition),
+                                                                                                                      state(*state) {}
 
 Component Implementation<Component>::make(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) {
   Component component;
@@ -339,7 +328,7 @@ vector<Side> Implementation<Component>::horizontal(const Component& component, b
   return contour;
 }
 
-int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation &) {
+int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation&) {
   // Not implemented: see #60.
   return 1;
 }
@@ -363,7 +352,7 @@ std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge
     connections.splice(end(connections), walkClockwise(from, *rbegin(component.topContour())));
     connections.splice(end(connections), walkClockwise(*rbegin(component.bottomContour()), to));
   } else if (from.top() && to.top()) {
-    while(true) {
+    while (true) {
       auto cross = from.cross();
 
       std::reverse(begin(cross), end(cross));
@@ -375,7 +364,7 @@ std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge
           // This should probably change with #68.
           ;
         }
-       
+
       connections.splice(end(connections), cross);
 
       if (from == to) {
@@ -399,7 +388,7 @@ std::list<Side> Implementation<Component>::walkClockwise(HalfEdge from, HalfEdge
           // This should probably change with #68.
           ;
         }
-       
+
       connections.splice(end(connections), cross);
 
       if (from == to) {
@@ -448,7 +437,7 @@ void Implementation<Component>::registerSeparating(Component& left, const Connec
 
 std::ostream& operator<<(std::ostream& os, const Component& self) {
   return os << boost::algorithm::join(
-    self.perimeter() | rx::transform([](const auto& side) { return lexical_cast<string>(side); }) | rx::to_vector(), " ");
+             self.perimeter() | rx::transform([](const auto& side) { return lexical_cast<string>(side); }) | rx::to_vector(), " ");
 }
 
 std::ostream& operator<<(std::ostream& os, const Side& self) {
@@ -460,4 +449,4 @@ std::ostream& operator<<(std::ostream& os, const Side& self) {
     throw std::logic_error("invalid connection");
 }
 
-}
+}  // namespace intervalxt

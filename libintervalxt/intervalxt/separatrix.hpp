@@ -48,7 +48,7 @@ class Separatrix : boost::equality_comparable<Separatrix> {
  private:
   using Implementation = ::intervalxt::Implementation<Separatrix>;
   spimpl::impl_ptr<Implementation> impl;
-  
+
   friend Implementation;
   friend std::hash<Separatrix>;
 };
@@ -57,10 +57,9 @@ class Separatrix : boost::equality_comparable<Separatrix> {
 
 namespace std {
 
-template<>
+template <>
 struct hash<intervalxt::Separatrix> { size_t operator()(const intervalxt::Separatrix&) const noexcept; };
 
-}
-
+}  // namespace std
 
 #endif

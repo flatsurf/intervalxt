@@ -29,7 +29,7 @@
 
 namespace intervalxt {
 
-template<>
+template <>
 class Implementation<IntervalExchangeTransformation> {
  public:
   Implementation(std::shared_ptr<Lengths>, const std::vector<Label>&, const std::vector<Label>&);
@@ -51,7 +51,6 @@ class Implementation<IntervalExchangeTransformation> {
   bool swap = false;
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-

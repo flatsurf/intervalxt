@@ -21,16 +21,15 @@
 #ifndef LIBINTERVALXT_INTERVAL_HPP
 #define LIBINTERVALXT_INTERVAL_HPP
 
-#include <list>
 #include <boost/operators.hpp>
+#include <list>
 
 #include "../../intervalxt/label.hpp"
 
 namespace intervalxt {
 
-struct Interval :
-  boost::equality_comparable<Interval>,
-  boost::equality_comparable<Interval, Label> {
+struct Interval : boost::equality_comparable<Interval>,
+                  boost::equality_comparable<Interval, Label> {
   explicit Interval(const Label label) : label(label) {}
 
   inline operator Label() const noexcept { return label; }
@@ -41,7 +40,6 @@ struct Interval :
   typename std::list<Interval>::iterator twin;
 };
 
-}  // namespace
-
+}  // namespace intervalxt
 
 #endif

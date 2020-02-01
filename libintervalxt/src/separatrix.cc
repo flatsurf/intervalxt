@@ -20,9 +20,9 @@
 
 #include <ostream>
 
-#include "impl/separatrix.impl.hpp"
-#include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/decomposition_state.hpp"
+#include "impl/dynamical_decomposition.impl.hpp"
+#include "impl/separatrix.impl.hpp"
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
@@ -33,9 +33,8 @@ namespace intervalxt {
 using std::ostream;
 using Orientation = Implementation<Separatrix>::Orientation;
 
-Separatrix::Separatrix() :
-  // We assume that the caller sets impl explicitly
-  impl(nullptr) {}
+Separatrix::Separatrix() :  // We assume that the caller sets impl explicitly
+                           impl(nullptr) {}
 
 bool Separatrix::parallel() const noexcept {
   return impl->orientation == Implementation::Orientation::PARALLEL;
@@ -52,10 +51,9 @@ bool Separatrix::operator==(const Separatrix& rhs) const {
   return impl->label == rhs.impl->label && impl->orientation == rhs.impl->orientation;
 }
 
-Implementation<Separatrix>::Implementation(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) :
-  decomposition(decomposition),
-  label(label),
-  orientation(orientation) {}
+Implementation<Separatrix>::Implementation(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) : decomposition(decomposition),
+                                                                                                                                      label(label),
+                                                                                                                                      orientation(orientation) {}
 
 Separatrix Implementation<Separatrix>::make(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) {
   Separatrix separatrix;
@@ -64,7 +62,7 @@ Separatrix Implementation<Separatrix>::make(std::shared_ptr<DecompositionState> 
 }
 
 Separatrix Implementation<Separatrix>::atTop(std::shared_ptr<DecompositionState> decomposition, Label label) {
-  Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::ANTIPARALLEL); 
+  Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::ANTIPARALLEL);
   decomposition->top.at(label).right | rx::reverse() | rx::for_each([&](const auto& connection) {
     ASSERT(separatrix == connection.target(), "connection separatrices do not form a continuous chain");
     separatrix = connection.source();
@@ -75,7 +73,7 @@ Separatrix Implementation<Separatrix>::atTop(std::shared_ptr<DecompositionState>
 }
 
 Separatrix Implementation<Separatrix>::atBottom(std::shared_ptr<DecompositionState> decomposition, Label label) {
-  Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::PARALLEL); 
+  Separatrix separatrix = ::intervalxt::Implementation<Separatrix>::make(decomposition, label, Orientation::PARALLEL);
   decomposition->bottom.at(label).right | rx::for_each([&](const auto& connection) {
     ASSERT(separatrix == connection.source(), "connection separatrices do not form a continuous chain");
     separatrix = connection.target();
@@ -89,7 +87,7 @@ ostream& operator<<(ostream& os, const Separatrix& self) {
   return os << Implementation<DynamicalDecomposition>::render(self.impl->decomposition, self.impl->label) << (self.impl->orientation == Orientation::PARALLEL ? "+" : "-");
 }
 
-}
+}  // namespace intervalxt
 
 namespace std {
 
@@ -100,4 +98,4 @@ size_t hash<Separatrix>::operator()(const Separatrix& self) const noexcept {
   return self.parallel() ? hash : -hash;
 }
 
-}
+}  // namespace std

@@ -23,12 +23,12 @@
 
 #include <iosfwd>
 #include <map>
+#include <memory>
 #include <optional>
 #include <vector>
-#include <memory>
 
-#include <boost/operators.hpp>
 #include <gmpxx.h>
+#include <boost/operators.hpp>
 
 #include "external/spimpl/spimpl.h"
 
@@ -37,8 +37,7 @@
 
 namespace intervalxt {
 
-class IntervalExchangeTransformation :
-  boost::equality_comparable<IntervalExchangeTransformation> {
+class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
   IntervalExchangeTransformation(std::shared_ptr<Lengths>, const std::vector<Label> &top, const std::vector<Label> &bottom);
@@ -82,9 +81,9 @@ class IntervalExchangeTransformation :
   // Return whether swap() has been called an odd number of times.
   bool swapped() const noexcept;
 
-  bool operator==(const IntervalExchangeTransformation&) const;
+  bool operator==(const IntervalExchangeTransformation &) const;
 
-  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation&);
+  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
  private:
   using Implementation = ::intervalxt::Implementation<IntervalExchangeTransformation>;

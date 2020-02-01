@@ -30,13 +30,13 @@
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
+#include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
-#include "../intervalxt/induction_step.hpp"
 
+#include "impl/interval.hpp"
 #include "impl/interval_exchange_transformation.impl.hpp"
 #include "impl/rational_linear_subspace.hpp"
-#include "impl/interval.hpp"
 
 #include "util/assert.ipp"
 
@@ -64,7 +64,7 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
   return res;
 }
 
-}
+}  // namespace
 
 bool IntervalExchangeTransformation::zorichInduction() {
   const auto top = begin(impl->top);
@@ -75,7 +75,7 @@ bool IntervalExchangeTransformation::zorichInduction() {
     // The IET starts with a Cylinder
     return true;
 
-  while(true) {
+  while (true) {
     if (*bottom == *top) {
       // Zorich acceleration step: perform m full Dehn twists
       // and a partial twist.
@@ -85,7 +85,7 @@ bool IntervalExchangeTransformation::zorichInduction() {
       bottom++;
       break;
     }
-    
+
     lengths.push(*bottom);
     if (lengths.cmp(*top) >= 0) {
       lengths.pop();
@@ -132,7 +132,7 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
     vector<vector<mpq_class>> translations(impl->degree);
     for (auto& l : impl->top) {
       const auto t = impl->translation(l);
-      for(size_t d = 0; d < impl->degree; d++)
+      for (size_t d = 0; d < impl->degree; d++)
         translations[d].push_back(t[d]);
     }
     return not RationalLinearSubspace::fromEquations(translations).hasNonZeroNonNegativeVector();
@@ -143,7 +143,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
   using Result = InductionStep::Result;
 
   if (size() == 1) {
-    return { Result::CYLINDER };
+    return {Result::CYLINDER};
   }
 
   bool foundSaddleConnection = false;
@@ -193,17 +193,15 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
   ASSERT(!foundSaddleConnection, "Zorich Induction found a Saddle Connection in " << *this << " but induce() failed to see it.");
 
   if (boshernitzanNoPeriodicTrajectory()) {
-    return { Result::WITHOUT_PERIODIC_TRAJECTORY };
+    return {Result::WITHOUT_PERIODIC_TRAJECTORY};
   }
 
-  return { Result::LIMIT_REACHED };
+  return {Result::LIMIT_REACHED};
 }
 
-IntervalExchangeTransformation::IntervalExchangeTransformation() :
-  impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
+IntervalExchangeTransformation::IntervalExchangeTransformation() : impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
 
-IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
-  impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
+IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
   ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
 }
 
@@ -276,9 +274,9 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
     vector<Label> newComponentTop;
     vector<Label> newComponentBottom;
 
-    for (; topIterator != end(impl->top) ; topIterator = impl->top.erase(topIterator))
+    for (; topIterator != end(impl->top); topIterator = impl->top.erase(topIterator))
       newComponentTop.push_back(topIterator->label);
-    for (; bottomIterator != end(impl->bottom) ; bottomIterator = impl->bottom.erase(bottomIterator))
+    for (; bottomIterator != end(impl->bottom); bottomIterator = impl->bottom.erase(bottomIterator))
       newComponentBottom.push_back(bottomIterator->label);
 
     ASSERT(impl->top.size() == impl->bottom.size(), "top and bottom must have the same length after splitting of a component");
@@ -299,11 +297,10 @@ bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransforma
   return true;
 }
 
-Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
-  top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
-  bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
-  lengths(std::move(lengths)),
-  degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
+Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) : top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
+                                                                                                                                                          bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
+                                                                                                                                                          lengths(std::move(lengths)),
+                                                                                                                                                          degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
   ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
 
   ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
@@ -358,10 +355,13 @@ std::string Implementation<IntervalExchangeTransformation>::render(const Interva
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {
   return os << boost::algorithm::join(self.impl->top | rx::transform([&](const auto& interval) {
-      return "[" + self.impl->lengths->render(interval) + ": " + boost::lexical_cast<std::string>(self.impl->lengths->get(interval)) + "]";
-    }) | rx::to_vector(), " ") << " / " << boost::algorithm::join(self.impl->bottom | rx::transform([&](const auto& interval){
-      return "[" + self.impl->lengths->render(interval) + "]";
-    }) | rx::to_vector() , " ");
+                                        return "[" + self.impl->lengths->render(interval) + ": " + boost::lexical_cast<std::string>(self.impl->lengths->get(interval)) + "]";
+                                      }) | rx::to_vector(),
+                                      " ")
+            << " / " << boost::algorithm::join(self.impl->bottom | rx::transform([&](const auto& interval) {
+                                                 return "[" + self.impl->lengths->render(interval) + "]";
+                                               }) | rx::to_vector(),
+                                               " ");
 }
 
 }  // namespace intervalxt

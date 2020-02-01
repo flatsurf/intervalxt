@@ -46,9 +46,9 @@ class Label : public boost::equality_comparable<Label> {
 
 namespace std {
 
-template<>
+template <>
 struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const noexcept; };
 
-}
+}  // namespace std
 
 #endif

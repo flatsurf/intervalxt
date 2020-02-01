@@ -22,12 +22,12 @@
 #define LIBINTERVALXT_DECOMPOSITION_STATE_HPP
 
 #include <deque>
+#include <list>
 #include <memory>
 #include <unordered_map>
-#include <list>
 
-#include "forward.hpp"
 #include "component_state.hpp"
+#include "forward.hpp"
 #include "lengths_with_connections.hpp"
 
 namespace intervalxt {
@@ -57,7 +57,6 @@ struct DecompositionState {
   friend std::ostream& operator<<(std::ostream&, const DecompositionState&);
 };
 
-}
+}  // namespace intervalxt
 
 #endif
-

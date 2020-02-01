@@ -35,7 +35,7 @@
 namespace intervalxt {
 
 template <typename L>
-auto makeIET(const L& lengths, std::vector<int> permutation) {
+auto makeIET(const L &lengths, std::vector<int> permutation) {
   Lengths erasedLengths = lengths;
   auto top = lengths.labels();
   std::vector<Label> bottom;
@@ -46,7 +46,6 @@ auto makeIET(const L& lengths, std::vector<int> permutation) {
 
 std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
-}
-
+}  // namespace intervalxt
 
 #endif

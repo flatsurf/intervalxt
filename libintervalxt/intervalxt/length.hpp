@@ -23,20 +23,22 @@
 
 #include <string>
 
-#include <boost/type_erasure/operators.hpp>
-#include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/any.hpp>
+#include <boost/type_erasure/member.hpp>
+#include <boost/type_erasure/operators.hpp>
 
 #include "forward.hpp"
 
 namespace intervalxt {
 
-template<class T = boost::type_erasure::_self>
-struct boolable { static bool apply(const T& arg) { return static_cast<bool>(arg); } };
+template <class T = boost::type_erasure::_self>
+struct boolable {
+  static bool apply(const T& arg) { return static_cast<bool>(arg); }
+};
 
-}
+}  // namespace intervalxt
 
-template<class T, class Base>
+template <class T, class Base>
 struct boost::type_erasure::concept_interface<intervalxt::boolable<T>, Base, T> : Base {
   explicit operator bool() const { return ::boost::type_erasure::call(intervalxt::boolable<T>(), *this); }
 };
@@ -47,18 +49,16 @@ namespace intervalxt {
 // operations here but we want the implementation to rely on Lengths and not on
 // Length.
 using LengthInterface = boost::mpl::vector<
-  boost::type_erasure::copy_constructible<>,
-  boost::type_erasure::equality_comparable<>,
-  boost::type_erasure::less_than_comparable<>,
-  boost::type_erasure::ostreamable<>,
-  intervalxt::boolable<>,
-  boost::type_erasure::typeid_<>,
-  boost::type_erasure::relaxed
->;
- 
+    boost::type_erasure::copy_constructible<>,
+    boost::type_erasure::equality_comparable<>,
+    boost::type_erasure::less_than_comparable<>,
+    boost::type_erasure::ostreamable<>,
+    intervalxt::boolable<>,
+    boost::type_erasure::typeid_<>,
+    boost::type_erasure::relaxed>;
+
 using Length = boost::type_erasure::any<LengthInterface>;
 
-}
+}  // namespace intervalxt
 
 #endif
-
