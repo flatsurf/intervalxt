@@ -73,15 +73,9 @@ void throw_for_assert(const E& e) { throw e; }
 
 #ifdef NDEBUG
 
-#define ASSERT_ARGUMENT_(CONDITION) \
-  while (false) {                   \
-  }
-#define ASSERT_ARGUMENT(CONDITION, MESSAGE) \
-  while (false) {                           \
-  }
-#define ASSERT(CONDITION, MESSAGE) \
-  while (false) {                  \
-  }
+#define ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(true || (CONDITION))
+#define ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(true || (CONDITION), MESSAGE)
+#define ASSERT(CONDITION, MESSAGE) ASSERT_(true || (CONDITION), std::logic_error, MESSAGE)
 
 #else
 
