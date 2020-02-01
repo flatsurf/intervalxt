@@ -74,5 +74,12 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
 
 }  // namespace intervalxt
 
+namespace std {
+
+template<>
+struct hash<intervalxt::HalfEdge> { size_t operator()(const intervalxt::HalfEdge&) const noexcept; };
+
+}
+
 #endif
 

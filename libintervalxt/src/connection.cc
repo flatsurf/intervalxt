@@ -70,3 +70,15 @@ std::ostream& operator<<(std::ostream& os, const Connection& self) {
 }
 
 }
+
+namespace std {
+
+using namespace intervalxt;
+
+size_t hash<Connection>::operator()(const Connection& self) const noexcept {
+  // TODO: Use hash_combine
+  return hash<Separatrix>()(self.source()) + (hash<Separatrix>()(self.target()) << 32);
+}
+
+
+}

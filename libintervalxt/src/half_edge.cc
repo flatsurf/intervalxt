@@ -115,3 +115,14 @@ ostream& operator<<(ostream& os, const HalfEdge& self) {
 }
 
 }
+
+namespace std {
+
+using namespace intervalxt;
+
+size_t hash<HalfEdge>::operator()(const HalfEdge& self) const noexcept {
+  return hash<Label>()(self);
+}
+
+
+}
