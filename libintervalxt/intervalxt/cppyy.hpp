@@ -22,18 +22,31 @@
 #define LIBINTERVALXT_CPPYY_HPP
 
 #include <iosfwd>
+#include <memory>
+#include <vector>
 
+#include "forward.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
-#include "length.hpp"
+#include "lengths.hpp"
+
+#include "sample/lengths.hpp"
 
 namespace intervalxt {
-template <typename T>
-std::ostream &operator<<(std::ostream &, const Length<T> &);
-template <typename Length>
-std::ostream &operator<<(std::ostream &, const Label<Length> &);
-template <typename Length>
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation<Length> &);
-}  // namespace intervalxt
+
+template <typename L>
+auto makeIET(const L& lengths, std::vector<int> permutation) {
+  Lengths erasedLengths = lengths;
+  auto top = lengths.labels();
+  std::vector<Label> bottom;
+  for (int p : permutation)
+    bottom.push_back(top[p]);
+  return IntervalExchangeTransformation(std::make_shared<Lengths>(erasedLengths), top, bottom);
+}
+
+std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
+
+}
+
 
 #endif
