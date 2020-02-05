@@ -23,13 +23,13 @@
 #include <unordered_set>
 #include <valarray>
 
-#include <gmpxx.h>
+#include <fmt/format.h>
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/lexical_cast.hpp>
+#include <gmpxx.h>
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
+#include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
@@ -354,14 +354,9 @@ std::string Implementation<IntervalExchangeTransformation>::render(const Interva
 }
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {
-  return os << boost::algorithm::join(self.impl->top | rx::transform([&](const auto& interval) {
-                                        return "[" + self.impl->lengths->render(interval) + ": " + boost::lexical_cast<std::string>(self.impl->lengths->get(interval)) + "]";
-                                      }) | rx::to_vector(),
-                                      " ")
-            << " / " << boost::algorithm::join(self.impl->bottom | rx::transform([&](const auto& interval) {
-                                                 return "[" + self.impl->lengths->render(interval) + "]";
-                                               }) | rx::to_vector(),
-                                               " ");
+  return os << fmt::format("{} / {}",
+                           fmt::join(self.impl->top | rx::transform([&](const auto& interval) { return fmt::format("[{}: {}]", self.impl->lengths->render(interval), self.impl->lengths->get(interval)); }) | rx::to_vector(), " "),
+                           fmt::join(self.impl->bottom | rx::transform([&](const auto& interval) { return fmt::format("[{}]", self.impl->lengths->render(interval)); }) | rx::to_vector(), " "));
 }
 
 }  // namespace intervalxt

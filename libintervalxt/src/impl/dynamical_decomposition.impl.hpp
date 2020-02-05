@@ -36,7 +36,6 @@ class Implementation<DynamicalDecomposition> {
 
   static Component createComponent(std::shared_ptr<DecompositionState>, Component& left, const Connection&, IntervalExchangeTransformation&& right);
   static Component createComponent(std::shared_ptr<DecompositionState>, IntervalExchangeTransformation&&);
-  static std::string render(std::shared_ptr<DecompositionState>, Label);
 
   std::shared_ptr<DecompositionState> decomposition;
 };

@@ -54,6 +54,8 @@ struct DecompositionState {
 
   void check() const;
 
+  std::string render(Label) const;
+
   friend std::ostream& operator<<(std::ostream&, const DecompositionState&);
 };
 

@@ -23,14 +23,15 @@
 #include <variant>
 #include <vector>
 
-#include "external/rx-ranges/include/rx/ranges.hpp"
+#include <fmt/format.h>
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/logic/tribool.hpp>
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/decomposition_step.hpp"
+#include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/label.hpp"
 
@@ -49,8 +50,6 @@ using std::begin;
 using std::end;
 using std::string;
 using std::vector;
-
-using boost::lexical_cast;
 
 using InductionResult = InductionStep::Result;
 using DecompositionResult = DecompositionStep::Result;
@@ -436,8 +435,7 @@ void Implementation<Component>::registerSeparating(Component& left, const Connec
 }
 
 std::ostream& operator<<(std::ostream& os, const Component& self) {
-  return os << boost::algorithm::join(
-             self.perimeter() | rx::transform([](const auto& side) { return lexical_cast<string>(side); }) | rx::to_vector(), " ");
+  return os << fmt::format("{}", fmt::join(self.perimeter(), " "));
 }
 
 std::ostream& operator<<(std::ostream& os, const Side& self) {

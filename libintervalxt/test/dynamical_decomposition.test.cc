@@ -19,6 +19,7 @@
  *********************************************************************/
 
 #include <e-antic/renfxx.h>
+#include <fmt/format.h>
 #include <boost/logic/tribool.hpp>
 
 #include "external/catch2/single_include/catch2/catch.hpp"
@@ -26,14 +27,13 @@
 #include "../intervalxt/connection.hpp"
 #include "../intervalxt/decomposition_step.hpp"
 #include "../intervalxt/dynamical_decomposition.hpp"
+#include "../intervalxt/fmt.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/sample/e-antic-arithmetic.hpp"
 #include "../intervalxt/sample/lengths.hpp"
 
-using boost::lexical_cast;
 using eantic::renf_class;
 using eantic::renf_elem_class;
-using std::string;
 using Result = ::intervalxt::DecompositionStep::Result;
 
 namespace intervalxt::test {
@@ -55,7 +55,7 @@ TEST_CASE("Decomposition of an IET") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[d] [c] [a] [e] [b] -[e] -[d] -[c] -[a] -[b]");
+    REQUIRE(fmt::format("{}", component) == "[d] [c] [a] [e] [b] -[e] -[d] -[c] -[a] -[b]");
 
     auto step0 = component.decompositionStep();
     CAPTURE(step0);
@@ -63,18 +63,18 @@ TEST_CASE("Decomposition of an IET") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(*step0.connection) == "[d+ ⚯ b-]");
-    REQUIRE(lexical_cast<string>(component) == "[c] [a] [e] [d] [d+ ⚯ b-] -[e] -[d] -[c] -[a] [b- ⚯ d+]");
+    REQUIRE(fmt::format("{}", *step0.connection) == "[d+ ⚯ b-]");
+    REQUIRE(fmt::format("{}", component) == "[c] [a] [e] [d] [d+ ⚯ b-] -[e] -[d] -[c] -[a] [b- ⚯ d+]");
 
     auto step1 = component.decompositionStep();
     CAPTURE(step1);
     REQUIRE(step1.result == Result::SEPARATING_CONNECTION);
-    REQUIRE(lexical_cast<string>(*step1.connection) == "[a+ ⚯ c-]");
-    REQUIRE(lexical_cast<string>(component) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
+    REQUIRE(fmt::format("{}", *step1.connection) == "[a+ ⚯ c-]");
+    REQUIRE(fmt::format("{}", component) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
 
     {
       auto cylinder = *step1.additionalComponent;
-      REQUIRE(lexical_cast<std::string>(cylinder) == "[e] [d] [d+ ⚯ b-] -[e] -[d] [c- ⚯ a+]");
+      REQUIRE(fmt::format("{}", cylinder) == "[e] [d] [d+ ⚯ b-] -[e] -[d] [c- ⚯ a+]");
       REQUIRE(indeterminate(cylinder.cylinder()));
       REQUIRE(indeterminate(cylinder.withoutPeriodicTrajectory()));
       REQUIRE(indeterminate(cylinder.keane()));
@@ -93,7 +93,7 @@ TEST_CASE("Decomposition of an IET") {
       REQUIRE(not cylinder.withoutPeriodicTrajectory());
       REQUIRE(not cylinder.keane());
 
-      REQUIRE(lexical_cast<string>(cylinder) == "[e] [e+ ⚯ d-] [d+ ⚯ b-] -[e] [d- ⚯ e+] [c- ⚯ a+]");
+      REQUIRE(fmt::format("{}", cylinder) == "[e] [e+ ⚯ d-] [d+ ⚯ b-] -[e] [d- ⚯ e+] [c- ⚯ a+]");
     }
 
     {
@@ -102,7 +102,7 @@ TEST_CASE("Decomposition of an IET") {
       REQUIRE(not component.cylinder());
       REQUIRE(component.withoutPeriodicTrajectory());
 
-      REQUIRE(lexical_cast<string>(component) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
+      REQUIRE(fmt::format("{}", component) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
     }
   }
 
@@ -116,7 +116,7 @@ TEST_CASE("Decomposition of an IET") {
       CAPTURE(keane);
       REQUIRE(keane.withoutPeriodicTrajectory());
 
-      REQUIRE(lexical_cast<string>(keane) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
+      REQUIRE(fmt::format("{}", keane) == "[c] [a] [a+ ⚯ c-] -[c] -[a] [b- ⚯ d+]");
     }
 
     {
@@ -124,7 +124,7 @@ TEST_CASE("Decomposition of an IET") {
       CAPTURE(cylinder);
       REQUIRE(cylinder.cylinder());
 
-      REQUIRE(lexical_cast<string>(cylinder) == "[e] [e+ ⚯ d-] [d+ ⚯ b-] -[e] [d- ⚯ e+] [c- ⚯ a+]");
+      REQUIRE(fmt::format("{}", cylinder) == "[e] [e+ ⚯ d-] [d+ ⚯ b-] -[e] [d- ⚯ e+] [c- ⚯ a+]");
     }
   }
 }
@@ -141,7 +141,7 @@ TEST_CASE("Decomposition of a Trivial IET") {
 
   auto cylinder = decomposition.components()[0];
 
-  REQUIRE(lexical_cast<string>(cylinder) == "[a] -[a]");
+  REQUIRE(fmt::format("{}", cylinder) == "[a] -[a]");
 }
 
 TEST_CASE("Decomposition of obvious Cylinders") {
@@ -159,7 +159,7 @@ TEST_CASE("Decomposition of obvious Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[b] [a] -[b] -[a]");
+    REQUIRE(fmt::format("{}", component) == "[b] [a] -[b] -[a]");
 
     auto step0 = component.decompositionStep();
     CAPTURE(step0);
@@ -167,12 +167,12 @@ TEST_CASE("Decomposition of obvious Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
+    REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
 
     auto step1 = component.decompositionStep();
     CAPTURE(step1);
     REQUIRE(step1.result == Result::CYLINDER);
-    REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
+    REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
   }
 
   SECTION("Automatic Decomposition") {
@@ -182,7 +182,7 @@ TEST_CASE("Decomposition of obvious Cylinders") {
 
     auto component = decomposition.components()[0];
 
-    REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
+    REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ a-] -[b] [a- ⚯ b+]");
   }
 }
 
@@ -201,7 +201,7 @@ TEST_CASE("Decomposition of Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[c] [b] [a] -[c] -[b] -[a]");
+    REQUIRE(fmt::format("{}", component) == "[c] [b] [a] -[c] -[b] -[a]");
 
     auto step0 = component.decompositionStep();
     CAPTURE(step0);
@@ -209,7 +209,7 @@ TEST_CASE("Decomposition of Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[b] [c] [c+ ⚯ a-] -[c] -[b] [a- ⚯ c+]");
+    REQUIRE(fmt::format("{}", component) == "[b] [c] [c+ ⚯ a-] -[c] -[b] [a- ⚯ c+]");
 
     auto step1 = component.decompositionStep();
     CAPTURE(step1);
@@ -221,7 +221,7 @@ TEST_CASE("Decomposition of Nested Cylinders") {
       CAPTURE(step2);
       REQUIRE(step2.result == Result::CYLINDER);
       REQUIRE(cylinder.cylinder());
-      REQUIRE(lexical_cast<string>(cylinder) == "[c] [c+ ⚯ a-] -[c] [b- ⚯ b+]");
+      REQUIRE(fmt::format("{}", cylinder) == "[c] [c+ ⚯ a-] -[c] [b- ⚯ b+]");
     }
 
     {
@@ -231,15 +231,15 @@ TEST_CASE("Decomposition of Nested Cylinders") {
       REQUIRE(step2.result == Result::CYLINDER);
 
       REQUIRE(component.cylinder());
-      REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ b-] -[b] [a- ⚯ c+]");
+      REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ b-] -[b] [a- ⚯ c+]");
     }
   }
 
   SECTION("Automatic Decomposition") {
     REQUIRE(decomposition.decompose());
 
-    REQUIRE(lexical_cast<string>(decomposition.components()[0]) == "[b] [b+ ⚯ b-] -[b] [a- ⚯ c+]");
-    REQUIRE(lexical_cast<string>(decomposition.components()[1]) == "[c] [c+ ⚯ a-] -[c] [b- ⚯ b+]");
+    REQUIRE(fmt::format("{}", decomposition.components()[0]) == "[b] [b+ ⚯ b-] -[b] [a- ⚯ c+]");
+    REQUIRE(fmt::format("{}", decomposition.components()[1]) == "[c] [c+ ⚯ a-] -[c] [b- ⚯ b+]");
   }
 }
 
@@ -258,7 +258,7 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[d] [a] [c] [b] -[d] -[c] -[b] -[a]");
+    REQUIRE(fmt::format("{}", component) == "[d] [a] [c] [b] -[d] -[c] -[b] -[a]");
 
     auto step0 = component.decompositionStep();
     CAPTURE(step0);
@@ -266,7 +266,7 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[d] [d+ ⚯ a-] [c] [b] -[d] -[c] -[b] [a- ⚯ d+]");
+    REQUIRE(fmt::format("{}", component) == "[d] [d+ ⚯ a-] [c] [b] -[d] -[c] -[b] [a- ⚯ d+]");
 
     auto step1 = component.decompositionStep();
     CAPTURE(step1);
@@ -274,7 +274,7 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[c] [a- ⚯ d+] [d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] -[c] [b- ⚯ a+]");
+    REQUIRE(fmt::format("{}", component) == "[c] [a- ⚯ d+] [d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] -[c] [b- ⚯ a+]");
 
     auto step2 = component.decompositionStep();
     CAPTURE(step2);
@@ -282,14 +282,14 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
     REQUIRE(indeterminate(component.cylinder()));
     REQUIRE(indeterminate(component.withoutPeriodicTrajectory()));
     REQUIRE(indeterminate(component.keane()));
-    REQUIRE(lexical_cast<string>(component) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
+    REQUIRE(fmt::format("{}", component) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
   }
 
   SECTION("Automatic Decomposition") {
     REQUIRE(decomposition.decompose());
 
-    REQUIRE(lexical_cast<string>(decomposition.components()[0]) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
-    REQUIRE(lexical_cast<string>(decomposition.components()[1]) == "[d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] [c- ⚯ c+] [a- ⚯ d+]");
+    REQUIRE(fmt::format("{}", decomposition.components()[0]) == "[c] [c+ ⚯ c-] -[c] [b- ⚯ a+]");
+    REQUIRE(fmt::format("{}", decomposition.components()[1]) == "[d] [d+ ⚯ a-] [a+ ⚯ b-] -[d] [c- ⚯ c+] [a- ⚯ d+]");
   }
 }
 
@@ -309,11 +309,11 @@ TEST_CASE("Decomposition With Injected Connections") {
   component.inject(-HalfEdge(component, b), {}, {{b, e}, {e, f}});
   component.inject(-HalfEdge(component, a), {}, {{a, c}});
 
-  REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [a] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d+ ⚯ a-] -[a] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
+  REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [a] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d+ ⚯ a-] -[a] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
 
   component.decompose();
 
-  REQUIRE(lexical_cast<string>(component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [f+ ⚯ d-] [d+ ⚯ a-] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d- ⚯ f+] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
+  REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [f+ ⚯ d-] [d+ ⚯ a-] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d- ⚯ f+] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
 }
 
 TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
@@ -332,7 +332,7 @@ TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
 
   component.decompose();
 
-  REQUIRE(lexical_cast<string>(component) == "[d] [d+ ⚯ b-] [b+ ⚯ a-] [a+ ⚯ c-] -[d] [b- ⚯ d+] [a- ⚯ b+] [c- ⚯ a+]");
+  REQUIRE(fmt::format("{}", component) == "[d] [d+ ⚯ b-] [b+ ⚯ a-] [a+ ⚯ c-] -[d] [b- ⚯ d+] [a- ⚯ b+] [c- ⚯ a+]");
 }
 
 }  // namespace intervalxt::test

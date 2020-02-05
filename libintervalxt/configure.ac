@@ -37,6 +37,11 @@ AC_LANG([C++])
 dnl We use some C++17 features, such as if constexpr
 AX_CXX_COMPILE_STDCXX(17)
 
+AC_CHECK_HEADERS([boost/type_traits.hpp], , AC_MSG_ERROR([boost headers not found]))
+
+AX_CXX_CHECK_LIB([fmt], [fmt::v6::getpagesize()], , AC_MSG_ERROR([fmt library not found]), [-lfmt])
+AC_CHECK_HEADERS([fmt/format.h], , AC_MSG_ERROR([fmt headers not found]))
+
 ACX_PTHREAD([], [AC_MSG_ERROR([pthread not supported])])
 
 dnl We use FLINT's fmpq_sub_si through renfxx.h
