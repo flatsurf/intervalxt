@@ -20,14 +20,15 @@
 
 #include <ostream>
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/lexical_cast.hpp>
+#include <fmt/format.h>
 
 #include "../intervalxt/connection.hpp"
+#include "../intervalxt/fmt.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/separatrix.hpp"
 
 #include "impl/decomposition_state.hpp"
+#include "impl/interval_exchange_transformation.impl.hpp"
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
@@ -35,7 +36,6 @@
 
 namespace intervalxt {
 
-using boost::algorithm::join;
 using std::ostream;
 
 void DecompositionState::check() const {
@@ -65,15 +65,19 @@ void DecompositionState::check() const {
   }
 }
 
+std::string DecompositionState::render(Label label) const {
+  return Implementation<IntervalExchangeTransformation>::render(begin(components)->iet, label);
+}
+
 ostream& operator<<(ostream& os, const DecompositionState& self) {
   const auto& render = [&](const auto& state) {
-    return join(state | rx::filter([](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); }) | rx::transform([](const auto& connections) {
-                  return boost::lexical_cast<std::string>(std::hash<Label>()(connections.first)) + ": left=[" + join(connections.second.left | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ") + "], right=[" + join(connections.second.right | rx::transform([](const auto& connection) { return boost::lexical_cast<std::string>(connection); }) | rx::to_vector(), ", ") + "]";
-                }) | rx::to_vector(),
-                ", ");
+    return fmt::join(state | rx::filter([&](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); }) | rx::transform([&](const auto& connections) {
+                       return fmt::format("{}: left=[{}], right=[{})", self.render(connections.first), fmt::join(connections.second.left, ", "), fmt::join(connections.second.right, ", "));
+                     }) | rx::to_vector(),
+                     ", ");
   };
 
-  return os << "DecompositionState(top=" << render(self.top) << ", bottom=" << render(self.bottom) << ")";
+  return os << fmt::format("DecompositionState(top={}, bottom={})", render(self.top), render(self.bottom));
 }
 
 }  // namespace intervalxt

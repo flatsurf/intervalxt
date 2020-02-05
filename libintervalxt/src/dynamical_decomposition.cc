@@ -21,13 +21,13 @@
 #include <ostream>
 #include <vector>
 
-#include <boost/algorithm/string/join.hpp>
-#include <boost/lexical_cast.hpp>
+#include <fmt/format.h>
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/dynamical_decomposition.hpp"
+#include "../intervalxt/fmt.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
 
@@ -39,9 +39,6 @@
 #include "util/assert.ipp"
 
 namespace intervalxt {
-
-using boost::lexical_cast;
-using std::string;
 
 DynamicalDecomposition::DynamicalDecomposition(const IntervalExchangeTransformation& iet) : impl(spimpl::make_unique_impl<Implementation>(iet)) {}
 
@@ -83,13 +80,8 @@ Component Implementation<DynamicalDecomposition>::createComponent(std::shared_pt
   return right;
 }
 
-std::string Implementation<DynamicalDecomposition>::render(std::shared_ptr<DecompositionState> decomposition, Label label) {
-  return Implementation<IntervalExchangeTransformation>::render(begin(decomposition->components)->iet, label);
-}
-
 std::ostream& operator<<(std::ostream& os, const DynamicalDecomposition& self) {
-  auto components = self.components();
-  return os << "DynamicalDecomposition(" << boost::algorithm::join(components | rx::transform([](const auto& component) { return lexical_cast<string>(component); }) | rx::to_vector(), ", ");
+  return os << fmt::format("DynamicalDecomposition({})", fmt::join(self.components(), ", "));
 }
 
 }  // namespace intervalxt

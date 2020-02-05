@@ -26,7 +26,6 @@
 #include <variant>
 #include <vector>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
 #include "../external/gmpxxll/mpz_class.hpp"

@@ -26,6 +26,7 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/external/spimpl/spimpl.h                    \
 	../intervalxt/external/gmpxxll/mpz_class.hpp              \
 	../intervalxt/forward.hpp                                 \
+	../intervalxt/fmt.hpp                                     \
 	../intervalxt/half_edge.hpp                               \
 	../intervalxt/induction_step.hpp                          \
 	../intervalxt/interval_exchange_transformation.hpp        \

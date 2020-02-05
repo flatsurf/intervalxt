@@ -138,7 +138,7 @@ Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> dec
 ostream& operator<<(ostream& os, const HalfEdge& self) {
   if (self.impl->contour == Contour::TOP)
     os << "-";
-  return os << "[" << Implementation<DynamicalDecomposition>::render(self.impl->decomposition, self.impl->label) << "]";
+  return os << "[" << self.impl->decomposition->render(self.impl->label) << "]";
 }
 
 }  // namespace intervalxt

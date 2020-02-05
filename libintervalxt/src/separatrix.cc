@@ -84,7 +84,7 @@ Separatrix Implementation<Separatrix>::atBottom(std::shared_ptr<DecompositionSta
 }
 
 ostream& operator<<(ostream& os, const Separatrix& self) {
-  return os << Implementation<DynamicalDecomposition>::render(self.impl->decomposition, self.impl->label) << (self.impl->orientation == Orientation::PARALLEL ? "+" : "-");
+  return os << self.impl->decomposition->render(self.impl->label) << (self.impl->orientation == Orientation::PARALLEL ? "+" : "-");
 }
 
 }  // namespace intervalxt

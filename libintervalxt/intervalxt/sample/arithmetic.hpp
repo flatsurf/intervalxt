@@ -25,7 +25,6 @@
 #include <vector>
 
 #include <gmpxx.h>
-#include <boost/lexical_cast.hpp>
 
 namespace intervalxt::sample {
 
@@ -38,7 +37,7 @@ struct Arithmetic {
 
   static std::vector<mpq_class> coefficients(const T& value) {
     if constexpr (std::is_same_v<T, long long> || std::is_same_v<T, unsigned long long>) {
-      return std::vector<mpq_class>{mpq_class(boost::lexical_cast<std::string>(value))};
+      return std::vector<mpq_class>{mpq_class(std::to_string(value))};
     } else {
       return std::vector<mpq_class>{value};
     }
