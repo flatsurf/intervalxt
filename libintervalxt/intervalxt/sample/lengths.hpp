@@ -32,7 +32,7 @@
 namespace intervalxt::sample {
 
 template <typename T>
-class Lengths {
+class Lengths : public Serializable<Lengths<T>> {
  public:
   Lengths();
   explicit Lengths(const std::vector<T>&);
@@ -59,6 +59,8 @@ class Lengths {
  private:
   T& at(Label);
   const T& at(Label) const;
+
+  friend Serialization<Lengths<T>>;
 
   std::vector<Label> stack;
   std::vector<T> lengths;

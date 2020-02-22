@@ -22,14 +22,16 @@
 #define LIBINTERVALXT_LENGTHS_HPP
 
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include <gmpxx.h>
 #include <boost/type_erasure/any.hpp>
 #include <boost/type_erasure/member.hpp>
 
-#include "forward.hpp"
 #include "length.hpp"
+#include "erased/boost.hpp"
+#include "erased/serializable.hpp"
 
 namespace intervalxt {
 
@@ -43,6 +45,8 @@ BOOST_TYPE_ERASURE_MEMBER((has_member_cmp2), cmp, 2)
 BOOST_TYPE_ERASURE_MEMBER((has_member_get), get, 1)
 BOOST_TYPE_ERASURE_MEMBER((has_member_render), render, 1)
 
+struct LengthsSerialization;
+
 using LengthsInterface = boost::mpl::vector<
     boost::type_erasure::copy_constructible<>,
     has_member_push<void(Label)>,
@@ -54,10 +58,21 @@ using LengthsInterface = boost::mpl::vector<
     has_member_cmp2<int(Label, Label) const>,
     has_member_get<Length(Label) const>,
     has_member_render<std::string(Label) const>,
+    intervalxt::erased::is_serializable<LengthsSerialization>,
     boost::type_erasure::typeid_<>,
     boost::type_erasure::relaxed>;
 
 using Lengths = boost::type_erasure::any<LengthsInterface>;
+
+// See erased/README.md for details
+struct LengthsSerialization {
+  using Erased = Lengths;
+};
+
+template <typename T>
+::intervalxt::erased::Serializable<LengthsSerialization>::SerializableWrap<T> serializable(const T& unerased) {
+  return ::intervalxt::erased::Serializable<LengthsSerialization>::make(unerased);
+}
 
 }  // namespace intervalxt
 

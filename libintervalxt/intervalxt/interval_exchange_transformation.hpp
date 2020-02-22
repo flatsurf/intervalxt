@@ -32,12 +32,13 @@
 
 #include "external/spimpl/spimpl.h"
 
-#include "forward.hpp"
+#include "serializable.hpp"
 #include "lengths.hpp"
 
 namespace intervalxt {
 
-class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation> {
+class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation>,
+  Serializable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
   IntervalExchangeTransformation(std::shared_ptr<Lengths>, const std::vector<Label> &top, const std::vector<Label> &bottom);
@@ -74,6 +75,9 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   std::vector<Label> top() const noexcept;
   // Return the labels of the bottom permutation (in order.)
   std::vector<Label> bottom() const noexcept;
+
+  // Return the lengths underlying the intervals of this interval exchange transformation.
+  std::shared_ptr<const Lengths> lengths() const;
 
   // Return the number of intervals in this interval exchange transformation.
   size_t size() const noexcept;

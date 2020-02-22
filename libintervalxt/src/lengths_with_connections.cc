@@ -23,6 +23,7 @@
 #include "../intervalxt/label.hpp"
 
 #include "impl/decomposition_state.hpp"
+#include "impl/forward.hpp"
 #include "impl/lengths_with_connections.hpp"
 
 #include "util/assert.ipp"
