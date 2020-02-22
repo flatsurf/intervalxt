@@ -23,8 +23,8 @@
 
 #include "serializable.hpp"
 
-#include "detail/unparen.hpp"
 #include "detail/cereal.hpp"
+#include "detail/unparen.hpp"
 
 namespace intervalxt::erased {
 
@@ -37,6 +37,6 @@ namespace intervalxt::erased {
 #define LIBINTERVALXT_ERASED_REGISTER(SERIALIZATION, UNERASED) \
   CEREAL_REGISTER_TYPE(::intervalxt::erased::detail::Serializable<typename ::intervalxt::erased::detail::unparen<void UNERASED>::type, ::intervalxt::erased::Serializable<typename ::intervalxt::erased::detail::unparen<void SERIALIZATION>::type>>)
 
-}
+}  // namespace intervalxt::erased
 
 #endif

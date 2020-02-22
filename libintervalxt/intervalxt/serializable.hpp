@@ -50,7 +50,6 @@ class Serializable {
   friend void load_minimal(const Archive& archive, T& self, const S& value) { Serialization<T>().load(archive, self, value); }
 };
 
-}  // namespace flatsurf
+}  // namespace intervalxt
 
 #endif
-

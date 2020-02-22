@@ -64,6 +64,6 @@ struct Serializable : public Base {
   void load_(Archive&);
 };
 
-}
+}  // namespace intervalxt::erased::detail
 
 #endif

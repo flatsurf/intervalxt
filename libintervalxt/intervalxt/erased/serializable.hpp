@@ -35,8 +35,8 @@ struct Serializable {
   // A serializable wrapper type for Unerased.
   template <typename Unerased>
   using SerializableWrap = std::enable_if_t<
-    std::is_assignable_v<Erased, Unerased> && !std::is_same_v<Erased, std::decay_t<Unerased>>,
-    std::unique_ptr<Serializable>>;
+      std::is_assignable_v<Erased, Unerased> && !std::is_same_v<Erased, std::decay_t<Unerased>>,
+      std::unique_ptr<Serializable>>;
 
   virtual ~Serializable() {}
 
@@ -76,6 +76,6 @@ struct Serializable {
   }
 };
 
-}
+}  // namespace intervalxt::erased
 
 #endif

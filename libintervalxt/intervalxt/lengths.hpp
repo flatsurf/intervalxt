@@ -29,9 +29,9 @@
 #include <boost/type_erasure/any.hpp>
 #include <boost/type_erasure/member.hpp>
 
-#include "length.hpp"
 #include "erased/boost.hpp"
 #include "erased/serializable.hpp"
+#include "length.hpp"
 
 namespace intervalxt {
 

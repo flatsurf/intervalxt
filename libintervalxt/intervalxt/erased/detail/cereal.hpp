@@ -34,7 +34,7 @@ namespace cereal {
 template <typename Base>
 struct base_class;
 
-}
+}  // namespace cereal
 
 namespace intervalxt::erased::detail {
 
@@ -52,6 +52,6 @@ void Serializable<Unerased, Base>::load_(Archive& archive) {
   archive(unerased);
 }
 
-}
+}  // namespace intervalxt::erased::detail
 
 #endif

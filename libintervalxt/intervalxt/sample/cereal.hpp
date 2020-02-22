@@ -21,8 +21,8 @@
 #ifndef LIBINTERVALXT_SAMPLE_CEREAL_HPP
 #define LIBINTERVALXT_SAMPLE_CEREAL_HPP
 
-#include <cereal/cereal.hpp>
 #include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
 #include <cereal/types/vector.hpp>
 
 #include "lengths.hpp"
@@ -44,6 +44,6 @@ struct Serialization<sample::Lengths<T>> {
   }
 };
 
-}
+}  // namespace intervalxt
 
 #endif

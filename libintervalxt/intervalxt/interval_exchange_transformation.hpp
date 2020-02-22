@@ -32,13 +32,13 @@
 
 #include "external/spimpl/spimpl.h"
 
-#include "serializable.hpp"
 #include "lengths.hpp"
+#include "serializable.hpp"
 
 namespace intervalxt {
 
 class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation>,
-  Serializable<IntervalExchangeTransformation> {
+                                       Serializable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
   IntervalExchangeTransformation(std::shared_ptr<Lengths>, const std::vector<Label> &top, const std::vector<Label> &bottom);

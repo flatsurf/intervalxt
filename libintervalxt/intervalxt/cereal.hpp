@@ -23,12 +23,12 @@
 
 #include <map>
 
+#include <fmt/format.h>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/push_back.hpp>
 #include <cereal/cereal.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/polymorphic.hpp>
-#include <fmt/format.h>
 
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
@@ -164,7 +164,7 @@ void serialize(Archive& archive, Lengths& self) {
 // LIBINTERVALXT_LENGTHS_REGISTER_SERIALIZATION("ThisStringWillShowUpInSerializationOutput", (MyLengths));
 // ```
 
-      /*
+/*
 template <typename Archive>
 void save(Archive& archive, const Lengths& self) {
   BOOST_PP_SEQ_FOR_EACH(LIBINTERVALXT_TRY_SAVE, _, LIBINTERVALXT_LENGTHS_REGISTERED_SERIALIZATION);

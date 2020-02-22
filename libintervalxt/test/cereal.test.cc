@@ -23,18 +23,18 @@
 
 #include <boost/type_erasure/any_cast.hpp>
 
-#include <cereal/types/polymorphic.hpp>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 #include "external/catch2/single_include/catch2/catch.hpp"
 
+#include "../intervalxt/cereal.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/length.hpp"
 #include "../intervalxt/lengths.hpp"
-#include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/cereal.hpp"
-#include "../intervalxt/cereal.hpp"
+#include "../intervalxt/sample/lengths.hpp"
 
 #include "../intervalxt/erased/cereal.hpp"
 #include "../intervalxt/erased/serializable.hpp"
@@ -49,7 +49,8 @@ using IntLengths = ::intervalxt::sample::Lengths<int>;
 namespace intervalxt::test {
 
 template <typename T>
-T test_serialization(const T& x, const std::function<bool(const T&, const T&)> equality = [](const T& lhs, const T& rhs) { return lhs == rhs; }) {
+T test_serialization(
+    const T& x, const std::function<bool(const T&, const T&)> equality = [](const T& lhs, const T& rhs) { return lhs == rhs; }) {
   std::stringstream s;
 
   {
@@ -84,8 +85,7 @@ TEST_CASE("Serialization of Lengths", "[cereal][lengths]") {
 
   SECTION("Serialization of Lengths With Type Erasure") {
     const auto equality = [](const Lengths& lhs, const Lengths& rhs) {
-      return boost::type_erasure::any_cast<IntLengths>(lhs)
-        == boost::type_erasure::any_cast<IntLengths>(rhs);
+      return boost::type_erasure::any_cast<IntLengths>(lhs) == boost::type_erasure::any_cast<IntLengths>(rhs);
     };
 
     IntLengths unerased({1, 2, 3});
@@ -101,4 +101,4 @@ TEST_CASE("Serialization of IntervalExchangeTransformation", "[cereal][interval_
   test_serialization(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, a, b, c}));
 }
 
-}  // namespace
+}  // namespace intervalxt::test

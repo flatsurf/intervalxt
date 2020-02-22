@@ -26,14 +26,14 @@
 
 namespace intervalxt::erased::detail {
 
-template<typename T>
+template <typename T>
 struct unparen;
 
-template<typename R, typename T>
+template <typename R, typename T>
 struct unparen<R(T)> {
   typedef T type;
 };
 
-}
+}  // namespace intervalxt::erased::detail
 
 #endif
