@@ -11,4 +11,4 @@ BUILT_SOURCES = test-env.sh
 EXTRA_DIST += test-env.sh.in
 CLEANFILES = test-env.sh
 $(builddir)/test-env.sh: $(srcdir)/test-env.sh.in Makefile
-	sed -e 's,[@]srcdir[@],$(srcdir),g' -e 's,[@]builddir[@],$(builddir),g' -e 's,[@]pythondir[@],$(pythondir),g' < $< > $@
+	sed -e 's,[@]abs_srcdir[@],$(abs_srcdir),g' -e 's,[@]abs_builddir[@],$(abs_builddir),g' -e 's,[@]pythondir[@],$(pythondir),g' < $< > $@

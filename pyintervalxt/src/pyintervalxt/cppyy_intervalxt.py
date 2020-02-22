@@ -48,9 +48,8 @@ def pretty_print(proxy, name):
 
 cppyy.py.add_pythonization(pretty_print, "intervalxt")
 
-for path in os.environ.get('PYINTERVALXT_INCLUDE','').split(':'):
-    if path: cppyy.add_include_path(path)
-
+# Set EXTRA_CLING_ARGS="-I /usr/include" or wherever intervalxt/cppyy.hpp can
+# be resolved if the following line fails to find the header file.
 cppyy.include("intervalxt/cppyy.hpp")
 
 from cppyy.gbl import intervalxt
