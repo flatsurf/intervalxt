@@ -1,5 +1,7 @@
 #!/bin/sh
 
-export PYINTERVALXT_INCLUDE="@srcdir@/../../libintervalxt:@builddir@/../../libintervalxt/intervalxt"
-export LD_LIBRARY_PATH="@builddir@/../../libintervalxt/src/.libs/"
-export PYTHONPATH="@builddir@/../../pyintervalxt/src/:@pythondir@"
+# Resolve #include <intervalxt/*.hpp> relative to libintervalxt in the source tree and
+# resolve #include "intervalxt.hpp" relative to libintervalxt/intervalxt in the build tree.
+export EXTRA_CLING_ARGS="-I@abs_srcdir@/../../libintervalxt -I@abs_builddir@/../../libintervalxt/intervalxt $EXTRA_CLING_ARGS"
+export LD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:$LD_LIBRARY_PATH"
+export PYTHONPATH="@abs_srcdir@/../src/:@pythondir@"
