@@ -1,10 +1,11 @@
-check_PROGRAMS = rational_linear_subspace label interval_exchange_transformation dynamical_decomposition
+check_PROGRAMS = rational_linear_subspace label interval_exchange_transformation dynamical_decomposition saf_zero
 TESTS = $(check_PROGRAMS)
 
 rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc
 label_SOURCES = label.test.cc main.cc
 interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
 dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
+saf_zero_SOURCES = saf_zero.test.cc
 
 # We vendor the header-only library Cereal (serialization with C++ to be able
 # to run the tests even when cereal is not installed.
