@@ -37,7 +37,6 @@
 #include "../intervalxt/sample/lengths.hpp"
 
 #include "../intervalxt/erased/cereal.hpp"
-#include "../intervalxt/erased/serializable.hpp"
 
 LIBINTERVALXT_ERASED_REGISTER((::intervalxt::LengthsSerialization), (::intervalxt::sample::Lengths<int>))
 

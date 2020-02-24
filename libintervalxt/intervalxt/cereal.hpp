@@ -30,6 +30,8 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/polymorphic.hpp>
 
+#include "erased/cereal.hpp"
+
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "length.hpp"
@@ -89,131 +91,6 @@ struct Serialization<IntervalExchangeTransformation> {
     self = IntervalExchangeTransformation(lengths, top, bottom);
   }
 };
-
-/*
-template <>
-struct Serialization<Lengths> {
-  struct ErasedSerializationHelperBase {
-    virtual ~ErasedSerializationHelperBase(){} 
-
-    virtual Lengths lengths() = 0;
-
-    template <typename Archive>
-    void serialize(Archive& archive) {}
-  };
-
-  template <typename T>
-  struct ErasedSerializationHelper : public ErasedSerializationHelperBase {
-    template <typename Archive>
-    void serialize(Archive& archive) { archive(*t); }
-
-    Lengths lengths() override { return *t; }
-
-    T* t = new T();
-  };
-
-};
-
-// Note: For some strange reason, we cannot use a load/save pair here. Doing
-// so makes cereal complain that Label (!) has more than one save() function.
-template <typename Archive>
-void serialize(Archive& archive, Lengths& self) {
-  if constexpr (Archive::is_loading::value) {
-    static_assert(!Archive::is_saving::value, "serialize() must be either loading or saving but this archive is doing both");
-
-    std::unique_ptr<Serialization<Lengths>::ErasedSerializationHelperBase> serializable;
-
-    archive(serializable);
-
-    self = serializable->lengths();
-
-    // throw std::logic_error(fmt::format("not implemented for {}", typeid_of(self).name()));
-  } else {
-    static_assert(Archive::is_saving::value, "serialize() must be either loading or saving but this archive is not doing either");
-
-    std::unique_ptr<Serialization<Lengths>::ErasedSerializationHelperBase> serializable(static_cast<Serialization<Lengths>::ErasedSerializationHelperBase*>(self.serializable()));
-
-    archive(serializable);
-  }
-}
-
-#define LIBINTERVALXT_REGISTER_SERIALIZABLE_LENGTHS(TYPE) \
-  CEREAL_REGISTER_TYPE(::intervalxt::Serialization<::intervalxt::Lengths>::ErasedSerializationHelper<TYPE>); \
-  CEREAL_REGISTER_POLYMORPHIC_RELATION(::intervalxt::Serialization<::intervalxt::Lengths>::ErasedSerializationHelperBase, ::intervalxt::Serialization<::intervalxt::Lengths>::ErasedSerializationHelper<TYPE>);
-*/
-
-// Since Lengths is type-erased, its serialization works differently. If you
-// don't want to support serialization of your Lengths, then there is nothing
-// to do. Otherwise, implement any cereal serialization scheme, e.g., by
-// defining a serialize method in your Lengths class:
-// ```
-// template <typename Archive>
-// void serialize(Archive&);
-// ```
-// Additionally, you must register your lengths **before** including this file.
-// It is probably a good pattern to put this registration together with the
-// implementation of serialize into a cereal.hpp file that users that want to
-// use cereal serialization can optionally include:
-// ```
-// #include <cereal/cereal.hpp>
-// #include <intervalxt/lengths.hpp>
-//
-// template <typename Archive>
-// void MyLengths::serialize(Archive& archive) { ... }
-//
-// LIBINTERVALXT_LENGTHS_REGISTER_SERIALIZATION("ThisStringWillShowUpInSerializationOutput", (MyLengths));
-// ```
-
-/*
-template <typename Archive>
-void save(Archive& archive, const Lengths& self) {
-  BOOST_PP_SEQ_FOR_EACH(LIBINTERVALXT_TRY_SAVE, _, LIBINTERVALXT_LENGTHS_REGISTERED_SERIALIZATION);
-  throw std::logic_error("not implemented: this Lengths do not support serialization; did you forget to call LIBINTERVALXT_LENGTHS_REGISTER_SERIALIZATION?");
-}
-*/
-
-/*
-template <typename Archive, typename T>
-void save(Archive& archive, const Length<T>& self) {
-  archive(cereal::make_nvp("value", self.value));
-}
-
-template <typename Archive, typename T>
-void load(Archive& archive, Length<T>& self) {
-  T value;
-  archive(value);
-  self = value;
-}
-
-template <typename Archive, typename Length>
-void save(Archive& archive, const Label<Length>& self) {
-  auto uuid = boost::lexical_cast<std::string>(static_cast<boost::uuids::uuid>(*self.impl->id));
-  archive(cereal::make_nvp("uuid", uuid));
-  archive(cereal::make_nvp("length", self.impl->length));
-}
-
-template <typename Archive, typename Length>
-void load(Archive& archive, Label<Length>& self) {
-  std::string uuid;
-  archive(cereal::make_nvp("uuid", uuid));
-  self.impl->id = detail::Id::make(boost::lexical_cast<boost::uuids::uuid>(uuid));
-  archive(cereal::make_nvp("length", self.impl->length));
-}
-
-template <typename Archive, typename Length>
-void save(Archive& archive, const IntervalExchangeTransformation<Length>& self) {
-  archive(cereal::make_nvp("top", self.top()));
-  archive(cereal::make_nvp("bottom", self.bottom()));
-}
-
-template <typename Archive, typename Length>
-void load(Archive& archive, IntervalExchangeTransformation<Length>& self) {
-  std::vector<Label<Length>> top, bottom;
-  archive(cereal::make_nvp("top", top));
-  archive(cereal::make_nvp("bottom", bottom));
-  self = IntervalExchangeTransformation<Length>(top, bottom);
-}
-*/
 
 }  // namespace intervalxt
 
