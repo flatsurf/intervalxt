@@ -54,7 +54,7 @@ TEST_CASE("Cubic IET in H(3,1) with SAF=0") {
           renf_elem_class(K, "-5*A^2 + 22*A - 10"), renf_elem_class(K, "1/3*A^2 - 2*A + 3"));
   auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d, e, f, g}, {d, f, e, c, b, g, a});
 
-  auto s = iet.safInvariant()
+  auto s = iet.safInvariant();
   REQUIRE(s.min() == 0);
   REQUIRE(s.max() == 0);
 
