@@ -30,9 +30,6 @@
 #include "../arithmetic.hpp"
 #include "../lengths.hpp"
 
-// TODO: Remove
-#include "../../cereal.hpp"
-
 namespace intervalxt::sample {
 
 namespace {
