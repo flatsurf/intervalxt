@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
+
+#include <valarray>
 
 #include <e-antic/renfxx.h>
 #include <fmt/format.h>
