@@ -30,13 +30,13 @@
 
 namespace intervalxt::erased {
 
-BOOST_TYPE_ERASURE_FREE((has_free_serializable), serializable, 1)
+BOOST_TYPE_ERASURE_FREE((has_free_serializable), serializable, 2)
 
 // Concept that asserts the existence of a free serializable(const Erased&)
 // function which returns a pointer to a polymorphic object that can be handled
 // by cereal.
-template <typename Serialization>
-using is_serializable = ::intervalxt::erased::has_free_serializable<std::unique_ptr<::intervalxt::erased::Serializable<Serialization>>(const boost::type_erasure::_self&)>;
+template <typename Erased>
+using is_serializable = ::intervalxt::erased::has_free_serializable<std::unique_ptr<::intervalxt::erased::Serializable<Erased>>(const boost::type_erasure::_self&, const Tag<Erased>&)>;
 
 }  // namespace intervalxt::erased
 

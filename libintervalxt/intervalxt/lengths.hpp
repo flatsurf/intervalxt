@@ -45,34 +45,35 @@ BOOST_TYPE_ERASURE_MEMBER((has_member_cmp2), cmp, 2)
 BOOST_TYPE_ERASURE_MEMBER((has_member_get), get, 1)
 BOOST_TYPE_ERASURE_MEMBER((has_member_render), render, 1)
 
-struct LengthsSerialization;
-
-using LengthsInterface = boost::mpl::vector<
-    boost::type_erasure::copy_constructible<>,
-    has_member_push<void(Label)>,
-    has_member_pop<void()>,
-    has_member_subtract<void(Label)>,
-    has_member_subtract_repeated<Label(Label)>,
-    has_member_coefficients<std::vector<mpq_class>(Label) const>,
-    has_member_cmp1<int(Label) const>,
-    has_member_cmp2<int(Label, Label) const>,
-    has_member_get<Length(Label) const>,
-    has_member_render<std::string(Label) const>,
-    intervalxt::erased::is_serializable<LengthsSerialization>,
-    boost::type_erasure::typeid_<>,
-    boost::type_erasure::relaxed>;
+struct LengthsInterface;
 
 using Lengths = boost::type_erasure::any<LengthsInterface>;
 
-// See erased/README.md for details
-struct LengthsSerialization {
-  using Erased = Lengths;
-};
+struct LengthsInterface : boost::mpl::vector<
+  boost::type_erasure::copy_constructible<>,
+  has_member_push<void(Label)>,
+  has_member_pop<void()>,
+  has_member_subtract<void(Label)>,
+  has_member_subtract_repeated<Label(Label)>,
+  has_member_coefficients<std::vector<mpq_class>(Label) const>,
+  has_member_cmp1<int(Label) const>,
+  has_member_cmp2<int(Label, Label) const>,
+  has_member_get<Length(Label) const>,
+  has_member_render<std::string(Label) const>,
+  intervalxt::erased::is_serializable<Lengths>,
+  boost::type_erasure::typeid_<>,
+  boost::type_erasure::relaxed> {
 
-template <typename T>
-::intervalxt::erased::Serializable<LengthsSerialization>::SerializableWrap<T> serializable(const T& unerased) {
-  return ::intervalxt::erased::Serializable<LengthsSerialization>::make(unerased);
-}
+  template <typename Archive>
+  friend void save(Archive& archive, const Lengths& self) {
+    ::intervalxt::erased::saveErased(archive, self);
+  }
+
+  template <typename Archive>
+  friend void load(Archive& archive, Lengths& self) {
+    ::intervalxt::erased::loadErased(archive, self);
+  }
+};
 
 }  // namespace intervalxt
 
