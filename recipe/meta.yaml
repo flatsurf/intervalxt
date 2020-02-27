@@ -47,7 +47,7 @@ requirements:
     - clangdev ==8.0.0
 {%- endif %}
   host:
-{%- if name != "pyintervalxt" %}
+{%- if name in ["intervalxt", "libintervalxt"] %}
     # compile-time dependencies of libintervalxt
     - boost-cpp
     - e-antic 1.*
@@ -55,9 +55,10 @@ requirements:
     - gmp
     - ppl
 {%- endif %}
-{%- if name != "libintervalxt" %}
+{%- if name in ["intervalxt", "pyintervalxt"] %}
     - python
     - setuptools
+    - cppyythonizations
 {%- endif %}
 {%- if name == "pyintervalxt" %}
     - libintervalxt {{ version }} {{ target }}_{{ build_number }}

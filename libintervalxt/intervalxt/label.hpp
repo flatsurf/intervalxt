@@ -1,8 +1,8 @@
-/**********************************************************************
+/* ********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019 - 2020 Vincent Delecroix
+ *        Copyright (C) 2019 - 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
- *********************************************************************/
+ * *******************************************************************/
 
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
@@ -25,11 +25,19 @@
 
 #include <boost/operators.hpp>
 
-#include "forward.hpp"
+#include "serializable.hpp"
 
 namespace intervalxt {
 
-class Label : public boost::equality_comparable<Label> {
+// A label identifying a pair of intervals in an interval exchange
+// transformation. The label itself carries no information about the length of
+// the interval, the Lengths object knows about this and other metadata.
+// Note that this class has on purpose no printing operator<< on purpose; the
+// label itself is just some random id, only the Lengths object knows a
+// meaningful name for this id which can be determined by calling
+// Lengths::render().
+class Label : public boost::equality_comparable<Label>,
+              public Serializable<Label> {
  public:
   Label();
   explicit Label(size_t id);
@@ -39,6 +47,7 @@ class Label : public boost::equality_comparable<Label> {
  private:
   size_t id;
 
+  friend Serialization<Label>;
   friend std::hash<Label>;
 };
 

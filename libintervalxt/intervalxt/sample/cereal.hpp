@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,46 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_SAMPLE_CEREAL_HPP
+#define LIBINTERVALXT_SAMPLE_CEREAL_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <cereal/archives/json.hpp>
+#include <cereal/cereal.hpp>
+#include <cereal/types/vector.hpp>
 
-#include <optional>
-#include <variant>
-
-#include "intervalxt.hpp"
+#include "lengths.hpp"
 
 namespace intervalxt {
 
-class Label;
-
-class IntervalExchangeTransformation;
-
-class DynamicalDecomposition;
-
-class Component;
-
-class HalfEdge;
-
-class Separatrix;
-
-struct DecompositionStep;
-
-struct InductionStep;
-
-class Connection;
-
-using Side = std::variant<Connection, HalfEdge>;
-
 template <typename T>
-class Serializable;
+struct Serialization<sample::Lengths<T>> {
+  template <typename Archive>
+  void save(Archive& archive, const sample::Lengths<T>& self) {
+    archive(cereal::make_nvp("lengths", self.lengths));
+    archive(cereal::make_nvp("stack", self.stack));
+  }
 
-template <typename T>
-struct Serialization;
-
-template <typename T>
-class Implementation;
+  template <typename Archive>
+  void load(Archive& archive, sample::Lengths<T>& self) {
+    archive(cereal::make_nvp("lengths", self.lengths));
+    archive(cereal::make_nvp("stack", self.stack));
+  }
+};
 
 }  // namespace intervalxt
 

@@ -25,6 +25,7 @@
 #include <memory>
 #include <vector>
 
+#include "cereal.hpp"
 #include "forward.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"

@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,47 +18,26 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_ERASED_BOOST_HPP
+#define LIBINTERVALXT_ERASED_BOOST_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+#include <memory>
 
-#include <optional>
-#include <variant>
+#include <boost/type_erasure/any.hpp>
+#include <boost/type_erasure/free.hpp>
 
-#include "intervalxt.hpp"
+#include "forward.hpp"
 
-namespace intervalxt {
+namespace intervalxt::erased {
 
-class Label;
+BOOST_TYPE_ERASURE_FREE((has_free_serializable), serializable, 1)
 
-class IntervalExchangeTransformation;
+// Concept that asserts the existence of a free serializable(const Erased&)
+// function which returns a pointer to a polymorphic object that can be handled
+// by cereal.
+template <typename Serialization>
+using is_serializable = ::intervalxt::erased::has_free_serializable<std::unique_ptr<::intervalxt::erased::Serializable<Serialization>>(const boost::type_erasure::_self&)>;
 
-class DynamicalDecomposition;
-
-class Component;
-
-class HalfEdge;
-
-class Separatrix;
-
-struct DecompositionStep;
-
-struct InductionStep;
-
-class Connection;
-
-using Side = std::variant<Connection, HalfEdge>;
-
-template <typename T>
-class Serializable;
-
-template <typename T>
-struct Serialization;
-
-template <typename T>
-class Implementation;
-
-}  // namespace intervalxt
+}  // namespace intervalxt::erased
 
 #endif

@@ -222,6 +222,10 @@ bool IntervalExchangeTransformation::swapped() const noexcept {
   return impl->swap;
 }
 
+std::shared_ptr<const Lengths> IntervalExchangeTransformation::lengths() const {
+  return impl->lengths;
+}
+
 size_t IntervalExchangeTransformation::size() const noexcept {
   return impl->top.size();
 }

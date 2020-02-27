@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,47 +18,22 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-// This file forward declares all the types in the intervalxt namespace.
+#ifndef LIBINTERVALXT_ERASED_DETAIL_UNPAREN_HPP
+#define LIBINTERVALXT_ERASED_DETAIL_UNPAREN_HPP
 
-#ifndef LIBINTERVALXT_FORWARD_HPP
-#define LIBINTERVALXT_FORWARD_HPP
+// Remove () from macro types, similar to
+// https://stackoverflow.com/a/4298441/812379
 
-#include <optional>
-#include <variant>
-
-#include "intervalxt.hpp"
-
-namespace intervalxt {
-
-class Label;
-
-class IntervalExchangeTransformation;
-
-class DynamicalDecomposition;
-
-class Component;
-
-class HalfEdge;
-
-class Separatrix;
-
-struct DecompositionStep;
-
-struct InductionStep;
-
-class Connection;
-
-using Side = std::variant<Connection, HalfEdge>;
+namespace intervalxt::erased::detail {
 
 template <typename T>
-class Serializable;
+struct unparen;
 
-template <typename T>
-struct Serialization;
+template <typename R, typename T>
+struct unparen<R(T)> {
+  typedef T type;
+};
 
-template <typename T>
-class Implementation;
-
-}  // namespace intervalxt
+}  // namespace intervalxt::erased::detail
 
 #endif
