@@ -15,6 +15,7 @@ Pickling works::
 
     >>> from pickle import loads, dumps
     >>> loads(dumps(iet))
+    [a: 18] [b: 3] / [b] [a]
 
 """
 

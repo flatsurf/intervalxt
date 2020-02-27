@@ -26,6 +26,7 @@
 #include <fmt/format.h>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/push_back.hpp>
+
 #include <cereal/cereal.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/polymorphic.hpp>
