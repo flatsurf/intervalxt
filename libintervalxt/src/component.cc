@@ -296,30 +296,43 @@ Component Implementation<Component>::make(std::shared_ptr<DecompositionState> de
 }
 
 vector<Side> Implementation<Component>::horizontal(const Component& component, bool top) {
+  // TODO: Rewrite: This is too messy!
+
   vector<Side> contour;
 
   const auto add = [&](const Connection& connection) {
     assert(not contour.empty());
+    // TODO: Do we need this?
+    /*
     if (auto last = std::get_if<Connection>(&*rbegin(contour))) {
       if (*last == -connection) {
         contour.pop_back();
         return;
       }
     }
+    */
     contour.push_back(connection);
   };
 
   auto halfEdges = top ? component.topContour() : component.bottomContour();
-  const auto& collapsed = top ? component.impl->decomposition->top : component.impl->decomposition->bottom;
+  const auto& collapseds = top ? component.impl->decomposition->top : component.impl->decomposition->bottom;
 
   for (auto edge = begin(halfEdges); edge != end(halfEdges); edge++) {
-    if (edge != begin(halfEdges))
-      collapsed.at(*edge).left | rx::reverse() | rx::for_each(add);
+    if (edge != begin(halfEdges)) {
+      if (top) 
+        collapseds.at(*edge).left | rx::for_each(add);
+      else
+        collapseds.at(*edge).left | rx::reverse() | rx::for_each(add);
+    }
 
     contour.push_back(*edge);
 
-    if (edge != --end(halfEdges))
-      collapsed.at(*edge).right | rx::for_each(add);
+    if (edge != --end(halfEdges)) {
+      if (top)
+        collapseds.at(*edge).right | rx::reverse() | rx::for_each(add);
+      else
+        collapseds.at(*edge).right | rx::for_each(add);
+    }
   }
 
   if (top) std::reverse(contour.begin(), contour.end());
