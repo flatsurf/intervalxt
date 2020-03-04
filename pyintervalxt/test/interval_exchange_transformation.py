@@ -56,33 +56,40 @@ def test_reduce():
     assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
     assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
 
-def iet_check(iet):
+def iet_10_check(iet):
+    assert iet.size() == 2
+    assert iet.top()[0] == iet.bottom()[1]
+    assert iet.top()[1] == iet.bottom()[0]
     saf = iet.safInvariant()
     decomposition = intervalxt.DynamicalDecomposition(iet)
     decomposition.decompose()
-    ncyls = sum(bool(component.cylinder() == True) for component in decomposition.components())
+    cyls = sum(bool(component.cylinder() == True) for component in decomposition.components())
+    nocyls = sum(bool(component.cylinder() == False) for component in decomposition.components())
+    mins = sum(bool(component.withoutPeriodicTrajectory() == True) for component in decomposition.components())
+    nomins = sum(bool(component.withoutPeriodicTrajectory() == False) for component in decomposition.components())
+    assert cyls + nocyls == decomposition.components().size()
+    assert mins + nomins == decomposition.components().size()
 
 def test_mpz():
     from gmpxxyy import mpz
     lengths = intervalxt.sample.Lengths[mpz]([1, 1])
     iet = intervalxt.makeIET(lengths, [1, 0])
-    iet_check(iet)
+    iet_10_check(iet)
 
-def test_mpq_constructor():
+def test_mpq():
     from gmpxxyy import mpq
-    lengths = intervalxt.sample.Lengths[mpq]([1, 1])
+    lengths = intervalxt.sample.Lengths[mpq]([(1,3), (2,5)])
     iet = intervalxt.makeIET(lengths, [1, 0])
-    iet_check(iet)
+    iet_10_check(iet)
 
-def test_eantic_constructor():
+def test_eantic():
     from pyeantic import eantic
-
     L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
     lengths = []
     lengths.append(eantic.renf_elem(L, "a"))
     lengths.append(eantic.renf_elem(L, "2*a^2 - 3"))
     lengths = intervalxt.sample.Lengths[eantic.renf_elem_class](lengths)
     iet = intervalxt.makeIET(lengths, [1, 0])
-    iet_check(iet)
+    iet_10_check(iet)
 
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))
