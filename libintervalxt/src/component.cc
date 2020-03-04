@@ -187,8 +187,11 @@ DecompositionStep Component::decompositionStep(int limit) {
           ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
           ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
 
+      ASSERT(*begin(impl->state.iet.top()) != t, "Label t has been eliminated already.");
+
       // Register the new connection right of b.
       bottom.at(b).right.push_back(connection);
+      // TODO: Is this correct? Explain!
       top.at(*begin(impl->state.iet.top())).left.push_front(-connection);
 
       // The label t has been eliminated by moving the initial section to

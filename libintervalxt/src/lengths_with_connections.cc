@@ -67,8 +67,12 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
   // The subtrahend takes the minuends top (left) list with it (this might be a
   // nop since bottom and top share this initial list of connections.)
   auto& bottomSubtrahend = bottom.at(subtrahend).left;
-  ;
-  bottomSubtrahend.splice(end(bottomSubtrahend), top.at(minuend).left);
+
+  if (minuendOnTop)
+    bottomSubtrahend.splice(end(bottomSubtrahend), top.at(minuend).left);
+  else {
+    bottomSubtrahend.splice(begin(bottomSubtrahend), top.at(minuend).left);
+  }
 
   // The subtrahend takes the minuends bottom left list.
   bottomSubtrahend.splice(
