@@ -64,20 +64,17 @@ def iet_check(iet):
 
 def test_mpz():
     from gmpxxyy import mpz
-    from pyintervalxt import intervalxt
     lengths = intervalxt.sample.Lengths[mpz]([1, 1])
     iet = intervalxt.makeIET(lengths, [1, 0])
     iet_check(iet)
 
 def test_mpq_constructor():
     from gmpxxyy import mpq
-    from pyintervalxt import intervalxt
     lengths = intervalxt.sample.Lengths[mpq]([1, 1])
     iet = intervalxt.makeIET(lengths, [1, 0])
     iet_check(iet)
 
 def test_eantic_constructor():
-    from pyintervalxt import intervalxt
     from pyeantic import eantic
 
     L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
