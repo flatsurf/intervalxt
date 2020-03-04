@@ -56,4 +56,36 @@ def test_reduce():
     assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
     assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
 
+def iet_check(iet):
+    saf = iet.safInvariant()
+    decomposition = intervalxt.DynamicalDecomposition(iet)
+    decomposition.decompose()
+    ncyls = sum(bool(component.cylinder() == True) for component in decomposition.components())
+
+def test_mpz():
+    from gmpxxyy import mpz
+    from pyintervalxt import intervalxt
+    lengths = intervalxt.sample.Lengths[mpz]([1, 1])
+    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet_check(iet)
+
+def test_mpq_constructor():
+    from gmpxxyy import mpq
+    from pyintervalxt import intervalxt
+    lengths = intervalxt.sample.Lengths[mpq]([1, 1])
+    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet_check(iet)
+
+def test_eantic_constructor():
+    from pyintervalxt import intervalxt
+    from pyeantic import eantic
+
+    L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
+    lengths = []
+    lengths.append(eantic.renf_elem(L, "a"))
+    lengths.append(eantic.renf_elem(L, "2*a^2 - 3"))
+    lengths = intervalxt.sample.Lengths[eantic.renf_elem_class](lengths)
+    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet_check(iet)
+
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))
