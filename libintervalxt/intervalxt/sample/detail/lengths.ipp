@@ -184,7 +184,7 @@ template <typename T>
   auto only = Lengths(lengths);
   for (const auto label : this->labels())
     if (labels.find(label) == labels.end())
-      only.at(label) = 0;
+      only.at(label) = T();
   return only;
 }
 
