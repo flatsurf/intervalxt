@@ -129,6 +129,29 @@ TEST_CASE("Decomposition of an IET") {
   }
 }
 
+TEST_CASE("Decomposition of Periodic IETs") {
+  using namespace eantic;
+  using EAnticLengths = sample::Lengths<renf_elem_class>;
+
+  SECTION("A Marked Point at an Unrelated Coordinate") {
+    auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
+    auto x = K->gen();
+
+    auto&& [lengths, a, b, c] = EAnticLengths::make(x, 2-x, 1);
+    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c}, {c, a, b});
+    auto decomposition = DynamicalDecomposition(iet);
+
+    REQUIRE(decomposition.components().size() == 1);
+
+    auto component = decomposition.components()[0];
+
+    // We can not detect the periodicity in this case yet, #86.
+    auto result = component.decompose(1024);
+
+    REQUIRE(result == DecompositionStep::Result::LIMIT_REACHED);
+  }
+}
+
 TEST_CASE("Decomposition of a Trivial IET") {
   using IntLengths = sample::Lengths<int>;
 

@@ -128,8 +128,10 @@ DecompositionStep Component::decompositionStep(int limit) {
       zorichInductionSteps = boshernitzanCost;
     } else if (limit < 2 * boshernitzanCost) {
       zorichInductionSteps = limit;
+      limit = 0;
     } else {
       zorichInductionSteps = boshernitzanCost;
+      limit -= zorichInductionSteps;
     }
 
     step = self.iet.induce(zorichInductionSteps);
