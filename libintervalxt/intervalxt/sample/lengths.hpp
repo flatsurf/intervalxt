@@ -23,6 +23,7 @@
 
 #include <tuple>
 #include <vector>
+#include <unordered_set>
 
 #include <gmpxx.h>
 
@@ -55,6 +56,11 @@ class Lengths : public Serializable<Lengths<T>> {
   std::vector<mpq_class> coefficients(Label) const;
   std::string render(Label) const;
   T get(Label) const;
+  ::intervalxt::Lengths only(const std::unordered_set<Label>&) const;
+  ::intervalxt::Lengths forget() const;
+  bool similar(Label, Label, const ::intervalxt::Lengths&, Label, Label) const;
+
+  bool operator==(const Lengths&) const;
 
  private:
   T& at(Label);

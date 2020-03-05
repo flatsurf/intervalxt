@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Vincent Delecroix
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 
 #include "interval.hpp"
 
+#include "similarity_tracker.hpp"
+
 namespace intervalxt {
 
 template <>
@@ -44,10 +46,14 @@ class Implementation<IntervalExchangeTransformation> {
 
   std::valarray<mpq_class> coefficients(Label) const;
 
+  std::valarray<mpq_class> saf() const;
+  bool saf0() const;
+
   std::list<Interval> top;
   std::list<Interval> bottom;
   std::shared_ptr<Lengths> lengths;
   const size_t degree;
+  SimilarityTracker similarityTracker = {};
   bool swap = false;
 };
 

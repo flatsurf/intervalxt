@@ -52,6 +52,7 @@ using LengthInterface = boost::mpl::vector<
     boost::type_erasure::copy_constructible<>,
     boost::type_erasure::equality_comparable<>,
     boost::type_erasure::less_than_comparable<>,
+    boost::type_erasure::multipliable<>,
     boost::type_erasure::ostreamable<>,
     intervalxt::boolable<>,
     boost::type_erasure::typeid_<>,

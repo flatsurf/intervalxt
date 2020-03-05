@@ -13,6 +13,7 @@ libintervalxt_la_SOURCES =                         \
 	label.cc                                   \
 	lengths_with_connections.cc                \
 	rational_linear_subspace.cc                \
+	similarity_tracker.cc                      \
 	separatrix.cc
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
@@ -68,6 +69,7 @@ noinst_HEADERS =                                                  \
 	impl/rational_linear_subspace.hpp                         \
 	impl/rational_linear_subspace.impl.hpp                    \
 	impl/separatrix.impl.hpp                                  \
+	impl/similarity_tracker.hpp                               \
 	util/assert.ipp
 
 $(builddir)/../intervalxt/intervalxt.hpp: $(srcdir)/../intervalxt/intervalxt.hpp.in Makefile

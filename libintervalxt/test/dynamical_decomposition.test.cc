@@ -98,7 +98,7 @@ TEST_CASE("Decomposition of an IET") {
 
     {
       auto step2 = component.decompositionStep();
-      REQUIRE(step2.result == Result::WITHOUT_PERIODIC_TRAJECTORY);
+      REQUIRE(step2.result == Result::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN);
       REQUIRE(not component.cylinder());
       REQUIRE(component.withoutPeriodicTrajectory());
 
@@ -133,12 +133,30 @@ TEST_CASE("Decomposition of Periodic IETs") {
   using namespace eantic;
   using EAnticLengths = sample::Lengths<renf_elem_class>;
 
-  SECTION("A Marked Point at an Unrelated Coordinate") {
-    auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
+  SECTION("An Auto-Similar IET") {
+    auto K = renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.1");
     auto x = K->gen();
 
-    auto&& [lengths, a, b, c] = EAnticLengths::make(x, 2-x, 1);
-    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c}, {c, a, b});
+    auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x*x - x - 1, x*x, x, x, K->one(), K->one());
+    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d, e, f, g}, {b, e, d, g, f, c, a});
+    auto decomposition = DynamicalDecomposition(iet);
+
+    REQUIRE(decomposition.components().size() == 1);
+
+    auto component = decomposition.components()[0];
+
+    const auto step = component.decompositionStep();
+
+    REQUIRE(step.result == DecompositionStep::Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR);
+  }
+
+  SECTION("A Marked Point at an Unrelated Coordinate") {
+    auto K = renf_class::make("y^6 - y^4 - y^2 - 1", "y", "[1.356 +/- .1]");
+    auto y = K->gen();
+    auto x = y*y;
+
+    auto&& [lengths, a, b, c, d, e, f, g, h] = EAnticLengths::make(y, x + 1 - y, x*x - x - 1, x*x, x, x, K->one(), K->one());
+    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d, e, f, g, h}, {c, f, e, h, g, d, a, b});
     auto decomposition = DynamicalDecomposition(iet);
 
     REQUIRE(decomposition.components().size() == 1);
@@ -146,9 +164,9 @@ TEST_CASE("Decomposition of Periodic IETs") {
     auto component = decomposition.components()[0];
 
     // We can not detect the periodicity in this case yet, #86.
-    auto result = component.decompose(1024);
+    const auto step = component.decompositionStep(1024);
 
-    REQUIRE(result == DecompositionStep::Result::LIMIT_REACHED);
+    REQUIRE(step.result == DecompositionStep::Result::LIMIT_REACHED);
   }
 }
 

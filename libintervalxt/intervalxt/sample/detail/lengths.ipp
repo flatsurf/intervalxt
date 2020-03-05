@@ -179,6 +179,42 @@ std::string Lengths<T>::render(Label label) const {
   return ret;
 }
 
+template <typename T>
+::intervalxt::Lengths Lengths<T>::only(const std::unordered_set<Label>& labels) const {
+  auto only = Lengths(lengths);
+  for (const auto label : this->labels())
+    if (labels.find(label) == labels.end())
+      only.at(label) = 0;
+  return only;
+}
+
+template <typename T>
+::intervalxt::Lengths Lengths<T>::forget() const {
+  return Lengths(lengths);
+}
+
+template <typename T>
+bool Lengths<T>::operator==(const Lengths& other) const {
+  return lengths == other.lengths;
+}
+
+template <typename T>
+bool Lengths<T>::similar(Label a, Label b, const ::intervalxt::Lengths& other, Label aa, Label bb) const {
+  const auto& x = at(a);
+  const auto otherx = other.get(aa);
+
+  if (!x && !otherx)
+    return true;
+
+  const auto& y = at(b);
+  const auto othery = other.get(bb);
+
+  if (!y && !othery)
+    return true;
+
+  return x*othery == y*otherx;
+}
+
 }  // namespace intervalxt::sample
 
 #endif

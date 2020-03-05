@@ -40,8 +40,10 @@ ostream& operator<<(ostream& os, const DecompositionStep& self) {
       return os << "NON_SEPARATING_CONNECTION(" << *self.connection << ")";
     case Result::KEANE:
       return os << "KEANE";
-    case Result::WITHOUT_PERIODIC_TRAJECTORY:
-      return os << "WITHOUT_PERIODIC_TRAJECTORY";
+    case Result::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN:
+      return os << "WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN";
+    case Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR:
+      return os << "WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR";
     default:
       throw std::logic_error("invalid enum value");
   }

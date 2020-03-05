@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,35 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_INDUCTION_STEP_HPP
-#define LIBINTERVALXT_INDUCTION_STEP_HPP
+#ifndef LIBINTERVALXT_IMPL_SIMILARITY_TRACKER_HPP
+#define LIBINTERVALXT_IMPL_SIMILARITY_TRACKER_HPP
 
-#include <optional>
+#include <unordered_set>
 
-#include "forward.hpp"
-#include "interval_exchange_transformation.hpp"
-#include "label.hpp"
+#include "../../intervalxt/interval_exchange_transformation.hpp"
 
 namespace intervalxt {
 
-// The result of a call to IntervalExchangeTransformation::induce()
-struct InductionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN,
-    WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR,
-  };
+// Tracks whether Zorich Inductions for an IET are caught in a loop.
+class SimilarityTracker {
+ public:
+  bool loop(const IntervalExchangeTransformation&);
 
-  Result result;
-  std::optional<std::pair<Label, Label>> connection = {};
-  std::optional<IntervalExchangeTransformation> additionalIntervalExchangeTransformation = {};
+  void reset(const IntervalExchangeTransformation&);
+
+ private:
+  size_t periodBound = 1;
+  size_t ttl = 0;
+
+  std::vector<Label> top;
+  std::vector<size_t> bottom;
+  Lengths lengths;
 };
 
-std::ostream& operator<<(std::ostream&, const InductionStep&);
-
-}  // namespace intervalxt
+}
 
 #endif

@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <variant>
 #include <vector>
+#include <valarray>
 
 #include <fmt/format.h>
 
@@ -118,19 +119,25 @@ DecompositionStep Component::decompositionStep(int limit) {
 
   auto& self = impl->state;
 
-  int boshernitzanCost = Implementation::boshernitzanCost(self.iet);
+  std::optional<int> boshernitzanCost = Implementation::boshernitzanCost(self.iet);
 
   InductionStep step;
 
   do {
     int zorichInductionSteps;
-    if (limit == -1) {
-      zorichInductionSteps = boshernitzanCost;
-    } else if (limit < 2 * boshernitzanCost) {
-      zorichInductionSteps = limit;
-      limit = 0;
+    if (boshernitzanCost) {
+      if (limit == -1) {
+        zorichInductionSteps = *boshernitzanCost;
+      } else if (limit < 2 * *boshernitzanCost) {
+        zorichInductionSteps = limit;
+      } else {
+        zorichInductionSteps = *boshernitzanCost;
+      }
     } else {
-      zorichInductionSteps = boshernitzanCost;
+      zorichInductionSteps = limit;
+    }
+
+    if (limit != -1) {
       limit -= zorichInductionSteps;
     }
 
@@ -213,10 +220,14 @@ DecompositionStep Component::decompositionStep(int limit) {
           connection,
           equivalent};
     }
-    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY:
+    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN:
       self.withoutPeriodicTrajectory = true;
       self.cylinder = false;
-      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY};
+      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN};
+    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR:
+      self.withoutPeriodicTrajectory = true;
+      self.cylinder = false;
+      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
     default:
       throw std::logic_error("not implemented: unknown enum value");
   }
@@ -345,9 +356,18 @@ vector<Side> Implementation<Component>::horizontal(const Component& component, b
   return contour;
 }
 
-int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation&) {
+std::optional<int> Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation& iet) {
+  {
+    auto saf = iet.safInvariant();
+    if (std::none_of(begin(saf), end(saf), [](const auto& v) { return v; })) {
+      // When SAF = 0, the Boshernitzan criterion is not useful.
+      // https://github.com/flatsurf/intervalxt/issues/86
+      return {};
+    }
+  }
+
   // Not implemented: see #60.
-  return 1;
+  return 64;
 }
 
 std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Component& self) {

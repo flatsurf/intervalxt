@@ -105,26 +105,19 @@ bool IntervalExchangeTransformation::zorichInduction() {
 }
 
 std::valarray<mpq_class> IntervalExchangeTransformation::safInvariant() const {
-  if (impl->degree == 1) {
-    // empty vector for integers or rationals
-    return std::valarray<mpq_class>();
-  } else {
-    std::valarray<mpq_class> w;
-
-    w.resize(impl->degree * (impl->degree - 1) / 2);
-
-    for (auto& i : impl->top) {
-      w += wedge(impl->coefficients(i), impl->translation(i));
-    }
-
-    return w;
-  }
+  return impl->saf();
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
   if (impl->degree <= 1) {
     return false;
   } else {
+    if (impl->saf0()) {
+      // When SAF = 0 the Boshernitzan is never going to report "true".
+      // https://github.com/flatsurf/intervalxt/issues/86
+      return false;
+    }
+
     // Build the QQ-module of relations between translations, that is the space generated
     // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
     // Note: it would be nice to access the dimension of the module
@@ -146,9 +139,19 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     return {Result::CYLINDER};
   }
 
+  const bool saf0 = impl->saf0();
+
   bool foundSaddleConnection = false;
 
   for (int i = 0; limit == -1 || i < limit; i++) {
+    if (saf0) {
+      // When SAF=0 the Boshernitzan criterion will not be useful so we try to
+      // detect a loop directly.
+      if (impl->similarityTracker.loop(*this)) {
+        return { Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR };
+      }
+    }
+
     foundSaddleConnection = zorichInduction();
     if (foundSaddleConnection) break;
 
@@ -193,7 +196,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
   ASSERT(!foundSaddleConnection, "Zorich Induction found a Saddle Connection in " << *this << " but induce() failed to see it.");
 
   if (boshernitzanNoPeriodicTrajectory()) {
-    return {Result::WITHOUT_PERIODIC_TRAJECTORY};
+    return {Result::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN};
   }
 
   return {Result::LIMIT_REACHED};
@@ -301,10 +304,11 @@ bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransforma
   return true;
 }
 
-Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) : top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
-                                                                                                                                                          bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
-                                                                                                                                                          lengths(std::move(lengths)),
-                                                                                                                                                          degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
+Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
+  top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
+  bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
+  lengths(std::move(lengths)),
+  degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
   ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
 
   ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
@@ -322,6 +326,28 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
 
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return this->lengths->coefficients(label).size() == degree; }), "Degrees of elements over Q do not match; expected " << degree);
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
+}
+
+std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::saf() const {
+  if (degree == 1) {
+    // empty vector for integers or rationals
+    return {};
+  } else {
+    std::valarray<mpq_class> w;
+ 
+    w.resize(degree * (degree - 1) / 2);
+ 
+    for (auto& i : top) {
+      w += wedge(coefficients(i), translation(i));
+    }
+ 
+    return w;
+  }
+}
+
+bool Implementation<IntervalExchangeTransformation>::saf0() const {
+  auto saf = this->saf();
+  return std::none_of(begin(saf), end(saf), [](const auto& x) { return x; });
 }
 
 std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::coefficients(Label label) const {

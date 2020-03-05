@@ -111,4 +111,16 @@ std::string LengthsWithConnections::render(Label label) const {
   return lengths->render(label);
 }
 
+Lengths LengthsWithConnections::only(const std::unordered_set<Label>& labels) const {
+  return forget().only(labels);
+}
+
+Lengths LengthsWithConnections::forget() const {
+  return lengths->forget();
+}
+
+bool LengthsWithConnections::similar(Label a, Label b, const ::intervalxt::Lengths& other, Label aa, Label bb) const {
+  return forget().similar(a, b, other, aa, bb);
+}
+
 }  // namespace intervalxt

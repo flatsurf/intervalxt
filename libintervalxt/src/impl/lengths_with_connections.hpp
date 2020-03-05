@@ -24,6 +24,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include <gmpxx.h>
 
@@ -46,6 +47,10 @@ class LengthsWithConnections {
   int cmp(Label, Label) const;
   Length get(Label) const;
   std::string render(Label) const;
+  Lengths only(const std::unordered_set<Label>&) const;
+  Lengths forget() const;
+
+  bool similar(Label, Label, const Lengths&, Label, Label) const;
 
  private:
   void subtract(Label minuend, Label subtrahend);
