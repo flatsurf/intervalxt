@@ -34,7 +34,10 @@
 #include "lengths.hpp"
 
 #include "sample/e-antic-arithmetic.hpp"
-#include "sample/exact-real-arithmetic.hpp"
+// If we pull this in, we require users of pyintervalxt to have exact-real
+// installed. Since nobody is using exact-real currenty, let's wait for
+// https://github.com/flatsurf/intervalxt/issues/95 to make this work again.
+// #include "sample/exact-real-arithmetic.hpp"
 #include "sample/lengths.hpp"
 #include "sample/mpz-arithmetic.hpp"
 #include "sample/rational-arithmetic.hpp"
