@@ -33,8 +33,10 @@ struct Serializable : public Base {
 
   static_assert(!std::is_same_v<Unerased, Erased>);
 
-  Serializable() : unerased() {}
-  explicit Serializable(const Unerased& unerased) : unerased(unerased) {}
+  Serializable() :
+    unerased() {}
+  explicit Serializable(const Unerased& unerased) :
+    unerased(unerased) {}
 
   Erased erased() const override { return unerased; }
 

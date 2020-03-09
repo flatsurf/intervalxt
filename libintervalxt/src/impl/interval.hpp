@@ -30,7 +30,8 @@ namespace intervalxt {
 
 struct Interval : boost::equality_comparable<Interval>,
                   boost::equality_comparable<Interval, Label> {
-  explicit Interval(const Label label) : label(label) {}
+  explicit Interval(const Label label) :
+    label(label) {}
 
   inline operator Label() const noexcept { return label; }
   inline bool operator==(const Interval& rhs) const noexcept { return label == rhs.label; }

@@ -112,7 +112,8 @@ Implementation<RationalLinearSubspace>::Implementation(const vector<vector<mpq_c
   positive = NNC_Polyhedron(constraints);
 }
 
-RationalLinearSubspace::RationalLinearSubspace() : impl(spimpl::make_impl<Implementation>()) {}
+RationalLinearSubspace::RationalLinearSubspace() :
+  impl(spimpl::make_impl<Implementation>()) {}
 
 RationalLinearSubspace RationalLinearSubspace::fromEquations(const vector<vector<mpq_class>>& equations) {
   RationalLinearSubspace R;

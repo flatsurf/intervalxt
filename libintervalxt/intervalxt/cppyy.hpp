@@ -23,20 +23,23 @@
 
 #include <iosfwd>
 #include <memory>
-#include <vector>
 #include <valarray>
+#include <vector>
 
 #include "cereal.hpp"
+#include "dynamical_decomposition.hpp"
 #include "forward.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "lengths.hpp"
-#include "dynamical_decomposition.hpp"
 
+#include "sample/e-antic-arithmetic.hpp"
+// If we pull this in, we require users of pyintervalxt to have exact-real
+// installed. Since nobody is using exact-real currenty, let's wait for
+// https://github.com/flatsurf/intervalxt/issues/95 to make this work again.
+// #include "sample/exact-real-arithmetic.hpp"
 #include "sample/lengths.hpp"
 #include "sample/mpz-arithmetic.hpp"
-#include "sample/e-antic-arithmetic.hpp"
-#include "sample/exact-real-arithmetic.hpp"
 #include "sample/rational-arithmetic.hpp"
 
 namespace intervalxt {

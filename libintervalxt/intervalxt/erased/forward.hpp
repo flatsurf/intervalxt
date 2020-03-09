@@ -23,9 +23,12 @@
 
 namespace intervalxt::erased {
 
-template <typename Serialization>
+template <typename Erased>
 struct Serializable;
 
-}
+template <typename Erased>
+struct Tag {};
+
+}  // namespace intervalxt::erased
 
 #endif

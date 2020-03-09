@@ -13,49 +13,37 @@ Note that there are some assumptions for this to work:
 Make a Boost Type Erasure Type Serializable
 -------------------------------------------
 
-For these notes, we'll assume that your type's definition is
+For these notes, we'll assume that your type's definition is forward declared like the following (it is forward declared so we can use the erased type in its own definition):
 
 ```cpp
-using Interface = boost::mpl::vector<
-  …
->;
+struct Interface;
 
 using ErasedType = boost::type_erasure::any<Interface>;
+
+struct Interface : boost::mpl::vector<
+  …
+> {};
 ```
 
-1. Add a free function to your type erasure declaration that converts to a serializable polymorphic type.
+1. Add a free function to your type erasure declaration that converts to a serializable polymorphic type and add save/load methods for your erased type:
 
 ```cpp
 #include <intervalxt/erased/boost.hpp>
 
-// Forward declare a traits class that connects an erased serializable type
-// with your ErasedType.
-struct ErasedTypeSerialization;
-
-using Interface = boost::mpl::vector<
+struct Interface : boost::mpl::vector<
   …,
-  ::intervalxt::erased::is_serializable<ErasedTypeSerialization>
->
+  ::intervalxt::erased::is_serializable<ErasedType>
+> {
+  template <typename Archive>
+  friend void save(Archive& archive, const ErasedType& self) {
+    ::intervalxt::erased::saveErased(archive, self);
+  }
 
-using ErasedType = …;
-
-// Implement the traits class from above.
-struct ErasedTypeSerialization {
-  using Erased = ErasedType;
+  template <typename Archive>
+  friend void load(Archive& archive, ErasedType& self) {
+    ::intervalxt::erased::loadErased(archive, self);
+  }
 };
-```
-
-2. Implement a free function `serializable()`
-
-You might want to put this definition right below your `using ErasedType = …;`.
-
-```cpp
-#include <intervalxt/erased/serializable.hpp>
-
-template <typename T>
-::intervalxt::erased::Serializable<ErasedTypeSerialization>::SerializableWrap<T> serializable(const T& unerased) {
-  return ::intervalxt::erased::Serializable<ErasedTypeSerialization>::make(unerased);
-}
 ```
 
 3. Make your unerased types serializable
@@ -79,7 +67,7 @@ void serialize(Archive& archive, Unerased& unerased) {
 // each unerased type you want to deserialize.
 // IMPORTANT: Tell your users that they must include this header file *after*
 // any cereal/archives/ files.
-LIBINTERVALXT_ERASED_REGISTER((::full::namespace::ErasedTypeSerialization), (::full::namespace::Unerased));
+LIBINTERVALXT_ERASED_REGISTER((::full::namespace::ErasedType), (::full::namespace::Unerased));
 ```
 
 That's it. Now your erased types should serialize and deserialize (they

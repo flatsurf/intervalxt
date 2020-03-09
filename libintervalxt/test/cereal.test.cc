@@ -38,7 +38,7 @@
 
 #include "../intervalxt/erased/cereal.hpp"
 
-LIBINTERVALXT_ERASED_REGISTER((::intervalxt::LengthsSerialization), (::intervalxt::sample::Lengths<int>))
+LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<int>))
 
 using cereal::JSONInputArchive;
 using cereal::JSONOutputArchive;

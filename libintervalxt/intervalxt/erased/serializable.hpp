@@ -28,39 +28,25 @@
 
 namespace intervalxt::erased {
 
-template <typename Serialization>
+template <typename T>
 struct Serializable {
-  using Erased = typename Serialization::Erased;
-
-  // A serializable wrapper type for Unerased.
-  template <typename Unerased>
-  using SerializableWrap = std::enable_if_t<
-      std::is_assignable_v<Erased, Unerased> && !std::is_same_v<Erased, std::decay_t<Unerased>>,
-      std::unique_ptr<Serializable>>;
+  using Erased = T;
 
   virtual ~Serializable() {}
 
   virtual Erased erased() const = 0;
 
-  // Turn unerased into a pointer to a polymorphic serializable wrapper type.
-  template <typename T>
-  static SerializableWrap<T> make(const T& unerased) {
-    return std::make_unique<detail::Serializable<T, Serializable>>(unerased);
-  }
-
  private:
   // Serialize the erased type through this polymorphic wrapper type.
   template <typename Archive>
   friend void save(Archive& archive, const Erased& self) {
-    archive(serializable(self));
+    saveErased(archive, self);
   }
 
   // Deserialize the erased type through this polymorphic wrapper type.
   template <typename Archive>
   friend void load(Archive& archive, Erased& self) {
-    std::unique_ptr<Serializable> tmp;
-    archive(tmp);
-    self = tmp->erased();
+    loadErased(archive, self);
   }
 
   template <typename Archive>
@@ -75,6 +61,28 @@ struct Serializable {
     // base type, the subtypes do the actual (de)serialization.
   }
 };
+
+// Serialize the erased type through a polymorphic wrapper type.
+template <typename Archive, typename T>
+void saveErased(Archive& archive, const T& self) {
+  archive(serializable(self, Tag<T>()));
+}
+
+// Deserialize the erased type through a polymorphic wrapper type.
+template <typename Archive, typename T>
+void loadErased(Archive& archive, T& self) {
+  std::unique_ptr<Serializable<T>> tmp;
+  archive(tmp);
+  self = tmp->erased();
+}
+
+// Turns an unerased object into a polymorphic serilizable
+// wrapper. This method is picked up automatically through
+// some ADL magic (it appears.)
+template <typename Erased, typename T>
+std::unique_ptr<Serializable<Erased>> serializable(const T& unerased, const Tag<Erased>&) {
+  return std::make_unique<detail::Serializable<T, Serializable<Erased>>>(unerased);
+}
 
 }  // namespace intervalxt::erased
 

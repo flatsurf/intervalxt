@@ -20,6 +20,7 @@
 
 #include <ostream>
 #include <unordered_set>
+#include <valarray>
 #include <variant>
 #include <vector>
 
@@ -55,8 +56,9 @@ using InductionResult = InductionStep::Result;
 using DecompositionResult = DecompositionStep::Result;
 using Contour = Implementation<HalfEdge>::Contour;
 
-Component::Component() :  // We assume that the caller takes care of initializing impl.
-                         impl(nullptr) {}
+Component::Component() :
+  // We assume that the caller takes care of initializing impl.
+  impl(nullptr) {}
 
 boost::logic::tribool Component::cylinder() const noexcept {
   return impl->state.cylinder;
@@ -118,18 +120,26 @@ DecompositionStep Component::decompositionStep(int limit) {
 
   auto& self = impl->state;
 
-  int boshernitzanCost = Implementation::boshernitzanCost(self.iet);
+  std::optional<int> boshernitzanCost = Implementation::boshernitzanCost(self.iet);
 
   InductionStep step;
 
   do {
     int zorichInductionSteps;
-    if (limit == -1) {
-      zorichInductionSteps = boshernitzanCost;
-    } else if (limit < 2 * boshernitzanCost) {
-      zorichInductionSteps = limit;
+    if (boshernitzanCost) {
+      if (limit == -1) {
+        zorichInductionSteps = *boshernitzanCost;
+      } else if (limit < 2 * *boshernitzanCost) {
+        zorichInductionSteps = limit;
+      } else {
+        zorichInductionSteps = *boshernitzanCost;
+      }
     } else {
-      zorichInductionSteps = boshernitzanCost;
+      zorichInductionSteps = limit;
+    }
+
+    if (limit != -1) {
+      limit -= zorichInductionSteps;
     }
 
     step = self.iet.induce(zorichInductionSteps);
@@ -187,8 +197,11 @@ DecompositionStep Component::decompositionStep(int limit) {
           ::intervalxt::Implementation<Separatrix>::atBottom(impl->decomposition, b),
           ::intervalxt::Implementation<Separatrix>::atTop(impl->decomposition, t));
 
+      ASSERT(*begin(impl->state.iet.top()) != t, "Label t has been eliminated already.");
+
       // Register the new connection right of b.
       bottom.at(b).right.push_back(connection);
+      // TODO: Is this correct? Explain!
       top.at(*begin(impl->state.iet.top())).left.push_front(-connection);
 
       // The label t has been eliminated by moving the initial section to
@@ -208,10 +221,14 @@ DecompositionStep Component::decompositionStep(int limit) {
           connection,
           equivalent};
     }
-    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY:
+    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN:
       self.withoutPeriodicTrajectory = true;
       self.cylinder = false;
-      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY};
+      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN};
+    case InductionResult::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR:
+      self.withoutPeriodicTrajectory = true;
+      self.cylinder = false;
+      return {DecompositionResult::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
     default:
       throw std::logic_error("not implemented: unknown enum value");
   }
@@ -253,8 +270,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : left) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
+          ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
+          ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
       connections.left.push_back(connection);
       leftInjected.push_back(connection);
     }
@@ -272,8 +289,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : right) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
+          ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
+          ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
       connections.right.push_back(connection);
       rightInjected.push_back(connection);
     }
@@ -286,8 +303,9 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
   return {leftInjected, rightInjected};
 }
 
-Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) : decomposition(decomposition),
-                                                                                                                      state(*state) {}
+Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
+  decomposition(decomposition),
+  state(*state) {}
 
 Component Implementation<Component>::make(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) {
   Component component;
@@ -296,30 +314,43 @@ Component Implementation<Component>::make(std::shared_ptr<DecompositionState> de
 }
 
 vector<Side> Implementation<Component>::horizontal(const Component& component, bool top) {
+  // TODO: Rewrite: This is too messy!
+
   vector<Side> contour;
 
   const auto add = [&](const Connection& connection) {
     assert(not contour.empty());
+    // TODO: Do we need this?
+    /*
     if (auto last = std::get_if<Connection>(&*rbegin(contour))) {
       if (*last == -connection) {
         contour.pop_back();
         return;
       }
     }
+    */
     contour.push_back(connection);
   };
 
   auto halfEdges = top ? component.topContour() : component.bottomContour();
-  const auto& collapsed = top ? component.impl->decomposition->top : component.impl->decomposition->bottom;
+  const auto& collapseds = top ? component.impl->decomposition->top : component.impl->decomposition->bottom;
 
   for (auto edge = begin(halfEdges); edge != end(halfEdges); edge++) {
-    if (edge != begin(halfEdges))
-      collapsed.at(*edge).left | rx::reverse() | rx::for_each(add);
+    if (edge != begin(halfEdges)) {
+      if (top)
+        collapseds.at(*edge).left | rx::for_each(add);
+      else
+        collapseds.at(*edge).left | rx::reverse() | rx::for_each(add);
+    }
 
     contour.push_back(*edge);
 
-    if (edge != --end(halfEdges))
-      collapsed.at(*edge).right | rx::for_each(add);
+    if (edge != --end(halfEdges)) {
+      if (top)
+        collapseds.at(*edge).right | rx::reverse() | rx::for_each(add);
+      else
+        collapseds.at(*edge).right | rx::for_each(add);
+    }
   }
 
   if (top) std::reverse(contour.begin(), contour.end());
@@ -327,9 +358,18 @@ vector<Side> Implementation<Component>::horizontal(const Component& component, b
   return contour;
 }
 
-int Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation&) {
+std::optional<int> Implementation<Component>::boshernitzanCost(const IntervalExchangeTransformation& iet) {
+  {
+    auto saf = iet.safInvariant();
+    if (std::none_of(begin(saf), end(saf), [](const auto& v) { return v; })) {
+      // When SAF = 0, the Boshernitzan criterion is not useful.
+      // https://github.com/flatsurf/intervalxt/issues/86
+      return {};
+    }
+  }
+
   // Not implemented: see #60.
-  return 1;
+  return 64;
 }
 
 std::shared_ptr<DecompositionState> Implementation<Component>::parent(const Component& self) {

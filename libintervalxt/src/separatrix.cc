@@ -33,8 +33,9 @@ namespace intervalxt {
 using std::ostream;
 using Orientation = Implementation<Separatrix>::Orientation;
 
-Separatrix::Separatrix() :  // We assume that the caller sets impl explicitly
-                           impl(nullptr) {}
+Separatrix::Separatrix() :
+  // We assume that the caller sets impl explicitly
+  impl(nullptr) {}
 
 bool Separatrix::parallel() const noexcept {
   return impl->orientation == Implementation::Orientation::PARALLEL;
@@ -51,9 +52,10 @@ bool Separatrix::operator==(const Separatrix& rhs) const {
   return impl->label == rhs.impl->label && impl->orientation == rhs.impl->orientation;
 }
 
-Implementation<Separatrix>::Implementation(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) : decomposition(decomposition),
-                                                                                                                                      label(label),
-                                                                                                                                      orientation(orientation) {}
+Implementation<Separatrix>::Implementation(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) :
+  decomposition(decomposition),
+  label(label),
+  orientation(orientation) {}
 
 Separatrix Implementation<Separatrix>::make(std::shared_ptr<DecompositionState> decomposition, Label label, Orientation orientation) {
   Separatrix separatrix;

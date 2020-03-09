@@ -37,7 +37,8 @@ namespace intervalxt {
 using std::ostream;
 using Contour = Implementation<HalfEdge>::Contour;
 
-HalfEdge::HalfEdge(const Component& component, const Label& label) : impl(spimpl::make_impl<Implementation>(::intervalxt::Implementation<Component>::parent(component), component, label, Contour::TOP)) {
+HalfEdge::HalfEdge(const Component& component, const Label& label) :
+  impl(spimpl::make_impl<Implementation>(::intervalxt::Implementation<Component>::parent(component), component, label, Contour::TOP)) {
 }
 
 Component HalfEdge::component() const {
@@ -50,7 +51,7 @@ Component HalfEdge::component() const {
       return std::find(begin(bottom), end(bottom), *this) != end(bottom);
     }
   }(),
-         "half edge " << *this << " is not in the component " << impl->component << " for which it was created anymore");
+      "half edge " << *this << " is not in the component " << impl->component << " for which it was created anymore");
   return impl->component;
 }
 
@@ -130,10 +131,11 @@ std::list<Connection> HalfEdge::right() const {
     return impl->decomposition->bottom.at(*this).right;
 }
 
-Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) : decomposition(decomposition),
-                                                                                                                                                        component(component),
-                                                                                                                                                        label(label),
-                                                                                                                                                        contour(contour) {}
+Implementation<HalfEdge>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Component& component, Label label, Contour contour) :
+  decomposition(decomposition),
+  component(component),
+  label(label),
+  contour(contour) {}
 
 ostream& operator<<(ostream& os, const HalfEdge& self) {
   if (self.impl->contour == Contour::TOP)

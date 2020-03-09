@@ -66,7 +66,7 @@ class LengthRegistrar:
     def __call__(self):
         for length in self.known_lengths:
             if length not in LengthRegistrar.REGISTERED_LENGTHS:
-                cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::LengthsSerialization), (%s));'%(length,))
+                cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (%s));'%(length,))
             LengthRegistrar.REGISTERED_LENGTHS.add(length)
 
 lengthsRegistrar = LengthRegistrar()

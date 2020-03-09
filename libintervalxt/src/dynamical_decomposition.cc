@@ -40,7 +40,8 @@
 
 namespace intervalxt {
 
-DynamicalDecomposition::DynamicalDecomposition(const IntervalExchangeTransformation& iet) : impl(spimpl::make_unique_impl<Implementation>(iet)) {}
+DynamicalDecomposition::DynamicalDecomposition(const IntervalExchangeTransformation& iet) :
+  impl(spimpl::make_unique_impl<Implementation>(iet)) {}
 
 bool DynamicalDecomposition::decompose(std::function<bool(const Component&)> target, int limit) {
   auto components = this->components();
@@ -49,17 +50,18 @@ bool DynamicalDecomposition::decompose(std::function<bool(const Component&)> tar
 
 std::vector<Component> DynamicalDecomposition::components() const {
   return impl->decomposition->components | rx::transform([&](auto& component) {
-           return ::intervalxt::Implementation<Component>::make(impl->decomposition, &const_cast<ComponentState&>(component));
-         }) |
+    return ::intervalxt::Implementation<Component>::make(impl->decomposition, &const_cast<ComponentState&>(component));
+  }) |
          rx::to_vector();
 }
 
-Implementation<DynamicalDecomposition>::Implementation(const IntervalExchangeTransformation& iet) : decomposition(std::make_shared<DecompositionState>()) {
+Implementation<DynamicalDecomposition>::Implementation(const IntervalExchangeTransformation& iet) :
+  decomposition(std::make_shared<DecompositionState>()) {
   createComponent(decomposition, IntervalExchangeTransformation(
                                      ::intervalxt::Implementation<IntervalExchangeTransformation>::withLengths(iet,
-                                                                                                               [&](std::shared_ptr<Lengths> original) {
-                                                                                                                 return std::make_shared<Lengths>(LengthsWithConnections(original, decomposition));
-                                                                                                               })));
+                                         [&](std::shared_ptr<Lengths> original) {
+                                           return std::make_shared<Lengths>(LengthsWithConnections(original, decomposition));
+                                         })));
 
   for (auto label : iet.top())
     decomposition->top[label] = {};

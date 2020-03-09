@@ -13,3 +13,5 @@ skip_render:
   - .gitattributes
   - .gitignore
   - build-locally.py
+  - webservices.yaml
+  - main.yaml

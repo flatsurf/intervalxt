@@ -59,6 +59,8 @@ requirements:
     - python
     - setuptools
     - cppyythonizations
+    - gmpxxyy
+    - pyeantic
 {%- endif %}
 {%- if name == "pyintervalxt" %}
     - libintervalxt {{ version }} {{ target }}_{{ build_number }}

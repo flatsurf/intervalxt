@@ -37,7 +37,7 @@ class Implementation<Component> {
   Implementation(std::shared_ptr<DecompositionState>, ComponentState*);
 
   static Component make(std::shared_ptr<DecompositionState>, ComponentState*);
-  static int boshernitzanCost(const IntervalExchangeTransformation&);
+  static std::optional<int> boshernitzanCost(const IntervalExchangeTransformation&);
   static std::vector<Side> horizontal(const Component& component, bool top);
   static void registerSeparating(Component& left, const Connection&, Component& right);
   static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
