@@ -51,12 +51,14 @@ int cmp(const T& lhs, const T& rhs) {
 }  // namespace
 
 template <typename T>
-Lengths<T>::Lengths() : stack(),
-                        lengths() {}
+Lengths<T>::Lengths() :
+  stack(),
+  lengths() {}
 
 template <typename T>
-Lengths<T>::Lengths(const std::vector<T>& lengths) : stack(),
-                                                     lengths(lengths) {
+Lengths<T>::Lengths(const std::vector<T>& lengths) :
+  stack(),
+  lengths(lengths) {
   assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length >= 0; }) && "all Lengths must be non-negative");
 }
 
@@ -212,7 +214,7 @@ bool Lengths<T>::similar(Label a, Label b, const ::intervalxt::Lengths& other, L
   if (!y && !othery)
     return true;
 
-  return x*othery == y*otherx;
+  return x * othery == y * otherx;
 }
 
 }  // namespace intervalxt::sample

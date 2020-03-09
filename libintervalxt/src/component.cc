@@ -20,9 +20,9 @@
 
 #include <ostream>
 #include <unordered_set>
+#include <valarray>
 #include <variant>
 #include <vector>
-#include <valarray>
 
 #include <fmt/format.h>
 
@@ -56,8 +56,9 @@ using InductionResult = InductionStep::Result;
 using DecompositionResult = DecompositionStep::Result;
 using Contour = Implementation<HalfEdge>::Contour;
 
-Component::Component() :  // We assume that the caller takes care of initializing impl.
-                         impl(nullptr) {}
+Component::Component() :
+  // We assume that the caller takes care of initializing impl.
+  impl(nullptr) {}
 
 boost::logic::tribool Component::cylinder() const noexcept {
   return impl->state.cylinder;
@@ -269,8 +270,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : left) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
+          ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::ANTIPARALLEL),
+          ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::PARALLEL));
       connections.left.push_back(connection);
       leftInjected.push_back(connection);
     }
@@ -288,8 +289,8 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     for (const auto& [source, target] : right) {
       auto connection = ::intervalxt::Implementation<Connection>::make(state,
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
-                                                                       ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
+          ::intervalxt::Implementation<Separatrix>::make(state, source, Orientation::PARALLEL),
+          ::intervalxt::Implementation<Separatrix>::make(state, target, Orientation::ANTIPARALLEL));
       connections.right.push_back(connection);
       rightInjected.push_back(connection);
     }
@@ -302,8 +303,9 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
   return {leftInjected, rightInjected};
 }
 
-Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) : decomposition(decomposition),
-                                                                                                                      state(*state) {}
+Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
+  decomposition(decomposition),
+  state(*state) {}
 
 Component Implementation<Component>::make(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) {
   Component component;
@@ -335,7 +337,7 @@ vector<Side> Implementation<Component>::horizontal(const Component& component, b
 
   for (auto edge = begin(halfEdges); edge != end(halfEdges); edge++) {
     if (edge != begin(halfEdges)) {
-      if (top) 
+      if (top)
         collapseds.at(*edge).left | rx::for_each(add);
       else
         collapseds.at(*edge).left | rx::reverse() | rx::for_each(add);

@@ -30,6 +30,7 @@ namespace intervalxt {
 using std::begin;
 using std::end;
 
-ComponentState::ComponentState(IntervalExchangeTransformation&& iet) : iet(std::move(iet)) {}
+ComponentState::ComponentState(IntervalExchangeTransformation&& iet) :
+  iet(std::move(iet)) {}
 
 }  // namespace intervalxt

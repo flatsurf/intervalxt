@@ -24,9 +24,11 @@
 
 namespace intervalxt {
 
-Label::Label() : id(static_cast<size_t>(random())) {}
+Label::Label() :
+  id(static_cast<size_t>(random())) {}
 
-Label::Label(size_t id) : id(id) {}
+Label::Label(size_t id) :
+  id(id) {}
 
 bool Label::operator==(const Label& rhs) const noexcept { return id == rhs.id; }
 

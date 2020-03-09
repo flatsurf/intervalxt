@@ -33,10 +33,12 @@
 
 namespace intervalxt {
 template <typename T>
-Length<T>::Length() : Length(T()) {}
+Length<T>::Length() :
+  Length(T()) {}
 
 template <typename T>
-Length<T>::Length(const T& value) : value(value) {
+Length<T>::Length(const T& value) :
+  value(value) {
   assert(value >= 0 && "a length cannot be negative");
 }
 

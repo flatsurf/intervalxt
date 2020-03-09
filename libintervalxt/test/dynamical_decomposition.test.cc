@@ -131,13 +131,13 @@ TEST_CASE("Decomposition of an IET") {
 
 TEST_CASE("Decomposition of Periodic IETs") {
   using namespace eantic;
-    using EAnticLengths = sample::Lengths<renf_elem_class>;
+  using EAnticLengths = sample::Lengths<renf_elem_class>;
 
   SECTION("An Auto-Similar IET") {
     auto K = renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.1");
     auto x = K->gen();
 
-    auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x*x - x - 1, x*x, x, x, K->one(), K->one());
+    auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x * x - x - 1, x * x, x, x, K->one(), K->one());
     auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d, e, f, g}, {b, e, d, g, f, c, a});
     auto decomposition = DynamicalDecomposition(iet);
 
@@ -153,9 +153,9 @@ TEST_CASE("Decomposition of Periodic IETs") {
   SECTION("A Marked Point at an Unrelated Coordinate") {
     auto K = renf_class::make("y^6 - y^4 - y^2 - 1", "y", "[1.356 +/- .1]");
     auto y = K->gen();
-    auto x = y*y;
+    auto x = y * y;
 
-    auto&& [lengths, a, b, c, d, e, f, g, h] = EAnticLengths::make(y, x + 1 - y, x*x - x - 1, x*x, x, x, K->one(), K->one());
+    auto&& [lengths, a, b, c, d, e, f, g, h] = EAnticLengths::make(y, x + 1 - y, x * x - x - 1, x * x, x, x, K->one(), K->one());
     auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d, e, f, g, h}, {c, f, e, h, g, d, a, b});
     auto decomposition = DynamicalDecomposition(iet);
 
@@ -177,7 +177,7 @@ TEST_CASE("Decomposition of Periodic IETs") {
 
     const auto frac = [&](const auto& num, const auto& den) { return renf_elem_class(num) / renf_elem_class(den); };
 
-    auto&& [lengths, l1, l43, l18, l12, l27, l35, l41, l21, l40, l14, l28, l29, l23, l38, l37, l16] = EAnticLengths::make((-frac(3, 2)*a*a*a*a*a*a*a + frac(19, 2)*a*a*a*a*a - frac(31, 2)*a*a*a + frac(13, 2)*a), (3*a*a*a*a*a*a*a - frac(39, 2)*a*a*a*a*a + 35*a*a*a - frac(31, 2)*a), (-5*a*a*a*a*a*a*a + frac(65, 2)*a*a*a*a*a - frac(113, 2)*a*a*a + frac(49, 2)*a), (-frac(7, 2)*a*a*a*a*a*a*a + frac(47, 2)*a*a*a*a*a - 45*a*a*a + frac(41, 2)*a), (-frac(1, 2)*a*a*a*a*a*a*a + 5*a*a*a*a*a - frac(23, 2)*a*a*a + frac(11, 2)*a), (a*a*a*a*a*a*a - 9*a*a*a*a*a + frac(39, 2)*a*a*a - frac(19, 2)*a), (frac(21, 2)*a*a*a*a*a*a*a - frac(143, 2)*a*a*a*a*a + frac(271, 2)*a*a*a - frac(123, 2)*a), (-2*a*a*a*a*a*a*a + 15*a*a*a*a*a - 31*a*a*a + frac(29, 2)*a), (2*a*a*a*a*a*a*a - frac(27, 2)*a*a*a*a*a + frac(49, 2)*a*a*a - 11*a), (-3*a*a*a*a*a*a*a + frac(39, 2)*a*a*a*a*a - 36*a*a*a + 16*a), (-2*a*a*a*a*a*a*a + 15*a*a*a*a*a - 31*a*a*a + frac(29, 2)*a), (frac(3, 2)*a*a*a*a*a*a*a - 11*a*a*a*a*a + frac(47, 2)*a*a*a - 12*a), (-5*a*a*a*a*a*a*a + frac(71, 2)*a*a*a*a*a - frac(137, 2)*a*a*a + 31*a), (frac(1, 2)*a*a*a*a*a*a*a - 3*a*a*a*a*a + frac(9, 2)*a*a*a - frac(5, 2)*a), (6*a*a*a*a*a*a*a - 42*a*a*a*a*a + 80*a*a*a - frac(73, 2)*a), (-a*a*a*a*a*a*a + frac(15, 2)*a*a*a*a*a - frac(29, 2)*a*a*a + frac(11, 2)*a));
+    auto&& [lengths, l1, l43, l18, l12, l27, l35, l41, l21, l40, l14, l28, l29, l23, l38, l37, l16] = EAnticLengths::make((-frac(3, 2) * a * a * a * a * a * a * a + frac(19, 2) * a * a * a * a * a - frac(31, 2) * a * a * a + frac(13, 2) * a), (3 * a * a * a * a * a * a * a - frac(39, 2) * a * a * a * a * a + 35 * a * a * a - frac(31, 2) * a), (-5 * a * a * a * a * a * a * a + frac(65, 2) * a * a * a * a * a - frac(113, 2) * a * a * a + frac(49, 2) * a), (-frac(7, 2) * a * a * a * a * a * a * a + frac(47, 2) * a * a * a * a * a - 45 * a * a * a + frac(41, 2) * a), (-frac(1, 2) * a * a * a * a * a * a * a + 5 * a * a * a * a * a - frac(23, 2) * a * a * a + frac(11, 2) * a), (a * a * a * a * a * a * a - 9 * a * a * a * a * a + frac(39, 2) * a * a * a - frac(19, 2) * a), (frac(21, 2) * a * a * a * a * a * a * a - frac(143, 2) * a * a * a * a * a + frac(271, 2) * a * a * a - frac(123, 2) * a), (-2 * a * a * a * a * a * a * a + 15 * a * a * a * a * a - 31 * a * a * a + frac(29, 2) * a), (2 * a * a * a * a * a * a * a - frac(27, 2) * a * a * a * a * a + frac(49, 2) * a * a * a - 11 * a), (-3 * a * a * a * a * a * a * a + frac(39, 2) * a * a * a * a * a - 36 * a * a * a + 16 * a), (-2 * a * a * a * a * a * a * a + 15 * a * a * a * a * a - 31 * a * a * a + frac(29, 2) * a), (frac(3, 2) * a * a * a * a * a * a * a - 11 * a * a * a * a * a + frac(47, 2) * a * a * a - 12 * a), (-5 * a * a * a * a * a * a * a + frac(71, 2) * a * a * a * a * a - frac(137, 2) * a * a * a + 31 * a), (frac(1, 2) * a * a * a * a * a * a * a - 3 * a * a * a * a * a + frac(9, 2) * a * a * a - frac(5, 2) * a), (6 * a * a * a * a * a * a * a - 42 * a * a * a * a * a + 80 * a * a * a - frac(73, 2) * a), (-a * a * a * a * a * a * a + frac(15, 2) * a * a * a * a * a - frac(29, 2) * a * a * a + frac(11, 2) * a));
     auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {l1, l43, l18, l12, l27, l35, l41, l21, l40, l14, l28, l29, l23, l38, l37, l16}, {l29, l23, l35, l16, l43, l38, l14, l27, l37, l40, l21, l18, l12, l41, l28, l1});
     auto decomposition = DynamicalDecomposition(iet);
 
@@ -192,7 +192,6 @@ TEST_CASE("Decomposition of Periodic IETs") {
     // without periodic trajectories. This in particular goes beyond #86 and #87.
     REQUIRE(component.decompositionStep(1024).result == DecompositionStep::Result::LIMIT_REACHED);
   }
-
 }
 
 TEST_CASE("Decomposition of a Trivial IET") {

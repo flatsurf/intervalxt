@@ -43,6 +43,6 @@ class SimilarityTracker {
   Lengths lengths;
 };
 
-}
+}  // namespace intervalxt
 
 #endif

@@ -23,8 +23,8 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 #include <gmpxx.h>
 

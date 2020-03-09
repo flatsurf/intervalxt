@@ -30,8 +30,9 @@
 
 namespace intervalxt {
 
-LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<DecompositionState> decomposition) : lengths(lengths),
-                                                                                                                                      decomposition(decomposition) {}
+LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<DecompositionState> decomposition) :
+  lengths(lengths),
+  decomposition(decomposition) {}
 
 void LengthsWithConnections::push(Label label) {
   ASSERT(std::find(begin(stack), end(stack), label) == end(stack), "label cannot be pushed more than once");
@@ -59,7 +60,7 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
   // subtrahend on the bottom. Note that this search is very inefficient, see
   // #71.
   bool minuendOnTop = std::any_of(begin(decomposition->components), end(decomposition->components),
-                                  [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
+      [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
 
   auto& top = minuendOnTop ? decomposition->top : decomposition->bottom;
   auto& bottom = minuendOnTop ? decomposition->bottom : decomposition->top;

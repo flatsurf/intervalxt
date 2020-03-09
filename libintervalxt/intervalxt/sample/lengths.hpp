@@ -22,8 +22,8 @@
 #define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 
 #include <tuple>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 
 #include <gmpxx.h>
 

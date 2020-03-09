@@ -148,7 +148,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
       // When SAF=0 the Boshernitzan criterion will not be useful so we try to
       // detect a loop directly.
       if (impl->similarityTracker.loop(*this)) {
-        return { Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR };
+        return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
       }
     }
 
@@ -202,9 +202,11 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
   return {Result::LIMIT_REACHED};
 }
 
-IntervalExchangeTransformation::IntervalExchangeTransformation() : impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
+IntervalExchangeTransformation::IntervalExchangeTransformation() :
+  impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
 
-IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) : impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
+IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
+  impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
   ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
 }
 
@@ -334,13 +336,13 @@ std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::saf() c
     return {};
   } else {
     std::valarray<mpq_class> w;
- 
+
     w.resize(degree * (degree - 1) / 2);
- 
+
     for (auto& i : top) {
       w += wedge(coefficients(i), translation(i));
     }
- 
+
     return w;
   }
 }
@@ -385,8 +387,8 @@ std::string Implementation<IntervalExchangeTransformation>::render(const Interva
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {
   return os << fmt::format("{} / {}",
-                           fmt::join(self.impl->top | rx::transform([&](const auto& interval) { return fmt::format("[{}: {}]", self.impl->lengths->render(interval), self.impl->lengths->get(interval)); }) | rx::to_vector(), " "),
-                           fmt::join(self.impl->bottom | rx::transform([&](const auto& interval) { return fmt::format("[{}]", self.impl->lengths->render(interval)); }) | rx::to_vector(), " "));
+             fmt::join(self.impl->top | rx::transform([&](const auto& interval) { return fmt::format("[{}: {}]", self.impl->lengths->render(interval), self.impl->lengths->get(interval)); }) | rx::to_vector(), " "),
+             fmt::join(self.impl->bottom | rx::transform([&](const auto& interval) { return fmt::format("[{}]", self.impl->lengths->render(interval)); }) | rx::to_vector(), " "));
 }
 
 }  // namespace intervalxt

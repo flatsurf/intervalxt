@@ -50,7 +50,6 @@ bool SimilarityTracker::loop(const IntervalExchangeTransformation& iet) {
   }
 
   return true;
-  
 }
 
 void SimilarityTracker::reset(const IntervalExchangeTransformation& iet) {
@@ -70,4 +69,4 @@ void SimilarityTracker::reset(const IntervalExchangeTransformation& iet) {
   periodBound *= 2;
 }
 
-}
+}  // namespace intervalxt

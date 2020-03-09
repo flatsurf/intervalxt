@@ -72,9 +72,9 @@ std::string DecompositionState::render(Label label) const {
 ostream& operator<<(ostream& os, const DecompositionState& self) {
   const auto& render = [&](const auto& state) {
     return fmt::join(state | rx::filter([&](const auto& connections) { return not connections.second.left.empty() || not connections.second.right.empty(); }) | rx::transform([&](const auto& connections) {
-                       return fmt::format("{}: left=[{}], right=[{})", self.render(connections.first), fmt::join(connections.second.left, ", "), fmt::join(connections.second.right, ", "));
-                     }) | rx::to_vector(),
-                     ", ");
+      return fmt::format("{}: left=[{}], right=[{})", self.render(connections.first), fmt::join(connections.second.left, ", "), fmt::join(connections.second.right, ", "));
+    }) | rx::to_vector(),
+        ", ");
   };
 
   return os << fmt::format("DecompositionState(top={}, bottom={})", render(self.top), render(self.bottom));

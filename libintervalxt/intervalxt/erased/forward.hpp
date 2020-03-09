@@ -29,6 +29,6 @@ struct Serializable;
 template <typename Erased>
 struct Tag {};
 
-}
+}  // namespace intervalxt::erased
 
 #endif

@@ -78,7 +78,7 @@ void loadErased(Archive& archive, T& self) {
 
 // Turns an unerased object into a polymorphic serilizable
 // wrapper. This method is picked up automatically through
-// some ADL magic (it appears.) 
+// some ADL magic (it appears.)
 template <typename Erased, typename T>
 std::unique_ptr<Serializable<Erased>> serializable(const T& unerased, const Tag<Erased>&) {
   return std::make_unique<detail::Serializable<T, Serializable<Erased>>>(unerased);
