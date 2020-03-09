@@ -23,20 +23,20 @@
 
 #include <iosfwd>
 #include <memory>
-#include <vector>
 #include <valarray>
+#include <vector>
 
 #include "cereal.hpp"
+#include "dynamical_decomposition.hpp"
 #include "forward.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "lengths.hpp"
-#include "dynamical_decomposition.hpp"
 
-#include "sample/lengths.hpp"
-#include "sample/mpz-arithmetic.hpp"
 #include "sample/e-antic-arithmetic.hpp"
 #include "sample/exact-real-arithmetic.hpp"
+#include "sample/lengths.hpp"
+#include "sample/mpz-arithmetic.hpp"
 #include "sample/rational-arithmetic.hpp"
 
 namespace intervalxt {
