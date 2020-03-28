@@ -49,6 +49,7 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/sample/e-antic-arithmetic.hpp               \
 	../intervalxt/sample/exact-real-arithmetic.hpp            \
 	../intervalxt/sample/lengths.hpp                          \
+	../intervalxt/sample/long-long-int-arithmetic.hpp         \
 	../intervalxt/sample/mpz-arithmetic.hpp                   \
 	../intervalxt/sample/rational-arithmetic.hpp              \
 	../intervalxt/separatrix.hpp                              \

@@ -39,6 +39,7 @@
 // https://github.com/flatsurf/intervalxt/issues/95 to make this work again.
 // #include "sample/exact-real-arithmetic.hpp"
 #include "sample/lengths.hpp"
+#include "sample/long-long-int-arithmetic.hpp"
 #include "sample/mpz-arithmetic.hpp"
 #include "sample/rational-arithmetic.hpp"
 
