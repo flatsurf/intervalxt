@@ -1,31 +1,42 @@
+_python:
+- 3.7.* *_cpython
+- 3.6.* *_cpython
+- 3.7.* *_cpython
+action:
+- release
+- release
+- release
 boost_cpp:
 - 1.70.0
 channel_sources:
 - flatsurf,conda-forge,defaults
 channel_targets:
 - flatsurf main
+component:
+- libintervalxt
+- pyintervalxt
+- pyintervalxt
 cxx_compiler:
 - gxx
 cxx_compiler_version:
 - '7'
 docker_image:
 - condaforge/linux-anvil-comp7
+fmt:
+- '6'
 gmp:
 - '6'
-name:
-- pyintervalxt
+job:
+- release
+- release
+- release
 pin_run_as_build:
   boost-cpp:
     max_pin: x.x.x
   gmp:
     max_pin: x
-  python:
-    min_pin: x.x
-    max_pin: x.x
-python:
-- '3.7'
-target:
-- release
 zip_keys:
-- - target
-  - name
+- - job
+  - action
+  - _python
+  - component
