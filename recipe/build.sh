@@ -3,8 +3,8 @@ set -ex
 
 source $RECIPE_DIR/environment.sh
 
-if [[ "$name" != "intervalxt" ]]; then
-  cd $name
+if [[ "$component" != "intervalxt" ]]; then
+  cd $component
 fi
 
 $SNIPPETS_DIR/autoconf/run.sh
