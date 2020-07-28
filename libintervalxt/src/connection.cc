@@ -18,6 +18,8 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include <ostream>
+
 #include "../intervalxt/connection.hpp"
 
 #include "impl/connection.impl.hpp"
