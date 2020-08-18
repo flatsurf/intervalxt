@@ -201,7 +201,6 @@ DecompositionStep Component::decompositionStep(int limit) {
 
       // Register the new connection right of b.
       bottom.at(b).right.push_back(connection);
-      // TODO: Is this correct? Explain!
       top.at(*begin(impl->state.iet.top())).left.push_front(-connection);
 
       // The label t has been eliminated by moving the initial section to
@@ -314,21 +313,10 @@ Component Implementation<Component>::make(std::shared_ptr<DecompositionState> de
 }
 
 vector<Side> Implementation<Component>::horizontal(const Component& component, bool top) {
-  // TODO: Rewrite: This is too messy!
-
   vector<Side> contour;
 
   const auto add = [&](const Connection& connection) {
     assert(not contour.empty());
-    // TODO: Do we need this?
-    /*
-    if (auto last = std::get_if<Connection>(&*rbegin(contour))) {
-      if (*last == -connection) {
-        contour.pop_back();
-        return;
-      }
-    }
-    */
     contour.push_back(connection);
   };
 

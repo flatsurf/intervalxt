@@ -20,8 +20,7 @@ minimal components and recover the full decomposition.
 
 ## Current Release Info
 
-We build and release this package with every push to the master branch. These releases are considered unstable and highly
-experimental. There are no stable releases yet.
+We build and release this package with every push to the master branch.
 
 This repository contains two related projects:
 
@@ -30,8 +29,8 @@ This repository contains two related projects:
 
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
-| [![Nightly Build](https://img.shields.io/badge/recipe-libintervalxt-green.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) |
-| [![Nightly Build](https://img.shields.io/badge/recipe-pyintervalxt-green.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) |
+| [![Build](https://img.shields.io/badge/recipe-libintervalxt-green.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/libintervalxt.svg)](https://anaconda.org/flatsurf/libintervalxt) |
+| [![Build](https://img.shields.io/badge/recipe-pyintervalxt-green.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Downloads](https://img.shields.io/conda/dn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Version](https://img.shields.io/conda/vn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) | [![Conda Platforms](https://img.shields.io/conda/pn/flatsurf/pyintervalxt.svg)](https://anaconda.org/flatsurf/pyintervalxt) |
 
 ## Install with Conda
 
@@ -105,7 +104,7 @@ run
 ```
 conda config --add channels conda-forge
 conda config --add channels flatsurf # if you want to pull in the latest version of dependencies
-conda create -n intervalxt-build cxx-compiler libtool automake boost-cpp e-antic benchmark ccache ppl libexactreal pytest cppyy fmt cppyythonizations
+conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind
 conda activate intervalxt-build
 export CPPFLAGS="-isystem $CONDA_PREFIX/include"
 export CFLAGS="$CPPFLAGS"

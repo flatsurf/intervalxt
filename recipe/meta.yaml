@@ -1,4 +1,4 @@
-{% set version = environ.get('GIT_DESCRIBE_TAG', 'untagged') | string | replace('-','_') %}
+{% set version = '1.0.0' %}
 {% set build_number = environ.get('GIT_DESCRIBE_NUMBER') %}
 {% set component = component or 'flatsurf' %}
 {% set action = action or 'release' %}
@@ -27,9 +27,7 @@ build:
   skip: True  # [osx]
 {%- if component == "libintervalxt" %}
   run_exports:
-    # We pin the version of libintervalxt exactly since we do not want to
-    # bother with incompatibilities in our nightly builds.
-    - {{ pin_subpackage(component, exact=True) }}
+    - {{ pin_subpackage(component, max_pin="x") }}
 {%- endif %}
   script_env:
 {%- if action == "coverage" %}
@@ -52,7 +50,7 @@ requirements:
   host:
 {%- if libintervalxt_requirements %}
     - boost-cpp
-    - e-antic 1.*
+    - e-antic >=1.0a master_1110
     - fmt
     - gmp
     - ppl
@@ -62,7 +60,7 @@ requirements:
     - setuptools
     - cppyythonizations
     - gmpxxyy
-    - pyeantic
+    - pyeantic >=1.0.1
 {%- endif %}
 {%- if component == "pyintervalxt" %}
     - libintervalxt {{ version }} {{ build_number }}

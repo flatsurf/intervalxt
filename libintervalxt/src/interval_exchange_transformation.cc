@@ -48,8 +48,7 @@ namespace {
 
 template <typename T>
 std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
-  if (v1.size() != v2.size())
-    throw std::logic_error("vectors must have same size");
+  CHECK_ARGUMENT(v1.size() == v2.size(), "vectors must have same size but " << v1.size() << " != " << v2.size());
 
   size_t d = v1.size();
   std::valarray<T> res(d * (d - 1) / 2);
