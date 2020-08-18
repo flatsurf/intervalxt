@@ -104,7 +104,7 @@ run
 ```
 conda config --add channels conda-forge
 conda config --add channels flatsurf # if you want to pull in the latest version of dependencies
-conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind
+conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt=6 gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind
 conda activate intervalxt-build
 export CPPFLAGS="-isystem $CONDA_PREFIX/include"
 export CFLAGS="$CPPFLAGS"
