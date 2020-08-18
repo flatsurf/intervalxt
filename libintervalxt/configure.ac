@@ -59,6 +59,8 @@ AX_CXX_CHECK_LIB([gmpxx], [std::runtime_error::what () const], , AC_MSG_ERROR([G
 AC_CHECK_HEADERS([e-antic/renfxx.h], , AC_MSG_ERROR([E-ANTIC headers not found]))
 AC_CHECK_LIB([eantic], [renf_elem_clear], , AC_MSG_ERROR([E-ANTIC library not found]), [-lgmp -lmpfr])
 AX_CXX_CHECK_LIB([eanticxx], [eantic::renf_elem_class], , AC_MSG_ERROR([E-ANTIC library not found]), [-lgmp -lmpfr])
+# antic is used directly by e-antic in its headers
+AC_CHECK_LIB([antic], [nf_elem_sub_si], , AC_MSG_ERROR([ANTIC library not found]), [-lgmp -lmpfr])
 
 AX_CXX_CHECK_LIB([ppl], [Parma_Polyhedra_Library::Constraint_System::print() const], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not found]))
 AC_CHECK_HEADERS([ppl.hh], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not found]))
