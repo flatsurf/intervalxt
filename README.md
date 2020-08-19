@@ -20,7 +20,7 @@ minimal components and recover the full decomposition.
 
 ## Current Release Info
 
-We build and release this package with every push to the master branch.
+We release this package regularly with [rever](https://regro.github.io/rever-docs/index.html); typically with every push to the master branch.
 
 This repository contains two related projects:
 
