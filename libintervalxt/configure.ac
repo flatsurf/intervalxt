@@ -39,8 +39,10 @@ AX_CXX_COMPILE_STDCXX(17)
 
 AC_CHECK_HEADERS([boost/type_traits.hpp], , AC_MSG_ERROR([boost headers not found]))
 
-AX_CXX_CHECK_LIB([fmt], [fmt::v6::getpagesize()], , AC_MSG_ERROR([fmt library not found]), [-lfmt])
 AC_CHECK_HEADERS([fmt/format.h], , AC_MSG_ERROR([fmt headers not found]))
+AX_CXX_CHECK_LIB([fmt], [fmt::v6::getpagesize()], , [
+  AX_CXX_CHECK_LIB([fmt], [fmt::v7::getpagesize()], , [AC_MSG_ERROR([fmt library not found])], [-lfmt])
+], [-lfmt])
 
 ACX_PTHREAD([], [AC_MSG_ERROR([pthread not supported])])
 
