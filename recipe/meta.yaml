@@ -1,6 +1,6 @@
 {% set version = '1.0.2' %}
-{% set build_number = environ.get('GIT_DESCRIBE_NUMBER') %}
-{% set component = component or 'flatsurf' %}
+{% set build_number = '1' %}
+{% set component = component or 'intervalxt' %}
 {% set action = action or 'release' %}
 {% set py = _python | replace('*', '') | replace(' ', '') | replace('.', '') %}
 {% set pyintervalxt_requirements = component in ["intervalxt", "pyintervalxt"] %}
@@ -50,7 +50,7 @@ requirements:
   host:
 {%- if libintervalxt_requirements %}
     - boost-cpp
-    - e-antic >=1.0a master_1136
+    - e-antic >=1.0a master_1148
     - fmt
     - gmp
     - ppl
