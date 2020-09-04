@@ -18,12 +18,10 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <valarray>
-#include <vector>
-
 #include <e-antic/renfxx.h>
 
-#include "external/catch2/single_include/catch2/catch.hpp"
+#include <valarray>
+#include <vector>
 
 #include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
@@ -32,6 +30,7 @@
 #include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/mpz-arithmetic.hpp"
 #include "../intervalxt/sample/rational-arithmetic.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 using std::pair;
 using std::vector;

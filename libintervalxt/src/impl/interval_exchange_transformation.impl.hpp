@@ -24,9 +24,7 @@
 #include <list>
 
 #include "../../intervalxt/interval_exchange_transformation.hpp"
-
 #include "interval.hpp"
-
 #include "similarity_tracker.hpp"
 
 namespace intervalxt {

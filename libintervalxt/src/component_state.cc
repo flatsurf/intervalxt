@@ -18,12 +18,12 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include "impl/component_state.hpp"
+
 #include <algorithm>
 
 #include "../intervalxt/connection.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
-
-#include "impl/component_state.hpp"
 
 namespace intervalxt {
 

@@ -18,9 +18,9 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <ostream>
-
 #include "../intervalxt/induction_step.hpp"
+
+#include <ostream>
 
 namespace intervalxt {
 

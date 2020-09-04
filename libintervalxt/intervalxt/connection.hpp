@@ -25,7 +25,6 @@
 #include <iosfwd>
 
 #include "external/spimpl/spimpl.h"
-
 #include "forward.hpp"
 
 namespace intervalxt {

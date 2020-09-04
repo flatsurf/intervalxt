@@ -20,9 +20,8 @@
 
 #include <unordered_set>
 
-#include "external/catch2/single_include/catch2/catch.hpp"
-
 #include "../intervalxt/label.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 namespace intervalxt::test {
 

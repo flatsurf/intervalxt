@@ -18,26 +18,23 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include "../intervalxt/interval_exchange_transformation.hpp"
+
+#include <fmt/format.h>
+#include <gmpxx.h>
+
 #include <algorithm>
 #include <list>
 #include <unordered_set>
 #include <valarray>
 
-#include <fmt/format.h>
-
-#include <gmpxx.h>
-
-#include "external/rx-ranges/include/rx/ranges.hpp"
-
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
-#include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
-
+#include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/interval.hpp"
 #include "impl/interval_exchange_transformation.impl.hpp"
 #include "impl/rational_linear_subspace.hpp"
-
 #include "util/assert.ipp"
 
 using std::vector;

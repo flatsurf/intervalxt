@@ -21,12 +21,12 @@
 #ifndef LIBINTERVALXT_LENGTHS_WITH_CONNECTIONS_HPP
 #define LIBINTERVALXT_LENGTHS_WITH_CONNECTIONS_HPP
 
+#include <gmpxx.h>
+
 #include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
-
-#include <gmpxx.h>
 
 #include "../../intervalxt/label.hpp"
 #include "../../intervalxt/lengths.hpp"

@@ -21,12 +21,11 @@
 #ifndef LIBINTERVALXT_DETAIL_LENGTH_IPP
 #define LIBINTERVALXT_DETAIL_LENGTH_IPP
 
+#include <boost/numeric/conversion/cast.hpp>
 #include <cassert>
 #include <ostream>
 #include <variant>
 #include <vector>
-
-#include <boost/numeric/conversion/cast.hpp>
 
 #include "../external/gmpxxll/mpz_class.hpp"
 #include "../length.hpp"

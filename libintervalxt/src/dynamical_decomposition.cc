@@ -18,24 +18,22 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <ostream>
-#include <vector>
+#include "../intervalxt/dynamical_decomposition.hpp"
 
 #include <fmt/format.h>
 
-#include "external/rx-ranges/include/rx/ranges.hpp"
+#include <ostream>
+#include <vector>
 
 #include "../intervalxt/component.hpp"
-#include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
-
+#include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/component.impl.hpp"
 #include "impl/decomposition_state.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/interval_exchange_transformation.impl.hpp"
-
 #include "util/assert.ipp"
 
 namespace intervalxt {

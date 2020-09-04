@@ -20,12 +20,10 @@
 
 #include <ostream>
 
+#include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/decomposition_state.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/separatrix.impl.hpp"
-
-#include "external/rx-ranges/include/rx/ranges.hpp"
-
 #include "util/assert.ipp"
 
 namespace intervalxt {

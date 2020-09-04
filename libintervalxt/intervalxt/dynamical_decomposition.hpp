@@ -21,15 +21,13 @@
 #ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 #define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 
+#include <boost/logic/tribool.hpp>
 #include <functional>
 #include <iosfwd>
 #include <vector>
 
-#include <boost/logic/tribool.hpp>
-
-#include "external/spimpl/spimpl.h"
-
 #include "component.hpp"
+#include "external/spimpl/spimpl.h"
 #include "forward.hpp"
 
 namespace intervalxt {

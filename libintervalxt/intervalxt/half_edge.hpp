@@ -21,14 +21,12 @@
 #ifndef LIBINTERVALXT_HALF_EDGE_HPP
 #define LIBINTERVALXT_HALF_EDGE_HPP
 
+#include <boost/operators.hpp>
 #include <functional>
 #include <list>
 #include <utility>
 
-#include <boost/operators.hpp>
-
 #include "external/spimpl/spimpl.h"
-
 #include "forward.hpp"
 
 namespace intervalxt {

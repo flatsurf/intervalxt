@@ -21,16 +21,14 @@
 #ifndef LIBINTERVALXT_COMPONENT_HPP
 #define LIBINTERVALXT_COMPONENT_HPP
 
+#include <boost/logic/tribool.hpp>
+#include <boost/operators.hpp>
 #include <functional>
 #include <list>
 #include <utility>
 
-#include <boost/logic/tribool.hpp>
-#include <boost/operators.hpp>
-
-#include "external/spimpl/spimpl.h"
-
 #include "connection.hpp"
+#include "external/spimpl/spimpl.h"
 #include "forward.hpp"
 #include "half_edge.hpp"
 

@@ -24,9 +24,7 @@
 #include <memory>
 
 #include "../../intervalxt/component.hpp"
-
 #include "component_state.hpp"
-
 #include "forward.hpp"
 
 namespace intervalxt {

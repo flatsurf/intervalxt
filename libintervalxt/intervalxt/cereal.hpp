@@ -21,18 +21,16 @@
 #ifndef LIBINTERVALXT_CEREAL_HPP
 #define LIBINTERVALXT_CEREAL_HPP
 
-#include <map>
-
 #include <fmt/format.h>
+
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/push_back.hpp>
-
 #include <cereal/cereal.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/polymorphic.hpp>
+#include <map>
 
 #include "erased/cereal.hpp"
-
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "length.hpp"

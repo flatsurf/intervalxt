@@ -18,18 +18,17 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include "../intervalxt/half_edge.hpp"
+
 #include <ostream>
 
 #include "../intervalxt/component.hpp"
-#include "../intervalxt/half_edge.hpp"
 #include "../intervalxt/separatrix.hpp"
-
 #include "impl/component.impl.hpp"
 #include "impl/decomposition_state.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/half_edge.impl.hpp"
 #include "impl/separatrix.impl.hpp"
-
 #include "util/assert.ipp"
 
 namespace intervalxt {

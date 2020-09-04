@@ -21,17 +21,16 @@
 #ifndef LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 #define LIBINTERVALXT_INTERVAL_EXCHANGE_TRANSFORMATION_HPP
 
+#include <gmpxx.h>
+
+#include <boost/operators.hpp>
 #include <iosfwd>
 #include <map>
 #include <memory>
 #include <optional>
 #include <vector>
 
-#include <gmpxx.h>
-#include <boost/operators.hpp>
-
 #include "external/spimpl/spimpl.h"
-
 #include "lengths.hpp"
 #include "serializable.hpp"
 

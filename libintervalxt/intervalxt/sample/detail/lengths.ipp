@@ -26,7 +26,6 @@
 #include <vector>
 
 #include "../../label.hpp"
-
 #include "../arithmetic.hpp"
 #include "../lengths.hpp"
 

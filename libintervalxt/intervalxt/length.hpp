@@ -21,11 +21,10 @@
 #ifndef LIBINTERVALXT_LENGTH_HPP
 #define LIBINTERVALXT_LENGTH_HPP
 
-#include <string>
-
 #include <boost/type_erasure/any.hpp>
 #include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/operators.hpp>
+#include <string>
 
 #include "forward.hpp"
 
