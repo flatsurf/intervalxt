@@ -20,9 +20,8 @@
 
 #include <e-antic/renfxx.h>
 #include <fmt/format.h>
-#include <boost/logic/tribool.hpp>
 
-#include "external/catch2/single_include/catch2/catch.hpp"
+#include <boost/logic/tribool.hpp>
 
 #include "../intervalxt/connection.hpp"
 #include "../intervalxt/decomposition_step.hpp"
@@ -31,6 +30,7 @@
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/sample/e-antic-arithmetic.hpp"
 #include "../intervalxt/sample/lengths.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 using eantic::renf_class;
 using eantic::renf_elem_class;

@@ -18,20 +18,18 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <ostream>
+#include "impl/decomposition_state.hpp"
 
 #include <fmt/format.h>
+
+#include <ostream>
 
 #include "../intervalxt/connection.hpp"
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/separatrix.hpp"
-
-#include "impl/decomposition_state.hpp"
-#include "impl/interval_exchange_transformation.impl.hpp"
-
 #include "external/rx-ranges/include/rx/ranges.hpp"
-
+#include "impl/interval_exchange_transformation.impl.hpp"
 #include "util/assert.ipp"
 
 namespace intervalxt {

@@ -45,12 +45,12 @@ requirements:
 {%- if action == "benchmark" %}
     - git
 {%- elif action == "style" %}
-    - clangdev ==8.0.0
+    - clangdev ==10.0.1
 {%- endif %}
   host:
 {%- if libintervalxt_requirements %}
     - boost-cpp
-    - e-antic >=1.0a master_1148
+    - e-antic >=1.0a1
     - fmt
     - gmp
     - ppl
@@ -60,7 +60,7 @@ requirements:
     - setuptools
     - cppyythonizations
     - gmpxxyy
-    - pyeantic >=1.0.1
+    - pyeantic >=1.1.1
 {%- endif %}
 {%- if component == "pyintervalxt" %}
     - libintervalxt {{ version }} {{ build_number }}

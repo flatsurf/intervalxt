@@ -24,7 +24,6 @@
 #include <memory>
 
 #include "../../intervalxt/label.hpp"
-
 #include "../../intervalxt/separatrix.hpp"
 #include "forward.hpp"
 

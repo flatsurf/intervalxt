@@ -25,7 +25,6 @@
 
 #include "../../intervalxt/connection.hpp"
 #include "../../intervalxt/separatrix.hpp"
-
 #include "forward.hpp"
 
 namespace intervalxt {

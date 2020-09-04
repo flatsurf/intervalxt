@@ -26,7 +26,6 @@
 #include "../../intervalxt/component.hpp"
 #include "../../intervalxt/half_edge.hpp"
 #include "../../intervalxt/label.hpp"
-
 #include "forward.hpp"
 
 namespace intervalxt {

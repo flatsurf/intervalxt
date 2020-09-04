@@ -21,10 +21,9 @@
 #ifndef LIBINTERVALXT_ERASED_CEREAL_HPP
 #define LIBINTERVALXT_ERASED_CEREAL_HPP
 
-#include "serializable.hpp"
-
 #include "detail/cereal.hpp"
 #include "detail/unparen.hpp"
+#include "serializable.hpp"
 
 namespace intervalxt::erased {
 

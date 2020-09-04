@@ -21,15 +21,15 @@
 #ifndef LIBINTERVALXT_LENGTHS_HPP
 #define LIBINTERVALXT_LENGTHS_HPP
 
+#include <gmpxx.h>
+
+#include <boost/type_erasure/any.hpp>
+#include <boost/type_erasure/member.hpp>
 #include <boost/type_erasure/operators.hpp>
 #include <string>
 #include <type_traits>
 #include <unordered_set>
 #include <vector>
-
-#include <gmpxx.h>
-#include <boost/type_erasure/any.hpp>
-#include <boost/type_erasure/member.hpp>
 
 #include "erased/boost.hpp"
 #include "erased/serializable.hpp"

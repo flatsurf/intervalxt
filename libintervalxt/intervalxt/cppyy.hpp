@@ -32,7 +32,6 @@
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "lengths.hpp"
-
 #include "sample/e-antic-arithmetic.hpp"
 // If we pull this in, we require users of pyintervalxt to have exact-real
 // installed. Since nobody is using exact-real currenty, let's wait for

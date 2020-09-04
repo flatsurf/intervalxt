@@ -21,10 +21,9 @@
 #ifndef LIBINTERVALXT_ERASED_BOOST_HPP
 #define LIBINTERVALXT_ERASED_BOOST_HPP
 
-#include <memory>
-
 #include <boost/type_erasure/any.hpp>
 #include <boost/type_erasure/free.hpp>
+#include <memory>
 
 #include "forward.hpp"
 

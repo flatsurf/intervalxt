@@ -21,9 +21,8 @@
 #ifndef LIBINTERVALXT_DETAIL_ID_HPP
 #define LIBINTERVALXT_DETAIL_ID_HPP
 
-#include <memory>
-
 #include <boost/uuid/uuid.hpp>
+#include <memory>
 
 namespace intervalxt {
 namespace detail {

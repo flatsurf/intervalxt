@@ -24,7 +24,6 @@
 #include <memory>
 
 #include "../../intervalxt/dynamical_decomposition.hpp"
-
 #include "forward.hpp"
 
 namespace intervalxt {

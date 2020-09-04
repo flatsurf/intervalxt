@@ -18,9 +18,9 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <stdlib.h>
-
 #include "../intervalxt/label.hpp"
+
+#include <stdlib.h>
 
 namespace intervalxt {
 

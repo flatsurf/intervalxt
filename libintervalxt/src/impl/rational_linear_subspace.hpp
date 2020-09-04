@@ -21,14 +21,13 @@
 #ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
 #define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_HPP
 
+#include <gmpxx.h>
+
+#include <boost/operators.hpp>
 #include <iosfwd>
 #include <vector>
 
-#include <gmpxx.h>
-#include <boost/operators.hpp>
-
 #include "../../intervalxt/external/spimpl/spimpl.h"
-
 #include "../../intervalxt/forward.hpp"
 
 namespace intervalxt {

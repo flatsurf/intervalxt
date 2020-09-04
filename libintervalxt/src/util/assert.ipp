@@ -21,9 +21,9 @@
 #define LIBFLATSURF_UTIL_ASSERT_IPP
 
 #include <gmpxx.h>
-#include <sstream>
 
 #include <boost/preprocessor/stringize.hpp>
+#include <sstream>
 
 namespace flatsurf {
 

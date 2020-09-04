@@ -18,31 +18,28 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include "../intervalxt/component.hpp"
+
+#include <fmt/format.h>
+
+#include <boost/logic/tribool.hpp>
 #include <ostream>
 #include <unordered_set>
 #include <valarray>
 #include <variant>
 #include <vector>
 
-#include <fmt/format.h>
-
-#include <boost/logic/tribool.hpp>
-
-#include "external/rx-ranges/include/rx/ranges.hpp"
-
-#include "../intervalxt/component.hpp"
 #include "../intervalxt/decomposition_step.hpp"
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/label.hpp"
-
+#include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/component.impl.hpp"
 #include "impl/connection.impl.hpp"
 #include "impl/decomposition_state.hpp"
 #include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/half_edge.impl.hpp"
 #include "impl/separatrix.impl.hpp"
-
 #include "util/assert.ipp"
 
 namespace intervalxt {

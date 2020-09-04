@@ -21,9 +21,8 @@
 #ifndef LIBINTERVALXT_COMPONENT_STATE_HPP
 #define LIBINTERVALXT_COMPONENT_STATE_HPP
 
-#include <vector>
-
 #include <boost/logic/tribool.hpp>
+#include <vector>
 
 #include "../../intervalxt/interval_exchange_transformation.hpp"
 #include "forward.hpp"

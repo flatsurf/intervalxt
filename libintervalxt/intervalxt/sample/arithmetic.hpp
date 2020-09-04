@@ -21,10 +21,10 @@
 #ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
 #define LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
 
+#include <gmpxx.h>
+
 #include <type_traits>
 #include <vector>
-
-#include <gmpxx.h>
 
 namespace intervalxt::sample {
 

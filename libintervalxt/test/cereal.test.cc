@@ -18,25 +18,21 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include <boost/type_erasure/any_cast.hpp>
+#include <cereal/archives/json.hpp>
+#include <cereal/types/polymorphic.hpp>
 #include <memory>
 #include <vector>
 
-#include <boost/type_erasure/any_cast.hpp>
-
-#include <cereal/archives/json.hpp>
-#include <cereal/types/polymorphic.hpp>
-
-#include "external/catch2/single_include/catch2/catch.hpp"
-
 #include "../intervalxt/cereal.hpp"
+#include "../intervalxt/erased/cereal.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/length.hpp"
 #include "../intervalxt/lengths.hpp"
 #include "../intervalxt/sample/cereal.hpp"
 #include "../intervalxt/sample/lengths.hpp"
-
-#include "../intervalxt/erased/cereal.hpp"
+#include "external/catch2/single_include/catch2/catch.hpp"
 
 LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<int>))
 

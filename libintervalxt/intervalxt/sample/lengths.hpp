@@ -21,11 +21,11 @@
 #ifndef LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 #define LIBINTERVALXT_SAMPLE_LENGTHS_HPP
 
+#include <gmpxx.h>
+
 #include <tuple>
 #include <unordered_set>
 #include <vector>
-
-#include <gmpxx.h>
 
 #include "../label.hpp"
 #include "../lengths.hpp"

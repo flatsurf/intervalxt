@@ -21,9 +21,8 @@
 #ifndef LIBINTERVALXT_LABEL_HPP
 #define LIBINTERVALXT_LABEL_HPP
 
-#include <functional>
-
 #include <boost/operators.hpp>
+#include <functional>
 
 #include "serializable.hpp"
 
