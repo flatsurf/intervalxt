@@ -4,6 +4,19 @@ intervalxt Change Log
 
 .. current developments
 
+v1.0.3
+====================
+
+**Added:**
+
+* safety checks for rever deploy script
+
+**Changed:**
+
+* upgraded clang-format to clang version 10
+
+
+
 v1.0.2
 ====================
 
