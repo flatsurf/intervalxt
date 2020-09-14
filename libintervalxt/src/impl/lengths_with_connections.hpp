@@ -42,7 +42,7 @@ class LengthsWithConnections {
   void pop();
   void subtract(Label);
   Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
+  std::vector<std::vector<mpq_class>> coefficients(const std::vector<Label>&) const;
   int cmp(Label) const;
   int cmp(Label, Label) const;
   Length get(Label) const;

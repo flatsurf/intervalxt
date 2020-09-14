@@ -57,7 +57,7 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   void swap();
 
   // Return the Sah-Arnoux-Fathi invariant
-  std::valarray<mpq_class> safInvariant() const;
+  std::vector<mpq_class> safInvariant() const;
 
   // Return whether there is no periodic trajectory via Boshernitzan's
   // algorithm.

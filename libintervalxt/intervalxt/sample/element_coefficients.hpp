@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,24 +18,38 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_EXACT_REAL_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_EXACT_REAL_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_ELEMENT_COEFFICIENTS_HPP
+#define LIBINTERVALXT_SAMPLE_ELEMENT_COEFFICIENTS_HPP
 
 #include <exact-real/element.hpp>
 
-#include "arithmetic.hpp"
+#include "coefficients.hpp"
 
 namespace intervalxt::sample {
 
+namespace {
+
 template <typename Ring>
-struct Arithmetic<exactreal::Element<Ring>> {
+struct Coefficients<exactreal::Element<Ring>> {
   using T = exactreal::Element<Ring>;
 
-  static std::vector<mpq_class> coefficients(const T& value) { return value.template coefficients<mpq_class>(); }
-  static auto floorDivision(const T& divident, const T& divisor) {
-    return divident.floordiv(divisor);
+  std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
+    if (elements.size() == 0)
+      return {};
+
+    auto parent = elements[0].module();
+    for (auto& x : elements)
+      parent = span(parent, x.module());
+
+    std::vector<std::vector<mpq_class>> ret;
+    for (auto x : elements)
+      ret.push_back(x.promote(parent).template coefficients<mpq_class>());
+
+    return ret;
   }
 };
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

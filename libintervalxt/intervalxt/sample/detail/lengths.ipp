@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@
 #include <vector>
 
 #include "../../label.hpp"
-#include "../arithmetic.hpp"
+#include "../coefficients.hpp"
+#include "../floor_division.hpp"
 #include "../lengths.hpp"
 
 namespace intervalxt::sample {
@@ -47,94 +48,92 @@ int cmp(const T& lhs, const T& rhs) {
   return 0;
 }
 
-}  // namespace
-
-template <typename T>
-Lengths<T>::Lengths() :
+template <typename T, typename FloorDivision, typename Coefficients>
+Lengths<T, FloorDivision, Coefficients>::Lengths() :
   stack(),
   lengths() {}
 
-template <typename T>
-Lengths<T>::Lengths(const std::vector<T>& lengths) :
+template <typename T, typename FloorDivision, typename Coefficients>
+Lengths<T, FloorDivision, Coefficients>::Lengths(const std::vector<T>& lengths) :
   stack(),
   lengths(lengths) {
   assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length >= 0; }) && "all Lengths must be non-negative");
 }
 
-template <typename T>
+template <typename T, typename FloorDivision, typename Coefficients>
 template <typename... L>
-auto Lengths<T>::make(L&&... values) {
+auto Lengths<T, FloorDivision, Coefficients>::make(L&&... values) {
   auto lengths = Lengths<T>(std::vector{values...});
   return std::tuple_cat(
       std::make_tuple(lengths),
       toTuple(lengths.labels(), std::make_index_sequence<sizeof...(L)>()));
 }
 
-template <typename T>
-std::vector<Label> Lengths<T>::labels() const {
+template <typename T, typename FloorDivision, typename Coefficients>
+std::vector<Label> Lengths<T, FloorDivision, Coefficients>::labels() const {
   std::vector<Label> labels;
   for (int i = 0; i < lengths.size(); i++) labels.push_back(Label(i));
   return labels;
 }
 
-template <typename T>
-Lengths<T>::operator T() const {
+template <typename T, typename FloorDivision, typename Coefficients>
+Lengths<T, FloorDivision, Coefficients>::operator T() const {
   return std::accumulate(begin(stack), end(stack), T(), [&](T value, Label label) { return value + at(label); });
 }
 
-template <typename T>
-T Lengths<T>::get(Label label) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+T Lengths<T, FloorDivision, Coefficients>::get(Label label) const {
   return at(label);
 }
 
-template <typename T>
-const T& Lengths<T>::at(Label label) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+const T& Lengths<T, FloorDivision, Coefficients>::at(Label label) const {
   return lengths.at(index(label));
 }
 
-template <typename T>
-T& Lengths<T>::at(Label label) {
+template <typename T, typename FloorDivision, typename Coefficients>
+T& Lengths<T, FloorDivision, Coefficients>::at(Label label) {
   return lengths.at(index(label));
 }
 
-template <typename T>
-void Lengths<T>::push(Label label) {
+template <typename T, typename FloorDivision, typename Coefficients>
+void Lengths<T, FloorDivision, Coefficients>::push(Label label) {
   stack.push_back(label);
 }
 
-template <typename T>
-void Lengths<T>::pop() {
+template <typename T, typename FloorDivision, typename Coefficients>
+void Lengths<T, FloorDivision, Coefficients>::pop() {
   stack.pop_back();
 }
 
-template <typename T>
-void Lengths<T>::clear() {
+template <typename T, typename FloorDivision, typename Coefficients>
+void Lengths<T, FloorDivision, Coefficients>::clear() {
   stack.clear();
 }
 
-template <typename T>
-int Lengths<T>::cmp(Label rhs) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+int Lengths<T, FloorDivision, Coefficients>::cmp(Label rhs) const {
   return ::intervalxt::sample::cmp<T>(*this, at(rhs));
 }
 
-template <typename T>
-int Lengths<T>::cmp(Label lhs, Label rhs) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+int Lengths<T, FloorDivision, Coefficients>::cmp(Label lhs, Label rhs) const {
   return ::intervalxt::sample::cmp<T>(at(lhs), at(rhs));
 }
 
-template <typename T>
-void Lengths<T>::subtract(Label from) {
+template <typename T, typename FloorDivision, typename Coefficients>
+void Lengths<T, FloorDivision, Coefficients>::subtract(Label from) {
   at(from) -= static_cast<T>(*this);
   assert(at(from) > 0 && "all lengths must be positive.");
   clear();
 }
 
-template <typename T>
-Label Lengths<T>::subtractRepeated(Label from) {
+template <typename T, typename FloorDivision, typename Coefficients>
+Label Lengths<T, FloorDivision, Coefficients>::subtractRepeated(Label from) {
   if (stack.size() == 0)
     throw std::invalid_argument("Cannot subtractRepeated() without push()");
 
-  auto quo = Arithmetic<T>::floorDivision(at(from), static_cast<T>(*this));
+  auto quo = FloorDivision()(at(from), static_cast<T>(*this));
 
   at(from) -= quo * static_cast<T>(*this);
 
@@ -159,13 +158,16 @@ Label Lengths<T>::subtractRepeated(Label from) {
   throw std::logic_error("Floor Division inconsistent with cmp()/subtract()");
 }
 
-template <typename T>
-std::vector<mpq_class> Lengths<T>::coefficients(Label label) const {
-  return Arithmetic<T>::coefficients(at(label));
+template <typename T, typename FloorDivision, typename Coefficients>
+std::vector<std::vector<mpq_class>> Lengths<T, FloorDivision, Coefficients>::coefficients(const std::vector<Label>& labels) const {
+  std::vector<T> lengths;
+  for (auto& label : labels)
+    lengths.push_back(at(label));
+  return Coefficients()(lengths);
 }
 
-template <typename T>
-std::string Lengths<T>::render(Label label) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+std::string Lengths<T, FloorDivision, Coefficients>::render(Label label) const {
   std::string ret;
   size_t current = index(label);
   while (current || ret.size() == 0) {
@@ -180,8 +182,8 @@ std::string Lengths<T>::render(Label label) const {
   return ret;
 }
 
-template <typename T>
-::intervalxt::Lengths Lengths<T>::only(const std::unordered_set<Label>& labels) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+::intervalxt::Lengths Lengths<T, FloorDivision, Coefficients>::only(const std::unordered_set<Label>& labels) const {
   auto only = Lengths(lengths);
   for (const auto label : this->labels())
     if (labels.find(label) == labels.end())
@@ -189,18 +191,18 @@ template <typename T>
   return only;
 }
 
-template <typename T>
-::intervalxt::Lengths Lengths<T>::forget() const {
+template <typename T, typename FloorDivision, typename Coefficients>
+::intervalxt::Lengths Lengths<T, FloorDivision, Coefficients>::forget() const {
   return Lengths(lengths);
 }
 
-template <typename T>
-bool Lengths<T>::operator==(const Lengths& other) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+bool Lengths<T, FloorDivision, Coefficients>::operator==(const Lengths& other) const {
   return lengths == other.lengths;
 }
 
-template <typename T>
-bool Lengths<T>::similar(Label a, Label b, const ::intervalxt::Lengths& other, Label aa, Label bb) const {
+template <typename T, typename FloorDivision, typename Coefficients>
+bool Lengths<T, FloorDivision, Coefficients>::similar(Label a, Label b, const ::intervalxt::Lengths& other, Label aa, Label bb) const {
   const auto& x = at(a);
   const auto otherx = other.get(aa);
 
@@ -215,6 +217,8 @@ bool Lengths<T>::similar(Label a, Label b, const ::intervalxt::Lengths& other, L
 
   return x * othery == y * otherx;
 }
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

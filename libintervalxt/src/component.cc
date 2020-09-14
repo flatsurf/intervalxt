@@ -25,7 +25,6 @@
 #include <boost/logic/tribool.hpp>
 #include <ostream>
 #include <unordered_set>
-#include <valarray>
 #include <variant>
 #include <vector>
 

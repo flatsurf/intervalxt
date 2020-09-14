@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,32 +18,27 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_MPQ_FLOOR_DIVISION_HPP
+#define LIBINTERVALXT_SAMPLE_MPQ_FLOOR_DIVISION_HPP
 
 #include <gmpxx.h>
 
-#include <type_traits>
-#include <vector>
+#include "floor_division.hpp"
 
 namespace intervalxt::sample {
 
-template <typename Arithmetic>
-using QuotientFloorDivision = typename std::invoke_result_t<decltype(&Arithmetic::floorDivision), const typename Arithmetic::T&, const typename Arithmetic::T&>;
+namespace {
 
-template <typename S, typename _ = void>
-struct Arithmetic {
-  using T = S;
+template <>
+struct FloorDivision<mpq_class> {
+  using T = mpq_class;
 
-  static std::vector<mpq_class> coefficients(const T& value) {
-    if constexpr (std::is_same_v<T, long long> || std::is_same_v<T, unsigned long long>) {
-      return std::vector<mpq_class>{mpq_class(std::to_string(value))};
-    } else {
-      return std::vector<mpq_class>{value};
-    }
+  mpz_class operator()(const T& divident, const T& divisor) {
+    return (divident.get_num() * divisor.get_den()) / (divident.get_den() * divisor.get_num());
   }
-  static auto floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Vincent Delecroix
+ *                      2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,25 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_RATIONAL_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_RATIONAL_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_MPZ_COEFFICIENTS_HPP
+#define LIBINTERVALXT_SAMPLE_MPZ_COEFFICIENTS_HPP
 
 #include <gmpxx.h>
 
-#include "arithmetic.hpp"
+#include "coefficients.hpp"
 
 namespace intervalxt::sample {
 
+namespace {
+
 template <>
-struct Arithmetic<mpq_class> {
-  using T = mpq_class;
+struct Coefficients<mpz_class> {
+  using T = mpz_class;
 
-  static std::vector<mpq_class> coefficients(const T& value) { return std::vector{value}; }
+  std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
+    std::vector<std::vector<mpq_class>> ret;
+    for (auto x : elements)
+      ret.push_back({x});
 
-  static mpz_class floorDivision(const T& divident, const T& divisor) {
-    return (divident.get_num() * divisor.get_den()) / (divident.get_den() * divisor.get_num());
+    return ret;
   }
 };
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

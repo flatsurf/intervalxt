@@ -23,7 +23,6 @@
 
 #include <iosfwd>
 #include <memory>
-#include <valarray>
 #include <vector>
 
 #include "cereal.hpp"

@@ -61,7 +61,7 @@ struct LengthsInterface : boost::mpl::vector<
                               has_member_pop<void()>,
                               has_member_subtract<void(Label)>,
                               has_member_subtract_repeated<Label(Label)>,
-                              has_member_coefficients<std::vector<mpq_class>(Label) const>,
+                              has_member_coefficients<std::vector<std::vector<mpq_class>>(const std::vector<Label>&) const>,
                               has_member_cmp1<int(Label) const>,
                               has_member_cmp2<int(Label, Label) const>,
                               has_member_get<Length(Label) const>,

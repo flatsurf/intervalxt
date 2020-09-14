@@ -31,6 +31,8 @@
 #include "../intervalxt/length.hpp"
 #include "../intervalxt/lengths.hpp"
 #include "../intervalxt/sample/cereal.hpp"
+#include "../intervalxt/sample/integer_coefficients.hpp"
+#include "../intervalxt/sample/integer_floor_division.hpp"
 #include "../intervalxt/sample/lengths.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 

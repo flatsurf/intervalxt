@@ -2,6 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,25 +18,25 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_MPZ_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_MPZ_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_INTEGER_FLOOR_DIVISION_HPP
+#define LIBINTERVALXT_SAMPLE_INTEGER_FLOOR_DIVISION_HPP
 
-#include <string>
-
-#include "arithmetic.hpp"
+#include "floor_division.hpp"
 
 namespace intervalxt::sample {
 
-template <>
-struct Arithmetic<long long int> {
-  using T = long long int;
+namespace {
 
-  static std::vector<mpq_class> coefficients(const T& value) {
-    return std::vector{mpq_class(std::to_string(value).c_str())};
+template <typename S>
+struct FloorDivision<S, S, typename std::enable_if<std::is_integral_v<S>>::type> {
+  using T = S;
+
+  T operator()(const T divident, const T divisor) {
+    return divident / divisor;
   }
-
-  static T floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 
