@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,36 +25,58 @@
 #include <memory>
 #include <vector>
 
-#include "cereal.hpp"
 #include "dynamical_decomposition.hpp"
-#include "forward.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "lengths.hpp"
-#include "sample/e-antic-arithmetic.hpp"
-// If we pull this in, we require users of pyintervalxt to have exact-real
-// installed. Since nobody is using exact-real currenty, let's wait for
-// https://github.com/flatsurf/intervalxt/issues/95 to make this work again.
-// #include "sample/exact-real-arithmetic.hpp"
 #include "sample/lengths.hpp"
-#include "sample/long-long-int-arithmetic.hpp"
-#include "sample/mpz-arithmetic.hpp"
-#include "sample/rational-arithmetic.hpp"
 
-namespace intervalxt {
+namespace intervalxt::cppyy {
+
+// We work around
+// https://bitbucket.org/wlav/cppyy/issues/268/segfault-with-types-in-unnamed-namespaces
+// by moving the Lengths type out of its unnamed namespace.
+template <typename V>
+class Lengths : public ::intervalxt::sample::Lengths<typename V::value_type> {
+ public:
+  using T = typename V::value_type;
+
+  using ::intervalxt::sample::Lengths<T>::Lengths;
+
+  using ::intervalxt::sample::Lengths<T>::labels;
+  using ::intervalxt::sample::Lengths<T>::push;
+  using ::intervalxt::sample::Lengths<T>::pop;
+  using ::intervalxt::sample::Lengths<T>::clear;
+  using ::intervalxt::sample::Lengths<T>::cmp;
+  using ::intervalxt::sample::Lengths<T>::subtract;
+  using ::intervalxt::sample::Lengths<T>::subtractRepeated;
+  using ::intervalxt::sample::Lengths<T>::coefficients;
+  using ::intervalxt::sample::Lengths<T>::render;
+  using ::intervalxt::sample::Lengths<T>::get;
+  using ::intervalxt::sample::Lengths<T>::only;
+  using ::intervalxt::sample::Lengths<T>::forget;
+  using ::intervalxt::sample::Lengths<T>::similar;
+  using ::intervalxt::sample::Lengths<T>::operator==;
+  using ::intervalxt::sample::Lengths<T>::operator bool;
+  using ::intervalxt::sample::Lengths<T>::operator T;
+};
 
 template <typename L>
-auto makeIET(const L &lengths, std::vector<int> permutation) {
-  Lengths erasedLengths = lengths;
+auto IntervalExchangeTransformation(L& lengths, const std::vector<int>& permutation) {
+  ::intervalxt::Lengths erasedLengths = lengths;
   auto top = lengths.labels();
   std::vector<Label> bottom;
   for (int p : permutation)
     bottom.push_back(top[p]);
-  return IntervalExchangeTransformation(std::make_shared<Lengths>(erasedLengths), top, bottom);
+  return ::intervalxt::IntervalExchangeTransformation(std::make_shared<::intervalxt::Lengths>(erasedLengths), top, bottom);
 }
+
+}  // namespace intervalxt
+
+namespace intervalxt {
 
 std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
-}  // namespace intervalxt
+}
 
 #endif

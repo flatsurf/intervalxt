@@ -76,6 +76,9 @@ class Lengths : public Serializable<Lengths<T>> {
   std::vector<T> lengths;
 };
 
+template <typename T>
+Lengths(const std::vector<T>&) -> Lengths<T>;
+
 }  // namespace
 
 }  // namespace intervalxt::sample
