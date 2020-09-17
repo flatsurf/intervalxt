@@ -86,7 +86,7 @@ def enable_label_printing(proxy, name):
     """
     printer = None
     def pretty_print(self):
-        if hasattr(self, "lengths"):
+        if hasattr(self, "lengths") and self.lengths is not None:
             return self.lengths.render(self)
         return printer(self)
     printer = proxy.__repr__
@@ -109,10 +109,10 @@ def enable_register_lengths_iet(proxy, name):
     nicely in Python.
     """
     top = proxy.top
-    proxy.top = lambda self: register_lengths(top(self), self.lengths)
+    proxy.top = lambda self: register_lengths(top(self), self.lengths if hasattr(self, "lengths") else None)
 
     bottom = proxy.bottom
-    proxy.bottom = lambda self: register_lengths(bottom(self), self.lengths)
+    proxy.bottom = lambda self: register_lengths(bottom(self), self.lengths if hasattr(self, "lengths") else None)
 
 def enable_register_lengths(proxy, name):
     r"""

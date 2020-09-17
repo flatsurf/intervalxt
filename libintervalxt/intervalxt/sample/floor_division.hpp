@@ -42,8 +42,8 @@ struct FloorDivision {
   using T = S;
 
   R operator()(const T&, const T&) {
-    static_assert(false_t<T>, "operator() performing a floor division not implemented for this type");
-    throw std::logic_error("not implemented: FloorDivision::operator()");
+    static_assert(false_t<T>, "operator() performing a floor division not implemented for this type; did you include the appropriate floor division header?");
+    throw std::logic_error("not implemented: FloorDivision::operator(); did you include the appropriate floor division header?");
   }
 };
 

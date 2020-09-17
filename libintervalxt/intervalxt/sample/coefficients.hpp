@@ -45,13 +45,13 @@ class Coefficients {
   using T = S;
 
   std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
-    static_assert(false_t<T>, "operator() returning rational coefficients of this element not implemented");
-    throw std::logic_error("not implemented: Coefficients::operator()");
+    static_assert(false_t<T>, "operator() returning rational coefficients of this element not implemented; did you include the appropriate coefficients header?");
+    throw std::logic_error("not implemented: Coefficients::operator(); did you include the appropriate coefficients header?");
   }
 };
 
-// A convenience implementation of the general Coefficients which applies to
-// tuples of fixed length instead of vectors.
+// A wrapper for the general Coefficients which applies to tuples of fixed
+// length instead of vectors.
 template <>
 class Coefficients<void, void> {
   template <typename T, std::size_t... I>
