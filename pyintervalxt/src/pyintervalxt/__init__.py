@@ -45,6 +45,16 @@ You can also use number algebraic lengths with pyeantic::
     >>> IntervalExchangeTransformation(lengths, [1, 0])
     [a: (a ~ 1.8392868)] [b: (2*a^2 - 3 ~ 3.7659515)] / [b] [a]
 
+TESTS:
+
+Check that #85 has been resolved:
+
+    >>> lengths = [L.gen(), eantic.renf_elem(L, "-3*a^2 + 2*a - 1")]
+    >>> IntervalExchangeTransformation(lengths, [1, 0])
+    Traceback (most recent call last):
+    ...
+    TypeError: ...all lengths must be non-negative...
+
 """
 
 ######################################################################

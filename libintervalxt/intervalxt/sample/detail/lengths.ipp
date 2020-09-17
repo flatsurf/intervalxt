@@ -57,7 +57,8 @@ template <typename T, typename FloorDivision, typename Coefficients>
 Lengths<T, FloorDivision, Coefficients>::Lengths(const std::vector<T>& lengths) :
   stack(),
   lengths(lengths) {
-  assert(std::all_of(lengths.begin(), lengths.end(), [](const auto& length) { return length >= 0; }) && "all Lengths must be non-negative");
+  if (std::any_of(begin(lengths), end(lengths), [](const auto& length) { return length < 0; }))
+    throw std::invalid_argument("all lengths must be non-negative");
 }
 
 template <typename T, typename FloorDivision, typename Coefficients>
