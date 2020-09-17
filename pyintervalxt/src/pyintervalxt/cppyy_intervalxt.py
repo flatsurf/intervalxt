@@ -34,10 +34,13 @@ if os.environ.get('PYINTERVALXT_CYSIGNALS', True):
     except ModuleNotFoundError:
         pass
 
+
 def pretty_print(proxy, name):
     proxy.__repr__ = proxy.__str__
 
+
 cppyy.py.add_pythonization(pretty_print, "intervalxt")
+
 
 # Singleton object that makes sure that all Lengths that we have seen during
 # this cppyy session are known to cereal. This might break when unrelated
@@ -62,6 +65,7 @@ class LengthRegistrar:
                 cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (%s));'%(length,))
             LengthRegistrar.REGISTERED_LENGTHS.add(length)
 
+
 lengthsRegistrar = LengthRegistrar()
 
 def enable_cereal_(proxy, name):
@@ -69,9 +73,11 @@ def enable_cereal_(proxy, name):
 
     enable_cereal(proxy, name, headers)
 
+
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::sample")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::cppyy")
+
 
 def enable_label_printing(proxy, name):
     r"""
@@ -93,6 +99,7 @@ def enable_label_printing(proxy, name):
     proxy.__repr__ = pretty_print
     proxy.__str__ = pretty_print
 
+
 def register_lengths(labels, lengths):
     r"""
     Helper function for enable_label_printing to actually register Lengths with
@@ -102,6 +109,7 @@ def register_lengths(labels, lengths):
     for l in labels:
         l.lengths = lengths
     return labels
+
 
 def enable_register_lengths_iet(proxy, name):
     r"""
@@ -114,6 +122,7 @@ def enable_register_lengths_iet(proxy, name):
     bottom = proxy.bottom
     proxy.bottom = lambda self: register_lengths(bottom(self), self.lengths if hasattr(self, "lengths") else None)
 
+
 def enable_register_lengths(proxy, name):
     r"""
     Make sure that Label knows which Lengths it belongs to so it can print
@@ -122,15 +131,19 @@ def enable_register_lengths(proxy, name):
     labels = proxy.labels
     proxy.labels = lambda self: register_lengths(labels(self), self)
 
+
 cppyy.py.add_pythonization(filtered("Label")(enable_label_printing), "intervalxt")
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(enable_register_lengths_iet), "intervalxt")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(enable_register_lengths), "intervalxt::cppyy")
+
 
 # Set EXTRA_CLING_ARGS="-I /usr/include" or wherever intervalxt/cppyy.hpp can
 # be resolved if the following line fails to find the header file.
 cppyy.include("intervalxt/cppyy.hpp")
 
+
 from cppyy.gbl import intervalxt
+
 
 def Lengths(lengths, headers=None):
     if len(lengths) == 0:
@@ -175,6 +188,7 @@ def IntervalExchangeTransformation(lengths, permutation):
     iet.lengths = lengths
 
     return iet
+
 
 # Hide the original sample::Lengths as instantiating them leads to segfaults in
 # cppyy, see https://bitbucket.org/wlav/cppyy/issues/268/segfault-with-types-in-unnamed-namespaces

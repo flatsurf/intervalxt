@@ -55,6 +55,33 @@ Check that #85 has been resolved:
     ...
     TypeError: ...all lengths must be non-negative...
 
+Check that #33 has been resolved::
+
+    >>> IntervalExchangeTransformation((1, 1, 1), (1, 0, 2)) == IntervalExchangeTransformation((1, 1, 1), (2, 1, 0))
+    False
+    >>> IntervalExchangeTransformation((3, 2, 1), (1, 0, 2)) == IntervalExchangeTransformation((1, 2, 3), (1, 0, 2))
+    False
+    >>> IntervalExchangeTransformation((3, 2, 1), (2, 1, 0)) == IntervalExchangeTransformation((3, 2, 1), (1, 2, 0))
+    False
+    >>> IntervalExchangeTransformation((1, 2, 3), (0, 1, 2)) == IntervalExchangeTransformation((1, 2, 3), (0, 1, 2))
+    True
+
+Note that such equality comparisons takes the names of the labels into account
+(actually, they use `Label::operator==` which is more complicated but behaves
+very predictably from the Python interface.) To ignore label naming completely,
+use `equivalent`::
+
+    >>> iet = IntervalExchangeTransformation((1, 1), (0, 1))
+    >>> jet = iet.reduce().value()
+    >>> iet
+    [a: 1] / [a]
+    >>> jet
+    [b: 1] / [b]
+    >>> iet == jet
+    False
+    >>> iet.equivalent(jet)
+    True
+
 """
 
 ######################################################################

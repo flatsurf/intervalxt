@@ -300,6 +300,27 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   }
 }
 
+bool IntervalExchangeTransformation::equivalent(const IntervalExchangeTransformation& rhs) const {
+  if (size() != rhs.size())
+    return false;
+
+  const auto permutation = [](const std::vector<Label>& top, const std::vector<Label>& bottom) {
+    return bottom | rx::transform([&](const auto& b) { return std::find(begin(top), end(top), b) - begin(top); }) | rx::to_vector();
+  };
+
+  if (permutation(top(), bottom()) != permutation(rhs.top(), rhs.bottom()))
+    return false;
+
+  const auto topLengths = [](const std::vector<Label>& top, const auto& lengths) {
+    return top | rx::transform([&](const auto& label) { return lengths->get(label); }) | rx::to_vector();
+  };
+
+  if (topLengths(top(), impl->lengths) != topLengths(rhs.top(), rhs.impl->lengths))
+    return false;
+
+  return true;
+}
+
 bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransformation& rhs) const {
   const std::vector<Label> labels = impl->top | rx::transform([](const auto& interval) { return interval.label; }) | rx::to_vector();
   if (impl->top != rhs.impl->top || impl->bottom != rhs.impl->bottom)

@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "dynamical_decomposition.hpp"
+#include "induction_step.hpp"
 #include "interval_exchange_transformation.hpp"
 #include "label.hpp"
 #include "lengths.hpp"
