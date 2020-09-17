@@ -18,25 +18,31 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_SAMPLE_MPZ_ARITHMETIC_HPP
-#define LIBINTERVALXT_SAMPLE_MPZ_ARITHMETIC_HPP
+#ifndef LIBINTERVALXT_SAMPLE_RATIONAL_COEFFICIENTS_HPP
+#define LIBINTERVALXT_SAMPLE_RATIONAL_COEFFICIENTS_HPP
 
 #include <gmpxx.h>
 
-#include "arithmetic.hpp"
+#include "coefficients.hpp"
 
 namespace intervalxt::sample {
 
+namespace {
+
 template <>
-struct Arithmetic<mpz_class> {
-  using T = mpz_class;
+struct Coefficients<mpq_class> {
+  using T = mpq_class;
 
-  static std::vector<mpq_class> coefficients(const T& value) {
-    return std::vector{mpq_class(value)};
+  std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
+    std::vector<std::vector<mpq_class>> ret;
+    for (auto x : elements)
+      ret.push_back({x});
+
+    return ret;
   }
-
-  static mpz_class floorDivision(const T& divident, const T& divisor) { return divident / divisor; }
 };
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

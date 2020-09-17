@@ -26,10 +26,16 @@
 #include "../intervalxt/induction_step.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
-#include "../intervalxt/sample/e-antic-arithmetic.hpp"
+#include "../intervalxt/sample/integer_coefficients.hpp"
+#include "../intervalxt/sample/integer_floor_division.hpp"
 #include "../intervalxt/sample/lengths.hpp"
-#include "../intervalxt/sample/mpz-arithmetic.hpp"
-#include "../intervalxt/sample/rational-arithmetic.hpp"
+#include "../intervalxt/sample/mpq_coefficients.hpp"
+#include "../intervalxt/sample/mpq_floor_division.hpp"
+#include "../intervalxt/sample/mpz_coefficients.hpp"
+#include "../intervalxt/sample/mpz_floor_division.hpp"
+#include "../intervalxt/sample/renf_elem_coefficients.hpp"
+#include "../intervalxt/sample/renf_elem_floor_division.hpp"
+#include "../src/external/rx-ranges/include/rx/ranges.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 using std::pair;
@@ -308,21 +314,19 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       auto&& [lengths, a, b, c, d] = EAnticLengths::make(x / 2, x * x - mpq_class(1, 13), 4 * x / 7 - 1, 2 * one);
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
+      CAPTURE(iet);
 
       auto v = iet.safInvariant();
+      CAPTURE(v);
 
-      REQUIRE((v.min() != 0 || v.max() != 0));
+      REQUIRE((v | rx::any_of([](const auto& x) { return x != 0; })));
 
       int sign = 1;
 
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        std::valarray<mpq_class> vv;
-        if (sign)
-          vv = -iet.safInvariant();
-        else
-          vv = iet.safInvariant();
+        auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return sign ? -x : x; }) | rx::to_vector();
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
         sign ^= 1;
       }
@@ -334,20 +338,19 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       auto&& [lengths, a, b, c, d] = EAnticLengths::make(2 * x / 17, 5 * x * x / 3 - mpq_class(1, 18), 5 * x * x / 2 - 3, 3 * one);
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
+      CAPTURE(iet);
 
       auto v = iet.safInvariant();
-      REQUIRE((v.min() != 0 || v.max() != 0));
+      CAPTURE(v);
+
+      REQUIRE((v | rx::any_of([](const auto& x) { return x != 0; })));
 
       int sign = 1;
 
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        std::valarray<mpq_class> vv;
-        if (sign)
-          vv = -iet.safInvariant();
-        else
-          vv = iet.safInvariant();
+        auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return sign ? -x : x; }) | rx::to_vector();
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
         sign ^= 1;
       }
@@ -360,15 +363,17 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x * x - x - 1, x * x, x, x, one, one);
       auto iet = IET(lengths, {a, b, c, d, e, f, g}, {b, e, d, g, f, c, a});
+      CAPTURE(iet);
 
       auto v = iet.safInvariant();
-      REQUIRE(v.min() == 0);
-      REQUIRE(v.max() == 0);
+      CAPTURE(v);
+
+      REQUIRE((v | rx::all_of([](const auto& x) { return x == 0; })));
 
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        std::valarray<mpq_class> vv = iet.safInvariant();
+        const auto vv = iet.safInvariant();
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
       }
     }
@@ -380,15 +385,17 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       auto&& [lengths, a, b, c, d, e, f, g, h, i] = EAnticLengths::make(x.pow(4) - x.pow(3), 2 * x.pow(3) - x.pow(4), x.pow(3), x.pow(2), x.pow(2), x, x, one, one);
       auto iet = IET(lengths, {a, b, c, d, e, f, g, h, i}, {b, e, d, g, f, i, h, c, a});
+      CAPTURE(iet);
 
       auto v = iet.safInvariant();
-      REQUIRE(v.min() == 0);
-      REQUIRE(v.max() == 0);
+      CAPTURE(v);
+
+      REQUIRE((v | rx::all_of([](const auto& x) { return x == 0; })));
 
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        std::valarray<mpq_class> vv = iet.safInvariant();
+        const auto vv = iet.safInvariant();
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
       }
     }

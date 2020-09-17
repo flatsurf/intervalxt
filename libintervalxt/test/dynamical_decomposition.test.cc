@@ -28,8 +28,11 @@
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
-#include "../intervalxt/sample/e-antic-arithmetic.hpp"
+#include "../intervalxt/sample/integer_coefficients.hpp"
+#include "../intervalxt/sample/integer_floor_division.hpp"
 #include "../intervalxt/sample/lengths.hpp"
+#include "../intervalxt/sample/renf_elem_coefficients.hpp"
+#include "../intervalxt/sample/renf_elem_floor_division.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 using eantic::renf_class;

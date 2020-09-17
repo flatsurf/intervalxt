@@ -43,15 +43,21 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/length.hpp                                  \
 	../intervalxt/length_with_coefficients.hpp                \
 	../intervalxt/lengths.hpp                                 \
-	../intervalxt/sample/arithmetic.hpp                       \
 	../intervalxt/sample/cereal.hpp                           \
+	../intervalxt/sample/coefficients.hpp                     \
 	../intervalxt/sample/detail/lengths.ipp                   \
-	../intervalxt/sample/e-antic-arithmetic.hpp               \
-	../intervalxt/sample/exact-real-arithmetic.hpp            \
+	../intervalxt/sample/element_coefficients.hpp             \
+	../intervalxt/sample/element_floor_division.hpp           \
+	../intervalxt/sample/floor_division.hpp                   \
+	../intervalxt/sample/integer_coefficients.hpp             \
+	../intervalxt/sample/integer_floor_division.hpp           \
 	../intervalxt/sample/lengths.hpp                          \
-	../intervalxt/sample/long-long-int-arithmetic.hpp         \
-	../intervalxt/sample/mpz-arithmetic.hpp                   \
-	../intervalxt/sample/rational-arithmetic.hpp              \
+	../intervalxt/sample/mpq_coefficients.hpp                 \
+	../intervalxt/sample/mpq_floor_division.hpp               \
+	../intervalxt/sample/mpz_coefficients.hpp                 \
+	../intervalxt/sample/mpz_floor_division.hpp               \
+	../intervalxt/sample/renf_elem_coefficients.hpp           \
+	../intervalxt/sample/renf_elem_floor_division.hpp         \
 	../intervalxt/separatrix.hpp                              \
 	../intervalxt/serializable.hpp
 

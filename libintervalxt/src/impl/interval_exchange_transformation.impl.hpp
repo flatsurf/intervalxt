@@ -37,20 +37,20 @@ class Implementation<IntervalExchangeTransformation> {
   static IntervalExchangeTransformation withLengths(const IntervalExchangeTransformation&, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>&);
   static std::string render(const IntervalExchangeTransformation&, Label);
 
-  // Return the translation vector for the label i
-  // The output is a vector of mpq_class with respect to the irrational basis
+  // Return the translation vectors for the labels on top.
+  // Each output is a vector of mpq_class with respect to the irrational basis
   // used for the lengths of the iet.
-  std::valarray<mpq_class> translation(Label) const;
+  std::vector<std::vector<mpq_class>> translations() const;
 
-  std::valarray<mpq_class> coefficients(Label) const;
+  // Return the coefficient vectors for the labels on top.
+  std::vector<std::vector<mpq_class>> coefficients() const;
 
-  std::valarray<mpq_class> saf() const;
+  std::vector<mpq_class> saf() const;
   bool saf0() const;
 
   std::list<Interval> top;
   std::list<Interval> bottom;
   std::shared_ptr<Lengths> lengths;
-  const size_t degree;
   SimilarityTracker similarityTracker = {};
   bool swap = false;
 };

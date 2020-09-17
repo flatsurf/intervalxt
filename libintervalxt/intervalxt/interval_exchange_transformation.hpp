@@ -57,7 +57,7 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   void swap();
 
   // Return the Sah-Arnoux-Fathi invariant
-  std::valarray<mpq_class> safInvariant() const;
+  std::vector<mpq_class> safInvariant() const;
 
   // Return whether there is no periodic trajectory via Boshernitzan's
   // algorithm.
@@ -84,7 +84,13 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   // Return whether swap() has been called an odd number of times.
   bool swapped() const noexcept;
 
-  bool operator==(const IntervalExchangeTransformation &) const;
+  // Return whether this interval exchange transformation and rhs have the same
+  // underlying permutation and lengths. Unlike operator==, this ignores the
+  // exact labels.
+  bool equivalent(const IntervalExchangeTransformation &rhs) const;
+
+  // Return whether this interval exchange transformation and rhs have the same labels and the same lengths.
+  bool operator==(const IntervalExchangeTransformation &rhs) const;
 
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 

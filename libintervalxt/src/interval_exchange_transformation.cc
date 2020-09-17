@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include <algorithm>
 #include <list>
 #include <unordered_set>
-#include <valarray>
 
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
@@ -44,11 +43,11 @@ namespace intervalxt {
 namespace {
 
 template <typename T>
-std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
+std::vector<T> wedge(std::vector<T> v1, std::vector<T> v2) {
   CHECK_ARGUMENT(v1.size() == v2.size(), "vectors must have same size but " << v1.size() << " != " << v2.size());
 
   size_t d = v1.size();
-  std::valarray<T> res(d * (d - 1) / 2);
+  std::vector<T> res(d * (d - 1) / 2);
   if (d == 0) return res;
   size_t k = 0;
   for (size_t i = 0; i < d - 1; i++)
@@ -58,6 +57,20 @@ std::valarray<T> wedge(std::valarray<T> v1, std::valarray<T> v2) {
     }
 
   return res;
+}
+
+std::vector<mpq_class>& operator+=(std::vector<mpq_class>& lhs, const std::vector<mpq_class>& rhs) {
+  ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
+  for (size_t i = 0; i < lhs.size(); i++)
+    lhs[i] += rhs[i];
+  return lhs;
+}
+
+std::vector<mpq_class>& operator-=(std::vector<mpq_class>& lhs, const std::vector<mpq_class>& rhs) {
+  ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
+  for (size_t i = 0; i < lhs.size(); i++)
+    lhs[i] -= rhs[i];
+  return lhs;
 }
 
 }  // namespace
@@ -100,32 +113,29 @@ bool IntervalExchangeTransformation::zorichInduction() {
   return lengths.cmp(*begin(impl->top), *begin(impl->bottom)) == 0;
 }
 
-std::valarray<mpq_class> IntervalExchangeTransformation::safInvariant() const {
+std::vector<mpq_class> IntervalExchangeTransformation::safInvariant() const {
   return impl->saf();
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
-  if (impl->degree <= 1) {
-    return false;
-  } else {
-    if (impl->saf0()) {
-      // When SAF = 0 the Boshernitzan is never going to report "true".
-      // https://github.com/flatsurf/intervalxt/issues/86
-      return false;
-    }
+  const auto translations = impl->translations();
 
-    // Build the QQ-module of relations between translations, that is the space generated
-    // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
-    // Note: it would be nice to access the dimension of the module
-    // in some more straightforward way...
-    vector<vector<mpq_class>> translations(impl->degree);
-    for (auto& l : impl->top) {
-      const auto t = impl->translation(l);
-      for (size_t d = 0; d < impl->degree; d++)
-        translations[d].push_back(t[d]);
-    }
-    return not RationalLinearSubspace::fromEquations(translations).hasNonZeroNonNegativeVector();
-  }
+  if (translations[0].size() <= 1)
+    return false;
+
+  // When SAF = 0 the Boshernitzan is never going to report "true".
+  // https://github.com/flatsurf/intervalxt/issues/86
+  if (impl->saf0())
+    return false;
+
+  // Build the QQ-module of relations between translations, that is the space generated
+  // by integer vectors (a0, ..., an) such that a0 t0 + a1 t1 + ... + an tn = 0
+  std::vector<std::vector<mpq_class>> relations(translations[0].size());
+  for (auto& t : translations)
+    for (size_t d = 0; d < t.size(); d++)
+      relations[d].push_back(t[d]);
+
+  return not RationalLinearSubspace::fromEquations(relations).hasNonZeroNonNegativeVector();
 }
 
 InductionStep IntervalExchangeTransformation::induce(int limit) {
@@ -290,6 +300,27 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   }
 }
 
+bool IntervalExchangeTransformation::equivalent(const IntervalExchangeTransformation& rhs) const {
+  if (size() != rhs.size())
+    return false;
+
+  const auto permutation = [](const std::vector<Label>& top, const std::vector<Label>& bottom) {
+    return bottom | rx::transform([&](const auto& b) { return std::find(begin(top), end(top), b) - begin(top); }) | rx::to_vector();
+  };
+
+  if (permutation(top(), bottom()) != permutation(rhs.top(), rhs.bottom()))
+    return false;
+
+  const auto topLengths = [](const std::vector<Label>& top, const auto& lengths) {
+    return top | rx::transform([&](const auto& label) { return lengths->get(label); }) | rx::to_vector();
+  };
+
+  if (topLengths(top(), impl->lengths) != topLengths(rhs.top(), rhs.impl->lengths))
+    return false;
+
+  return true;
+}
+
 bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransformation& rhs) const {
   const std::vector<Label> labels = impl->top | rx::transform([](const auto& interval) { return interval.label; }) | rx::to_vector();
   if (impl->top != rhs.impl->top || impl->bottom != rhs.impl->bottom)
@@ -305,8 +336,7 @@ bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransforma
 Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
   top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
-  lengths(std::move(lengths)),
-  degree(top.size() == 0 ? 0 : this->lengths->coefficients(*top.begin()).size()) {
+  lengths(std::move(lengths)) {
   ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
 
   ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
@@ -322,25 +352,23 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
     }
   }
 
-  ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return this->lengths->coefficients(label).size() == degree; }), "Degrees of elements over Q do not match; expected " << degree);
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
-std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::saf() const {
-  if (degree == 1) {
-    // empty vector for integers or rationals
+std::vector<mpq_class> Implementation<IntervalExchangeTransformation>::saf() const {
+  const auto coefficients = this->coefficients();
+  const auto translations = this->translations();
+
+  const auto degree = coefficients[0].size();
+  if (degree <= 1)
     return {};
-  } else {
-    std::valarray<mpq_class> w;
 
-    w.resize(degree * (degree - 1) / 2);
+  std::vector<mpq_class> w(degree * (degree - 1) / 2);
 
-    for (auto& i : top) {
-      w += wedge(coefficients(i), translation(i));
-    }
+  for (const auto& [c, t] : rx::zip(coefficients, translations))
+    w += wedge(c, t);
 
-    return w;
-  }
+  return w;
 }
 
 bool Implementation<IntervalExchangeTransformation>::saf0() const {
@@ -348,29 +376,35 @@ bool Implementation<IntervalExchangeTransformation>::saf0() const {
   return std::none_of(begin(saf), end(saf), [](const auto& x) { return x; });
 }
 
-std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::coefficients(Label label) const {
-  auto coefficients = lengths->coefficients(label);
-  ASSERT(degree == coefficients.size(), "All Lengths must have the same number of Rational Coefficients but " << lengths->get(label) << " reported " << coefficients.size() << " instead of " << degree);
-  return std::valarray<mpq_class>(coefficients.data(), coefficients.size());
+std::vector<std::vector<mpq_class>> Implementation<IntervalExchangeTransformation>::coefficients() const {
+  return lengths->coefficients(top | rx::transform([](const auto& interval) { return static_cast<Label>(interval); }) | rx::to_vector());
 }
 
-// Return the translation vector for the label i The output is a vector of
-// mpq_class with respect to the irrational basis used for the lengths of
-// the iet.
-std::valarray<mpq_class> Implementation<IntervalExchangeTransformation>::translation(Label i) const {
-  std::valarray<mpq_class> translation(degree);
+std::vector<std::vector<mpq_class>> Implementation<IntervalExchangeTransformation>::translations() const {
+  const auto coefficients = this->coefficients();
+  std::unordered_map<Label, std::vector<mpq_class>> labelToCoefficient;
+  for (const auto& [label, coefficient] : rx::zip(top, coefficients))
+    labelToCoefficient[label] = coefficient;
 
-  for (auto& j : top) {
-    if (j == i) break;
-    translation -= coefficients(j);
+  std::vector<std::vector<mpq_class>> translations;
+  for (const auto& label : top) {
+    std::vector<mpq_class> translation(coefficients[0].size());
+    for (auto& t : top) {
+      if (t == label)
+        break;
+      translation -= labelToCoefficient.at(t);
+    }
+
+    for (auto& b : bottom) {
+      if (b == label)
+        break;
+      translation += labelToCoefficient.at(b);
+    }
+
+    translations.push_back(translation);
   }
 
-  for (auto& j : bottom) {
-    if (j == i) break;
-    translation += coefficients(j);
-  }
-
-  return translation;
+  return translations;
 }
 
 IntervalExchangeTransformation Implementation<IntervalExchangeTransformation>::withLengths(const IntervalExchangeTransformation& iet, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>& createLengths) {

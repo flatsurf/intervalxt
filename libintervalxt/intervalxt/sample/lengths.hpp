@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,10 +29,14 @@
 
 #include "../label.hpp"
 #include "../lengths.hpp"
+#include "coefficients.hpp"
+#include "floor_division.hpp"
 
 namespace intervalxt::sample {
 
-template <typename T>
+namespace {
+
+template <typename T, typename FloorDivision = FloorDivision<T>, typename Coefficients = Coefficients<T>>
 class Lengths : public Serializable<Lengths<T>> {
  public:
   Lengths();
@@ -53,7 +57,7 @@ class Lengths : public Serializable<Lengths<T>> {
   int cmp(Label, Label) const;
   void subtract(Label);
   Label subtractRepeated(Label);
-  std::vector<mpq_class> coefficients(Label) const;
+  std::vector<std::vector<mpq_class>> coefficients(const std::vector<Label>&) const;
   std::string render(Label) const;
   T get(Label) const;
   ::intervalxt::Lengths only(const std::unordered_set<Label>&) const;
@@ -71,6 +75,11 @@ class Lengths : public Serializable<Lengths<T>> {
   std::vector<Label> stack;
   std::vector<T> lengths;
 };
+
+template <typename T>
+Lengths(const std::vector<T>&) -> Lengths<T>;
+
+}  // namespace
 
 }  // namespace intervalxt::sample
 

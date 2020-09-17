@@ -24,27 +24,27 @@
 import sys
 import pytest
 
-from pyintervalxt import intervalxt
+from pyintervalxt import intervalxt, IntervalExchangeTransformation
 
 def test_IntervalExchangeTransformation():
-    iet = intervalxt.IET((18, 3), (1, 0))
+    iet = IntervalExchangeTransformation((18, 3), (1, 0))
     assert repr(iet) == "[a: 18] [b: 3] / [b] [a]"
     iet.swap()
     assert repr(iet) == "[b: 3] [a: 18] / [a] [b]"
 
 def test_reduce():
-    iet = intervalxt.IET((18, 3), (1, 0))
+    iet = IntervalExchangeTransformation((18, 3), (1, 0))
     r = iet.reduce()
     assert not r.has_value()
 
-    iet = intervalxt.IET((18, 3), (0, 1))
+    iet = IntervalExchangeTransformation((18, 3), (0, 1))
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
     assert repr(iet) == "[a: 18] / [a]"
     assert repr(iet2) == "[b: 3] / [b]"
 
-    iet = intervalxt.IET((4, 56, 23, 11, 21, 9, 65),(1, 0, 4, 3, 2, 6, 5))
+    iet = IntervalExchangeTransformation((4, 56, 23, 11, 21, 9, 65),(1, 0, 4, 3, 2, 6, 5))
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
@@ -72,14 +72,12 @@ def iet_10_check(iet):
 
 def test_mpz():
     from gmpxxyy import mpz
-    lengths = intervalxt.sample.Lengths[mpz]([1, 1])
-    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet = IntervalExchangeTransformation((mpz(1), mpz(1)), [1, 0])
     iet_10_check(iet)
 
 def test_mpq():
     from gmpxxyy import mpq
-    lengths = intervalxt.sample.Lengths[mpq]([(1,3), (2,5)])
-    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet = IntervalExchangeTransformation((mpq(1, 3), mpq(2, 5)), [1, 0])
     iet_10_check(iet)
 
 def test_eantic():
@@ -88,8 +86,7 @@ def test_eantic():
     lengths = []
     lengths.append(eantic.renf_elem(L, "a"))
     lengths.append(eantic.renf_elem(L, "2*a^2 - 3"))
-    lengths = intervalxt.sample.Lengths[eantic.renf_elem_class](lengths)
-    iet = intervalxt.makeIET(lengths, [1, 0])
+    iet = IntervalExchangeTransformation(lengths, [1, 0])
     iet_10_check(iet)
 
 if __name__ == '__main__': sys.exit(pytest.main(sys.argv))

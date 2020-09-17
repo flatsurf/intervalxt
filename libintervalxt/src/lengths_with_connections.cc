@@ -91,8 +91,8 @@ Label LengthsWithConnections::subtractRepeated(Label minuend) {
   return ret;
 }
 
-std::vector<mpq_class> LengthsWithConnections::coefficients(Label label) const {
-  return lengths->coefficients(label);
+std::vector<std::vector<mpq_class>> LengthsWithConnections::coefficients(const std::vector<Label>& labels) const {
+  return lengths->coefficients(labels);
 }
 
 int LengthsWithConnections::cmp(Label label) const {
