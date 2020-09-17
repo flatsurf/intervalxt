@@ -62,7 +62,7 @@ class Lengths : public ::intervalxt::sample::Lengths<typename V::value_type> {
 };
 
 template <typename L>
-auto IntervalExchangeTransformation(L& lengths, const std::vector<int>& permutation) {
+auto IntervalExchangeTransformation(L &lengths, const std::vector<int> &permutation) {
   ::intervalxt::Lengths erasedLengths = lengths;
   auto top = lengths.labels();
   std::vector<Label> bottom;
@@ -71,7 +71,7 @@ auto IntervalExchangeTransformation(L& lengths, const std::vector<int>& permutat
   return ::intervalxt::IntervalExchangeTransformation(std::make_shared<::intervalxt::Lengths>(erasedLengths), top, bottom);
 }
 
-}  // namespace intervalxt
+}  // namespace intervalxt::cppyy
 
 namespace intervalxt {
 
