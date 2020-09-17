@@ -4,6 +4,46 @@ intervalxt Change Log
 
 .. current developments
 
+v2.0.0
+====================
+
+**Added:**
+
+* IntervalExchangeTransformation::equivalent() method to decide whether two
+  interval exchange transformations are equivalent modulo the precise labeling.
+* The `Lengths` of an `IntervalExchangeTransformation` are not available as
+  `iet.lengths` in Python. This is probably limited to interval exchange
+  transformations originally created through the Python interface.
+
+**Changed:**
+
+* Split `::intervalxt::sample::Arithmetic` into
+  `::intervalxt::sample::FloorDivision` and
+  `::intervalxt::sample::Coefficients`. The latter now accepts a vector of
+  elements and produces a vector of Q-vectors that correspond to the given
+  elements after being brought into the same vector space. This is a breaking
+  API change.
+
+* The method `Lengths::coefficients()` now expects a vector of labels and
+  produces a vector of Q-vectors corresponding to realizations of the
+  corresponding lengths in a common Q vector space.
+
+* The method `IntervalExchangeTransformation::safInvariant()` now returns a
+  `vector<mpq_class>` instead of a `valarray<mpq_class>`. The valarray had
+  always been a source of issues since it does not play nicely with vectors
+  that we use everywhere else in the flatsurf stack.
+* In the Python interface, `IET` has been renamed to
+  `IntervalExchangeTransformation` and `makeLengths` to `Lengths`.
+
+* `sample::Lengths` over integer types now require `gmpxxll` to be available.
+
+**Fixed:**
+
+* Most labels now print nicely in the Python interface.
+* negative lengths are now detected in the Python interface and reported as an error, #85
+
+
+
 v1.0.3
 ====================
 
