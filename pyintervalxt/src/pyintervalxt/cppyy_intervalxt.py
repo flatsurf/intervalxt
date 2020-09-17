@@ -22,7 +22,8 @@ import re
 import cppyy
 
 from cppyythonizations.pickling.cereal import enable_cereal
-from cppyythonizations.util import filtered
+from cppyythonizations.printing import enable_pretty_printing
+from cppyythonizations.util import filtered, wrap_method
 
 # Importing cysignals after cppyy gives us proper stack traces on segfaults
 # whereas cppyy otherwise only reports "segmentation violation" (which is
@@ -35,11 +36,7 @@ if os.environ.get('PYINTERVALXT_CYSIGNALS', True):
         pass
 
 
-def pretty_print(proxy, name):
-    proxy.__repr__ = proxy.__str__
-
-
-cppyy.py.add_pythonization(pretty_print, "intervalxt")
+cppyy.py.add_pythonization(enable_pretty_printing, "intervalxt")
 
 
 # Singleton object that makes sure that all Lengths that we have seen during
@@ -79,62 +76,27 @@ cppyy.py.add_pythonization(enable_cereal_, "intervalxt::sample")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::cppyy")
 
 
-def enable_label_printing(proxy, name):
+def name_label(labels, name):
     r"""
-    Make labels print as "a", "b", "c" and not only as their memory address.
-
-    Labels do not have an intrinsic name. They only get a name in libintervalxt
-    once they are associated with a Lengths object.
-
-    To make them print nicely, we try to make sure that any code path tha
-    creates a label attaches the correct Lengths object to it and use it here
-    to print them nicely.
-    """
-    printer = None
-    def pretty_print(self):
-        if hasattr(self, "lengths") and self.lengths is not None:
-            return self.lengths.render(self)
-        return printer(self)
-    printer = proxy.__repr__
-    proxy.__repr__ = pretty_print
-    proxy.__str__ = pretty_print
-
-
-def register_lengths(labels, lengths):
-    r"""
-    Helper function for enable_label_printing to actually register Lengths with
-    each label.
+    Helper function for Label.__str__ to attach a labels name upon creation.
     """
     labels = list(labels)
     for l in labels:
-        l.lengths = lengths
+        l._name = name(l)
     return labels
 
 
-def enable_register_lengths_iet(proxy, name):
-    r"""
-    Make sure that Label knows which Lengths it belongs to so it can print
-    nicely in Python.
-    """
-    top = proxy.top
-    proxy.top = lambda self: register_lengths(top(self), self.lengths if hasattr(self, "lengths") else None)
-
-    bottom = proxy.bottom
-    proxy.bottom = lambda self: register_lengths(bottom(self), self.lengths if hasattr(self, "lengths") else None)
+# Print label as "a", "b", "c" and not only as their memory address.
+# Labels do not have an intrinsic name. They only get a name in libintervalxt
+# once they are associated with a Lengths object.
+# To make them print nicely, we try to make sure that any code path tha creates
+# a label attaches its name to it.
+cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self, __str__: self._name if hasattr(self, "_name") else __str__())), "intervalxt")
 
 
-def enable_register_lengths(proxy, name):
-    r"""
-    Make sure that Label knows which Lengths it belongs to so it can print
-    nicely in Python.
-    """
-    labels = proxy.labels
-    proxy.labels = lambda self: register_lengths(labels(self), self)
-
-
-cppyy.py.add_pythonization(filtered("Label")(enable_label_printing), "intervalxt")
-cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(enable_register_lengths_iet), "intervalxt")
-cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(enable_register_lengths), "intervalxt::cppyy")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_label(labels(), self.render))), "intervalxt::cppyy")
 
 
 # Set EXTRA_CLING_ARGS="-I /usr/include" or wherever intervalxt/cppyy.hpp can
