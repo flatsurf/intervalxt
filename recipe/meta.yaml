@@ -71,6 +71,8 @@ requirements:
     - cppyy
     # sample::Lengths needs gmpxxll.hpp
     - gmpxxll
+    # we test a sample::Coefficients provider for exact-real
+    - libexactreal
     # enable check-valgrind in ./configure
     - valgrind >=3.15.0
 {%- endif %}

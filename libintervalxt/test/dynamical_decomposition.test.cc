@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,12 +35,12 @@
 #include "../intervalxt/sample/renf_elem_floor_division.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
-using eantic::renf_class;
-using eantic::renf_elem_class;
 using Result = ::intervalxt::DecompositionStep::Result;
 
 namespace intervalxt::test {
 
+using eantic::renf_class;
+using eantic::renf_elem_class;
 TEST_CASE("Decomposition of an IET") {
   using namespace eantic;
   using EAnticLengths = sample::Lengths<renf_elem_class>;
@@ -195,6 +195,25 @@ TEST_CASE("Decomposition of Periodic IETs") {
     // without periodic trajectories. This in particular goes beyond #86 and #87.
     REQUIRE(component.decompositionStep(1024).result == DecompositionStep::Result::LIMIT_REACHED);
   }
+}
+
+TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
+  using namespace eantic;
+  using EAnticLengths = sample::Lengths<renf_elem_class>;
+  auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
+  auto x = K->gen();
+
+  auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747 * x / 5000000000, 150057 * x / 100000, 50057 * x / 100000, 150057 * x / 100000);
+  auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, b, a, c});
+  auto decomposition = DynamicalDecomposition(iet);
+
+  REQUIRE(decomposition.components().size() == 1);
+
+  auto component = decomposition.components()[0];
+
+  component.decompose();
+
+  REQUIRE(fmt::format("{}", component) == "[d] [d+ ⚯ b-] [b+ ⚯ a-] [a+ ⚯ c-] -[d] [b- ⚯ d+] [a- ⚯ b+] [c- ⚯ a+]");
 }
 
 TEST_CASE("Decomposition of a Trivial IET") {
@@ -382,25 +401,6 @@ TEST_CASE("Decomposition With Injected Connections") {
   component.decompose();
 
   REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [f+ ⚯ d-] [d+ ⚯ a-] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d- ⚯ f+] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
-}
-
-TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
-  using namespace eantic;
-  using EAnticLengths = sample::Lengths<renf_elem_class>;
-  auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
-  auto x = K->gen();
-
-  auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747 * x / 5000000000, 150057 * x / 100000, 50057 * x / 100000, 150057 * x / 100000);
-  auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, b, a, c});
-  auto decomposition = DynamicalDecomposition(iet);
-
-  REQUIRE(decomposition.components().size() == 1);
-
-  auto component = decomposition.components()[0];
-
-  component.decompose();
-
-  REQUIRE(fmt::format("{}", component) == "[d] [d+ ⚯ b-] [b+ ⚯ a-] [a+ ⚯ c-] -[d] [b- ⚯ d+] [a- ⚯ b+] [c- ⚯ a+]");
 }
 
 }  // namespace intervalxt::test
