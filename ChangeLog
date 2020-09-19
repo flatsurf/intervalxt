@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v2.0.2
+====================
+
+**Fixed:**
+
+* hang in `Component::decompositionStep`, should fix https://github.com/flatsurf/flatsurf/issues/136
+
+
+
 v2.0.1
 ====================
 
