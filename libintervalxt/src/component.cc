@@ -116,6 +116,18 @@ DecompositionStep Component::decompositionStep(int limit) {
 
   auto& self = impl->state;
 
+  if (limit == -1) {
+    limit = 0;
+    while (true) {
+      auto step = decompositionStep(limit);
+
+      if (step.result != DecompositionResult::LIMIT_REACHED)
+        return step;
+
+      limit = Implementation::boshernitzanCost(self.iet).value_or(2 * (limit + 1));
+    }
+  }
+
   std::optional<int> boshernitzanCost = Implementation::boshernitzanCost(self.iet);
 
   InductionStep step;
@@ -123,9 +135,7 @@ DecompositionStep Component::decompositionStep(int limit) {
   do {
     int zorichInductionSteps;
     if (boshernitzanCost) {
-      if (limit == -1) {
-        zorichInductionSteps = *boshernitzanCost;
-      } else if (limit < 2 * *boshernitzanCost) {
+      if (limit < 2 * *boshernitzanCost) {
         zorichInductionSteps = limit;
       } else {
         zorichInductionSteps = *boshernitzanCost;
@@ -134,9 +144,7 @@ DecompositionStep Component::decompositionStep(int limit) {
       zorichInductionSteps = limit;
     }
 
-    if (limit != -1) {
-      limit -= zorichInductionSteps;
-    }
+    limit -= zorichInductionSteps;
 
     step = self.iet.induce(zorichInductionSteps);
   } while (step.result == InductionResult::LIMIT_REACHED && limit != 0);

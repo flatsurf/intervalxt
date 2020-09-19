@@ -22,6 +22,7 @@
 #define LIBINTERVALXT_SAMPLE_ELEMENT_COEFFICIENTS_HPP
 
 #include <exact-real/element.hpp>
+#include <exact-real/module.hpp>
 
 #include "coefficients.hpp"
 
