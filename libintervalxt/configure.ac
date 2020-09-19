@@ -66,8 +66,8 @@ AC_CHECK_HEADERS([ppl.hh], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not fou
 #####################
 # CHECK FOR E-ANTIC #
 #####################
-have_e_antic=yes
-m4_define([AX_WITHOUT_EANTIC], [have_e_antic=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
+have_eantic=yes
+m4_define([AX_WITHOUT_EANTIC], [have_eantic=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
 
 AC_CHECK_HEADERS([e-antic/renfxx.h], , [AX_WITHOUT_EANTIC([E-ANTIC headers not found])])
 AC_CHECK_LIB([eantic], [renf_elem_clear], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
@@ -82,18 +82,18 @@ AC_CHECK_LIB([flint], [fmpq_sub_si], [ ], [AX_WITHOUT_EANTIC([FLINT library not 
 AC_CHECK_HEADERS([arb.h], , [AX_WITHOUT_EANTIC([Arb headers not found])])
 AC_CHECK_LIB([arb], [arb_init], [ ], [AX_WITHOUT_EANTIC([Arb library not found])], [-lmpfr])
 
-AM_CONDITIONAL([HAVE_E_ANTIC], [test "x$have_e_antic" = "xyes"])
+AM_CONDITIONAL([HAVE_EANTIC], [test "x$have_eantic" = "xyes"])
 
 ########################
 # CHECK FOR EXACT-REAL #
 ########################
-have_exact_real=yes
-m4_define([AX_WITHOUT_EXACTREAL], [have_exact_real=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
+have_exactreal=yes
+m4_define([AX_WITHOUT_EXACTREAL], [have_exactreal=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
 
 AC_CHECK_HEADERS([exact-real/element.hpp], , [AX_WITHOUT_EXACTREAL([exact-real headers not found])])
 AX_CXX_CHECK_LIB([exactreal], [exactreal::Arb], [ ], [AX_WITHOUT_EXACTREAL([exact-real library not found])])
 
-AM_CONDITIONAL([HAVE_EXACTREAL], [test "x$have_exact_real" = "xyes"])
+AM_CONDITIONAL([HAVE_EXACTREAL], [test "x$have_exactreal" = "xyes"])
 
 
 AC_CONFIG_HEADERS([intervalxt/config.h])
