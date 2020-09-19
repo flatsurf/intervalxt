@@ -35,6 +35,7 @@ AS_IF([test "x$with_pytest" != "xno" && test "x$have_python" = "xyes"],
        AS_IF([$PYTHON -c 'import cppyythonizations'], , AC_MSG_ERROR([cppyythonizations for make check not found; run --without-pytest to disable Python tests in make check]))
        AS_IF([$PYTHON -c 'import gmpxxyy'], , AC_MSG_ERROR([gmpxxyy for make check not found; run --without-pytest to disable Python tests in make check]))
        AS_IF([$PYTHON -c 'import pyeantic'], , AC_MSG_ERROR([pyeantic for make check not found; run --without-pytest to disable Python tests in make check]))
+       AS_IF([$PYTHON -c 'import pyexactreal'], , AC_MSG_ERROR([pyexactreal for make check not found; run --without-pytest to disable Python tests in make check]))
       ], [])
 AM_CONDITIONAL([HAVE_PYTEST], [test "x$with_pytest" = "xyes"])
 

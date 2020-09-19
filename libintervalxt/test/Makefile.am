@@ -1,4 +1,11 @@
-check_PROGRAMS = rational_linear_subspace label interval_exchange_transformation dynamical_decomposition cereal
+check_PROGRAMS = rational_linear_subspace label
+
+if HAVE_EANTIC
+if HAVE_EXACTREAL
+check_PROGRAMS += interval_exchange_transformation dynamical_decomposition cereal coefficients
+endif
+endif
+
 TESTS = $(check_PROGRAMS)
 
 rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc
@@ -6,6 +13,7 @@ label_SOURCES = label.test.cc main.cc
 interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
 dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 cereal_SOURCES = cereal.test.cc main.cc
+coefficients_SOURCES = coefficients.test.cc main.cc
 
 # We vendor the header-only library Cereal (serialization with C++ to be able
 # to run the tests even when cereal is not installed.
@@ -19,6 +27,12 @@ EXTRA_DIST += external/catch2/single_include/catch2
 
 AM_CPPFLAGS = -I $(srcdir)/../ -I $(builddir)/../ -isystem $(srcdir)/external/cereal/include -isystem $(srcdir)/external/catch2/single_include/catch2/
 
-AM_LDFLAGS = $(builddir)/../src/libintervalxt.la -lrt -lpthread
-# we use gmpxx; its header is using gmp directly so we need to link it in as well
-AM_LDFLAGS += -lgmpxx -lgmp
+AM_LDFLAGS = $(builddir)/../src/libintervalxt.la
+
+if HAVE_EANTIC
+AM_LDFLAGS += -leantic -leanticxx -lflint -lantic
+endif
+
+if HAVE_EXACTREAL
+AM_LDFLAGS += -lexactreal
+endif

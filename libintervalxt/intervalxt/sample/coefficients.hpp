@@ -23,6 +23,7 @@
 
 #include <gmpxx.h>
 
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
