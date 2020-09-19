@@ -39,7 +39,7 @@ struct Coefficients<exactreal::Element<Ring>> {
 
     auto parent = elements[0].module();
     for (auto& x : elements)
-      parent = span(parent, x.module());
+      parent = exactreal::Module<Ring>::span(parent, x.module());
 
     std::vector<std::vector<mpq_class>> ret;
     for (auto x : elements)

@@ -25,6 +25,7 @@
 
 #include <type_traits>
 #include <vector>
+#include <tuple>
 
 namespace intervalxt::sample {
 
