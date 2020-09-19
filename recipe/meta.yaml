@@ -1,4 +1,4 @@
-{% set version = '2.0.1' %}
+{% set version = '2.0.2' %}
 {% set build_number = '0' %}
 {% set component = component or 'intervalxt' %}
 {% set action = action or 'release' %}
