@@ -63,6 +63,11 @@ class Component : boost::equality_comparable<Component> {
 
   DecompositionStep decompositionStep(int limit = -1);
 
+  // Return a copy of the Interval Exchange Transformation that is underlying
+  // this component. Note that the Lengths of that copy might not be identical
+  // to the current Lengths object but rather its forget().
+  std::unique_ptr<IntervalExchangeTransformation> iet() const;
+
   // Return whether all resulting components satisfy target, i.e., target could
   // be established for them all without reaching the limit.
   bool decompose(

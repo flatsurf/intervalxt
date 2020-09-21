@@ -1,4 +1,4 @@
-check_PROGRAMS = rational_linear_subspace label
+check_PROGRAMS = rational_linear_subspace label component
 
 if HAVE_EANTIC
 if HAVE_EXACTREAL
@@ -14,6 +14,7 @@ interval_exchange_transformation_SOURCES = interval_exchange_transformation.test
 dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 cereal_SOURCES = cereal.test.cc main.cc
 coefficients_SOURCES = coefficients.test.cc main.cc
+component_SOURCES = component.test.cc main.cc
 
 # We vendor the header-only library Cereal (serialization with C++ to be able
 # to run the tests even when cereal is not installed.

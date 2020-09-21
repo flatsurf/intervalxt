@@ -39,14 +39,12 @@ using Result = ::intervalxt::DecompositionStep::Result;
 
 namespace intervalxt::test {
 
-using eantic::renf_class;
-using eantic::renf_elem_class;
 TEST_CASE("Decomposition of an IET") {
   using namespace eantic;
-  using EAnticLengths = sample::Lengths<renf_elem_class>;
-  auto K = renf_class::make("a^2 - 2", "a", "1.414 +/- 0.01");
+  using EAnticLengths = sample::Lengths<eantic::renf_elem_class>;
+  auto K = eantic::renf_class::make("a^2 - 2", "a", "1.414 +/- 0.01");
 
-  auto&& [lengths, a, b, c, d, e] = EAnticLengths::make(renf_elem_class(K, 1), renf_elem_class(K, 3), K->gen(), renf_elem_class(K, 3), renf_elem_class(K, 3));
+  auto&& [lengths, a, b, c, d, e] = EAnticLengths::make(eantic::renf_elem_class(K, 1), eantic::renf_elem_class(K, 3), K->gen(), eantic::renf_elem_class(K, 3), eantic::renf_elem_class(K, 3));
   auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {b, a, c, d, e}, {d, c, a, e, b});
   auto decomposition = DynamicalDecomposition(iet);
 
@@ -134,10 +132,10 @@ TEST_CASE("Decomposition of an IET") {
 
 TEST_CASE("Decomposition of Periodic IETs") {
   using namespace eantic;
-  using EAnticLengths = sample::Lengths<renf_elem_class>;
+  using EAnticLengths = sample::Lengths<eantic::renf_elem_class>;
 
   SECTION("An Auto-Similar IET") {
-    auto K = renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.1");
+    auto K = eantic::renf_class::make("a^3 - a^2 - a - 1", "a", "1.84 +/- 0.1");
     auto x = K->gen();
 
     auto&& [lengths, a, b, c, d, e, f, g] = EAnticLengths::make(x + 1, x * x - x - 1, x * x, x, x, K->one(), K->one());
@@ -154,7 +152,7 @@ TEST_CASE("Decomposition of Periodic IETs") {
   }
 
   SECTION("A Marked Point at an Unrelated Coordinate") {
-    auto K = renf_class::make("y^6 - y^4 - y^2 - 1", "y", "[1.356 +/- .1]");
+    auto K = eantic::renf_class::make("y^6 - y^4 - y^2 - 1", "y", "[1.356 +/- .1]");
     auto y = K->gen();
     auto x = y * y;
 
@@ -175,10 +173,10 @@ TEST_CASE("Decomposition of Periodic IETs") {
   SECTION("An Unsolved Hard Case") {
     using namespace eantic;
 
-    const auto K = renf_class::make("a^8 - 7*a^6 + 14*a^4 - 8*a^2 + 1", "a", "-0.81 +/- .1");
+    const auto K = eantic::renf_class::make("a^8 - 7*a^6 + 14*a^4 - 8*a^2 + 1", "a", "-0.81 +/- .1");
     const auto a = K->gen();
 
-    const auto frac = [&](const auto& num, const auto& den) { return renf_elem_class(num) / renf_elem_class(den); };
+    const auto frac = [&](const auto& num, const auto& den) { return eantic::renf_elem_class(num) / eantic::renf_elem_class(den); };
 
     auto&& [lengths, l1, l43, l18, l12, l27, l35, l41, l21, l40, l14, l28, l29, l23, l38, l37, l16] = EAnticLengths::make((-frac(3, 2) * a * a * a * a * a * a * a + frac(19, 2) * a * a * a * a * a - frac(31, 2) * a * a * a + frac(13, 2) * a), (3 * a * a * a * a * a * a * a - frac(39, 2) * a * a * a * a * a + 35 * a * a * a - frac(31, 2) * a), (-5 * a * a * a * a * a * a * a + frac(65, 2) * a * a * a * a * a - frac(113, 2) * a * a * a + frac(49, 2) * a), (-frac(7, 2) * a * a * a * a * a * a * a + frac(47, 2) * a * a * a * a * a - 45 * a * a * a + frac(41, 2) * a), (-frac(1, 2) * a * a * a * a * a * a * a + 5 * a * a * a * a * a - frac(23, 2) * a * a * a + frac(11, 2) * a), (a * a * a * a * a * a * a - 9 * a * a * a * a * a + frac(39, 2) * a * a * a - frac(19, 2) * a), (frac(21, 2) * a * a * a * a * a * a * a - frac(143, 2) * a * a * a * a * a + frac(271, 2) * a * a * a - frac(123, 2) * a), (-2 * a * a * a * a * a * a * a + 15 * a * a * a * a * a - 31 * a * a * a + frac(29, 2) * a), (2 * a * a * a * a * a * a * a - frac(27, 2) * a * a * a * a * a + frac(49, 2) * a * a * a - 11 * a), (-3 * a * a * a * a * a * a * a + frac(39, 2) * a * a * a * a * a - 36 * a * a * a + 16 * a), (-2 * a * a * a * a * a * a * a + 15 * a * a * a * a * a - 31 * a * a * a + frac(29, 2) * a), (frac(3, 2) * a * a * a * a * a * a * a - 11 * a * a * a * a * a + frac(47, 2) * a * a * a - 12 * a), (-5 * a * a * a * a * a * a * a + frac(71, 2) * a * a * a * a * a - frac(137, 2) * a * a * a + 31 * a), (frac(1, 2) * a * a * a * a * a * a * a - 3 * a * a * a * a * a + frac(9, 2) * a * a * a - frac(5, 2) * a), (6 * a * a * a * a * a * a * a - 42 * a * a * a * a * a + 80 * a * a * a - frac(73, 2) * a), (-a * a * a * a * a * a * a + frac(15, 2) * a * a * a * a * a - frac(29, 2) * a * a * a + frac(11, 2) * a));
     auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {l1, l43, l18, l12, l27, l35, l41, l21, l40, l14, l28, l29, l23, l38, l37, l16}, {l29, l23, l35, l16, l43, l38, l14, l27, l37, l40, l21, l18, l12, l41, l28, l1});
@@ -199,8 +197,8 @@ TEST_CASE("Decomposition of Periodic IETs") {
 
 TEST_CASE("Decomposition Coming From a Case on the 1221 Surface") {
   using namespace eantic;
-  using EAnticLengths = sample::Lengths<renf_elem_class>;
-  auto K = renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
+  using EAnticLengths = sample::Lengths<eantic::renf_elem_class>;
+  auto K = eantic::renf_class::make("x^2 - 3", "x", "1.73 +/- 0.1");
   auto x = K->gen();
 
   auto&& [lengths, a, b, c, d] = EAnticLengths::make(17528509747 * x / 5000000000, 150057 * x / 100000, 50057 * x / 100000, 150057 * x / 100000);
