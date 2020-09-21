@@ -380,6 +380,84 @@ TEST_CASE("Decomposition of More Deeply Nested Cylinders") {
   }
 }
 
+TEST_CASE("Decomposition Step With Injected Connections") {
+  using IntLengths = sample::Lengths<int>;
+
+  SECTION("Minuend's Bottom Left Connections Move Correctly") {
+    auto&& [lengths, a, b, c] = IntLengths::make(8, 5, 0);
+    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a});
+    auto decomposition = DynamicalDecomposition(iet);
+
+    REQUIRE(decomposition.components().size() == 1);
+
+    auto component = decomposition.components()[0];
+
+    component.inject(-HalfEdge(component, a), {{c, a}}, {{a, c}});
+
+    // The top and bottom contours of the component now look like this:
+    //
+    // ----a--- --b--
+    // --b--
+    //      |        |
+    //       ----a---
+    //
+    // i.e., a has a vertical connection attached to itself on both sides.
+
+    REQUIRE(fmt::format("{}", component) == "[b] [c- ⚯ a+] [a] [a+ ⚯ c-] -[b] -[a]");
+
+    component.decompositionStep(1);
+
+    // After a single induction step, b has been subtracted from a and the left
+    // vertical connection at the bottom a is now at the top a. (This is crucial
+    // for flatsurf, see https://github.com/flatsurf/flatsurf/issues/210.)
+    //
+    //  -a- --b--
+    // |         |
+    //  --b-- -a-
+
+    REQUIRE(fmt::format("{}", component) == "[b] [a] [a+ ⚯ c-] -[b] -[a] [c- ⚯ a+]");
+
+    REQUIRE(component.bottomContour().back().left().size() == 0);
+  }
+
+  SECTION("Minuend's Bottom Left Connections Move Correctly When Top & Bottom are Swapped") {
+    auto&& [lengths, a, b, c] = IntLengths::make(8, 5, 0);
+    auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {b, a}, {a, b});
+    auto decomposition = DynamicalDecomposition(iet);
+
+    REQUIRE(decomposition.components().size() == 1);
+
+    auto component = decomposition.components()[0];
+
+    component.inject(HalfEdge(component, a), {{c, a}}, {{a, c}});
+
+    // The top and bottom contours of the component now look like this:
+    //
+    //       ----a---
+    //      |        |
+    // --b--
+    // ----a--- --b--
+    //
+    // i.e., a has a vertical connection attached to itself on both sides.
+
+    REQUIRE(fmt::format("{}", component) == "[a] [b] [a+ ⚯ c-] -[a] [c- ⚯ a+] -[b]");
+
+    component.decompositionStep(1);
+
+    // After a single induction step, b has been subtracted from a and the left
+    // vertical connection at the top a is now at the bottom a. (This is crucial
+    // for flatsurf, see https://github.com/flatsurf/flatsurf/issues/210.)
+    //
+    //  --b-- -a-
+    // |         |
+    //  -a- --b--
+
+    REQUIRE(fmt::format("{}", component) == "[a] [b] [a+ ⚯ c-] -[a] -[b] [c- ⚯ a+]");
+
+    REQUIRE(component.topContour().back().left().size() == 0);
+  }
+}
+
 TEST_CASE("Decomposition With Injected Connections") {
   using IntLengths = sample::Lengths<int>;
 
