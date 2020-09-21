@@ -38,7 +38,7 @@ TEST_CASE("Components of a Decomposition", "[component]") {
   auto decomposition = DynamicalDecomposition(iet);
 
   SECTION("iet() works") {
-    REQUIRE(fmt::format("{}", iet) == fmt::format("{}", *decomposition.components()[0].iet()));
+    REQUIRE(fmt::format("{}", iet) == fmt::format("{}", decomposition.components()[0].iet()));
   }
 }
 

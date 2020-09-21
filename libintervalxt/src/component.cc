@@ -306,9 +306,9 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
   return {leftInjected, rightInjected};
 }
 
-std::unique_ptr<IntervalExchangeTransformation> Component::iet() const {
+IntervalExchangeTransformation Component::iet() const {
   auto& iet = impl->state.iet;
-  return std::make_unique<IntervalExchangeTransformation>(std::make_shared<Lengths>(impl->state.iet.lengths()->forget()), iet.top(), iet.bottom());
+  return IntervalExchangeTransformation(std::make_shared<Lengths>(impl->state.iet.lengths()->forget()), iet.top(), iet.bottom());
 }
 
 Implementation<Component>::Implementation(std::shared_ptr<DecompositionState> decomposition, ComponentState* state) :
