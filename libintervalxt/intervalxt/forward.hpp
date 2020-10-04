@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,29 +26,32 @@
 #include <optional>
 #include <variant>
 
-#include "intervalxt.hpp"
+#include "local.hpp"
 
 namespace intervalxt {
 
-class Label;
-
-class IntervalExchangeTransformation;
-
-class DynamicalDecomposition;
-
 class Component;
-
-class HalfEdge;
-
-class Separatrix;
-
-struct DecompositionStep;
-
-struct InductionStep;
 
 class Connection;
 
-using Side = std::variant<Connection, HalfEdge>;
+struct DecompositionStep;
+
+class DynamicalDecomposition;
+
+class HalfEdge;
+
+template <typename T>
+class ImplementationOf;
+
+struct InductionStep;
+
+class IntervalExchangeTransformation;
+
+class Label;
+
+struct PrivateConstructor {};
+
+class Separatrix;
 
 template <typename T>
 class Serializable;
@@ -56,8 +59,7 @@ class Serializable;
 template <typename T>
 struct Serialization;
 
-template <typename T>
-class Implementation;
+using Side = std::variant<Connection, HalfEdge>;
 
 }  // namespace intervalxt
 

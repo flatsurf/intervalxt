@@ -33,6 +33,7 @@
 #include "../intervalxt/sample/lengths.hpp"
 #include "../intervalxt/sample/renf_elem_coefficients.hpp"
 #include "../intervalxt/sample/renf_elem_floor_division.hpp"
+#include "../src/external/rx-ranges/include/rx/ranges.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 using Result = ::intervalxt::DecompositionStep::Result;
@@ -390,7 +391,7 @@ TEST_CASE("Decomposition Step With Injected Connections") {
 
     auto component = decomposition.components()[0];
 
-    component.inject(-HalfEdge(component, a), {{c, a}}, {{a, c}});
+    component.inject(-component.topContour(a), {{c, a}}, {{a, c}});
 
     // The top and bottom contours of the component now look like this:
     //
@@ -427,7 +428,7 @@ TEST_CASE("Decomposition Step With Injected Connections") {
 
     auto component = decomposition.components()[0];
 
-    component.inject(HalfEdge(component, a), {{c, a}}, {{a, c}});
+    component.inject(component.topContour(a), {{c, a}}, {{a, c}});
 
     // The top and bottom contours of the component now look like this:
     //
@@ -467,10 +468,10 @@ TEST_CASE("Decomposition With Injected Connections") {
 
   auto component = decomposition.components()[0];
 
-  component.inject(HalfEdge(component, a), {{c, a}, {f, e}, {a, d}}, {{d, a}});
-  component.inject(HalfEdge(component, b), {{e, b}}, {});
-  component.inject(-HalfEdge(component, b), {}, {{b, e}, {e, f}});
-  component.inject(-HalfEdge(component, a), {}, {{a, c}});
+  component.inject(component.topContour(a), {{c, a}, {f, e}, {a, d}}, {{d, a}});
+  component.inject(component.topContour(b), {{e, b}}, {});
+  component.inject(-component.topContour(b), {}, {{b, e}, {e, f}});
+  component.inject(-component.topContour(a), {}, {{a, c}});
 
   REQUIRE(fmt::format("{}", component) == "[b] [b+ ⚯ e-] [e+ ⚯ f-] [a] [a+ ⚯ c-] -[b] [e- ⚯ b+] [d+ ⚯ a-] -[a] [c- ⚯ a+] [f- ⚯ e+] [a- ⚯ d+]");
 

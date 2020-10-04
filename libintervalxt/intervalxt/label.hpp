@@ -38,10 +38,10 @@ namespace intervalxt {
 class Label : public boost::equality_comparable<Label>,
               public Serializable<Label> {
  public:
-  Label();
+  Label() noexcept;
   explicit Label(size_t id);
 
-  bool operator==(const Label&) const noexcept;
+  bool operator==(const Label&) const;
 
  private:
   size_t id;
@@ -55,7 +55,7 @@ class Label : public boost::equality_comparable<Label>,
 namespace std {
 
 template <>
-struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const noexcept; };
+struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const; };
 
 }  // namespace std
 

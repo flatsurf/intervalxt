@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,22 +21,33 @@
 #ifndef LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_IMPL_HPP
 #define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_IMPL_HPP
 
+#include <deque>
 #include <memory>
 
 #include "../../intervalxt/dynamical_decomposition.hpp"
-#include "forward.hpp"
+#include "decomposition_state.hpp"
 
 namespace intervalxt {
 
 template <>
-class Implementation<DynamicalDecomposition> {
+class ImplementationOf<DynamicalDecomposition> {
  public:
-  Implementation(const IntervalExchangeTransformation&);
+  ImplementationOf();
+  ImplementationOf(const ImplementationOf&) = delete;
+  ImplementationOf(ImplementationOf&&) = delete;
 
-  static Component createComponent(std::shared_ptr<DecompositionState>, Component& left, const Connection&, IntervalExchangeTransformation&& right);
-  static Component createComponent(std::shared_ptr<DecompositionState>, IntervalExchangeTransformation&&);
+  ImplementationOf& operator=(const ImplementationOf&) = delete;
+  ImplementationOf& operator=(ImplementationOf&&) = delete;
 
-  std::shared_ptr<DecompositionState> decomposition;
+  static Component insertComponent(DynamicalDecomposition&, Component& left, DecompositionState::Connection, IntervalExchangeTransformation&& right);
+  static Component insertComponent(DynamicalDecomposition&, IntervalExchangeTransformation&&);
+
+  static void check(const DynamicalDecomposition&);
+
+  static ImplementationOf& self(DynamicalDecomposition&);
+  static const ImplementationOf& self(const DynamicalDecomposition&);
+
+  DecompositionState decomposition;
 };
 
 }  // namespace intervalxt

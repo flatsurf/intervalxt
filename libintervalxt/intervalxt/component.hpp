@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@
 #include <utility>
 
 #include "connection.hpp"
-#include "external/spimpl/spimpl.h"
-#include "forward.hpp"
+#include "copyable.hpp"
 #include "half_edge.hpp"
 
 namespace intervalxt {
@@ -37,17 +36,23 @@ namespace intervalxt {
 class Component : boost::equality_comparable<Component> {
   // Components can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
-  Component();
+  template <typename... Args>
+  Component(PrivateConstructor, Args&&... args);
 
  public:
-  boost::logic::tribool cylinder() const noexcept;
-  boost::logic::tribool withoutPeriodicTrajectory() const noexcept;
-  boost::logic::tribool keane() const noexcept;
+  boost::logic::tribool cylinder() const;
+  boost::logic::tribool withoutPeriodicTrajectory() const;
+  boost::logic::tribool keane() const;
 
   // The half edges that make up the top contour, left to right.
   std::vector<HalfEdge> topContour() const;
+
   // The half edges that make up the bottom contour, left to right.
   std::vector<HalfEdge> bottomContour() const;
+
+  HalfEdge topContour(Label) const;
+
+  HalfEdge bottomContour(Label) const;
 
   // Return a perimeter, walking around this component in counterclockwise order.
   std::vector<Side> perimeter() const;
@@ -60,6 +65,8 @@ class Component : boost::equality_comparable<Component> {
   std::vector<Side> bottom() const;
   // The portion of the perimeter that is on the top (from right to left.)
   std::vector<Side> top() const;
+
+  DynamicalDecomposition& decomposition() const;
 
   DecompositionStep decompositionStep(int limit = -1);
 
@@ -88,10 +95,9 @@ class Component : boost::equality_comparable<Component> {
   friend std::ostream& operator<<(std::ostream&, const Component&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<Component>;
-  spimpl::impl_ptr<Implementation> impl;
+  Copyable<Component> self;
 
-  friend Implementation;
+  friend ImplementationOf<Component>;
 };
 
 std::ostream& operator<<(std::ostream&, const Side&);

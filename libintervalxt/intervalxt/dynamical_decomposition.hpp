@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,18 +22,21 @@
 #define LIBINTERVALXT_DYNAMICAL_DECOMPOSITION_HPP
 
 #include <boost/logic/tribool.hpp>
+#include <boost/operators.hpp>
 #include <functional>
 #include <iosfwd>
 #include <vector>
 
 #include "component.hpp"
-#include "external/spimpl/spimpl.h"
-#include "forward.hpp"
+#include "shared.hpp"
 
 namespace intervalxt {
 
 // Frontend to decompose an IntervalExchangeTransformation into Components.
-class DynamicalDecomposition {
+class DynamicalDecomposition : boost::equality_comparable<DynamicalDecomposition> {
+  template <typename... Args>
+  DynamicalDecomposition(PrivateConstructor, Args&&... args);
+
  public:
   DynamicalDecomposition(const IntervalExchangeTransformation&);
 
@@ -47,11 +50,14 @@ class DynamicalDecomposition {
 
   std::vector<Component> components() const;
 
+  bool operator==(const DynamicalDecomposition&) const;
+
   friend std::ostream& operator<<(std::ostream&, const DynamicalDecomposition&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<DynamicalDecomposition>;
-  spimpl::unique_impl_ptr<Implementation> impl;
+  Shared<DynamicalDecomposition> self;
+
+  friend ImplementationOf<DynamicalDecomposition>;
 };
 
 }  // namespace intervalxt

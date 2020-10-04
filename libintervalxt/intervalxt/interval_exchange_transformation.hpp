@@ -30,8 +30,8 @@
 #include <optional>
 #include <vector>
 
-#include "external/spimpl/spimpl.h"
 #include "lengths.hpp"
+#include "movable.hpp"
 #include "serializable.hpp"
 
 namespace intervalxt {
@@ -71,18 +71,18 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   std::vector<IntervalExchangeTransformation> periodicNonPeriodicDecomposition() const;
 
   // Return the labels of the top permutation (in order.)
-  std::vector<Label> top() const noexcept;
+  std::vector<Label> top() const;
   // Return the labels of the bottom permutation (in order.)
-  std::vector<Label> bottom() const noexcept;
+  std::vector<Label> bottom() const;
 
   // Return the lengths underlying the intervals of this interval exchange transformation.
   std::shared_ptr<const Lengths> lengths() const;
 
   // Return the number of intervals in this interval exchange transformation.
-  size_t size() const noexcept;
+  size_t size() const;
 
   // Return whether swap() has been called an odd number of times.
-  bool swapped() const noexcept;
+  bool swapped() const;
 
   // Return whether this interval exchange transformation and rhs have the same
   // underlying permutation and lengths. Unlike operator==, this ignores the
@@ -95,11 +95,12 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
  private:
-  using Implementation = ::intervalxt::Implementation<IntervalExchangeTransformation>;
-  spimpl::unique_impl_ptr<Implementation> impl;
+  Movable<IntervalExchangeTransformation> self;
 
-  friend Implementation;
+  friend ImplementationOf<IntervalExchangeTransformation>;
 };
+
+std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
 }  // namespace intervalxt
 

@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,25 +26,29 @@
 #include "../../intervalxt/component.hpp"
 #include "../../intervalxt/half_edge.hpp"
 #include "../../intervalxt/label.hpp"
-#include "forward.hpp"
+#include "implementation_of_decomposition.hpp"
 
 namespace intervalxt {
 
 template <>
-class Implementation<HalfEdge> {
+class ImplementationOf<HalfEdge> : public ImplementationOfDecomposition {
  public:
   enum class Contour {
     TOP = -1,
     BOTTOM = 1,
   };
 
-  Implementation(std::shared_ptr<DecompositionState>, const Component&, Label, Contour);
+  ImplementationOf(const DynamicalDecomposition&, const Component&, Label, Contour);
+  static HalfEdge make(const DynamicalDecomposition&, const Component&, Label, Contour);
 
-  std::shared_ptr<DecompositionState> decomposition;
   Component component;
   Label label;
   Contour contour;
 };
+
+template <typename... Args>
+HalfEdge::HalfEdge(PrivateConstructor, Args&&... args) :
+  self(spimpl::make_impl<ImplementationOf<HalfEdge>>(std::forward<Args>(args)...)) {}
 
 }  // namespace intervalxt
 

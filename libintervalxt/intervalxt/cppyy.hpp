@@ -25,11 +25,7 @@
 #include <memory>
 #include <vector>
 
-#include "dynamical_decomposition.hpp"
-#include "induction_step.hpp"
-#include "interval_exchange_transformation.hpp"
-#include "label.hpp"
-#include "lengths.hpp"
+#include "intervalxt.hpp"
 #include "sample/lengths.hpp"
 
 namespace intervalxt::cppyy {
@@ -73,11 +69,5 @@ auto IntervalExchangeTransformation(L &lengths, const std::vector<int> &permutat
 }
 
 }  // namespace intervalxt::cppyy
-
-namespace intervalxt {
-
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
-
-}
 
 #endif

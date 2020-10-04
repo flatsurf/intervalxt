@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,36 +24,35 @@
 #include <boost/operators.hpp>
 #include <iosfwd>
 
-#include "external/spimpl/spimpl.h"
-#include "forward.hpp"
+#include "copyable.hpp"
 
 namespace intervalxt {
 
 class Connection : boost::equality_comparable<Connection> {
   // Connections can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
-  Connection();
+  template <typename... Args>
+  Connection(PrivateConstructor, Args&&... args);
 
  public:
-  Connection operator-() const noexcept;
+  Connection operator-() const;
 
-  bool operator==(const Connection&) const noexcept;
+  bool operator==(const Connection&) const;
 
   // Whether the connection is going from bottom to top.
-  bool parallel() const noexcept;
+  bool parallel() const;
   // Whether the connection is going from top to bottom.
-  bool antiparallel() const noexcept;
+  bool antiparallel() const;
 
-  Separatrix source() const noexcept;
-  Separatrix target() const noexcept;
+  Separatrix source() const;
+  Separatrix target() const;
 
   friend std::ostream& operator<<(std::ostream&, const Connection&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<Connection>;
-  spimpl::impl_ptr<Implementation> impl;
+  Copyable<Connection> self;
 
-  friend Implementation;
+  friend ImplementationOf<Connection>;
 };
 
 }  // namespace intervalxt
@@ -61,7 +60,7 @@ class Connection : boost::equality_comparable<Connection> {
 namespace std {
 
 template <>
-struct hash<intervalxt::Connection> { size_t operator()(const intervalxt::Connection&) const noexcept; };
+struct hash<intervalxt::Connection> { size_t operator()(const intervalxt::Connection&) const; };
 
 }  // namespace std
 

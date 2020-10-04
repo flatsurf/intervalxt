@@ -32,11 +32,11 @@ class Id : public std::enable_shared_from_this<Id> {
 
  public:
   // Helpers for serialization
-  operator boost::uuids::uuid() const noexcept;
-  static std::shared_ptr<const Id> make(const boost::uuids::uuid& uuid) noexcept;
-  static std::shared_ptr<const Id> make() noexcept;
+  operator boost::uuids::uuid() const;
+  static std::shared_ptr<const Id> make(const boost::uuids::uuid& uuid);
+  static std::shared_ptr<const Id> make();
   // Change the name of this Id for printing
-  void rename(std::string) noexcept;
+  void rename(std::string);
   // Return a human-readable name for this Id; not preserved by serialization.
   friend std::ostream& operator<<(std::ostream&, const Id&);
 };

@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,15 +25,17 @@
 
 #include <boost/operators.hpp>
 #include <iosfwd>
+#include <ppl.hh>
 #include <vector>
 
-#include "../../intervalxt/external/spimpl/spimpl.h"
 #include "../../intervalxt/forward.hpp"
 
 namespace intervalxt {
 
 // A linear rational subspace of ℚ^d.
 class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace> {
+  RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& vectors, bool equations);
+
  public:
   // The space ℚ^0.
   RationalLinearSubspace();
@@ -59,8 +61,9 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   friend std::ostream& operator<<(std::ostream&, const RationalLinearSubspace&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<RationalLinearSubspace>;
-  spimpl::impl_ptr<Implementation> impl;
+  Parma_Polyhedra_Library::NNC_Polyhedron subspace;
+  Parma_Polyhedra_Library::NNC_Polyhedron positive;
+  Parma_Polyhedra_Library::NNC_Polyhedron nonNegative;
 };
 
 }  // namespace intervalxt

@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include <boost/operators.hpp>
 #include <iosfwd>
 
-#include "external/spimpl/spimpl.h"
+#include "copyable.hpp"
 #include "forward.hpp"
 
 namespace intervalxt {
@@ -32,23 +32,23 @@ namespace intervalxt {
 class Separatrix : boost::equality_comparable<Separatrix> {
   // Separatrices can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
-  Separatrix();
+  template <typename... Args>
+  Separatrix(PrivateConstructor, Args&&... args);
 
  public:
   // Whether the separatrix goes from bottom to top.
-  bool parallel() const noexcept;
+  bool parallel() const;
   // Whether the separatrix goes from top to bottom.
-  bool antiparallel() const noexcept;
+  bool antiparallel() const;
 
   bool operator==(const Separatrix&) const;
 
   friend std::ostream& operator<<(std::ostream&, const Separatrix&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<Separatrix>;
-  spimpl::impl_ptr<Implementation> impl;
+  Copyable<Separatrix> self;
 
-  friend Implementation;
+  friend ImplementationOf<Separatrix>;
   friend std::hash<Separatrix>;
 };
 
@@ -57,7 +57,7 @@ class Separatrix : boost::equality_comparable<Separatrix> {
 namespace std {
 
 template <>
-struct hash<intervalxt::Separatrix> { size_t operator()(const intervalxt::Separatrix&) const noexcept; };
+struct hash<intervalxt::Separatrix> { size_t operator()(const intervalxt::Separatrix&) const; };
 
 }  // namespace std
 

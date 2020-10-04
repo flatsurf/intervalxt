@@ -30,9 +30,9 @@
 namespace intervalxt {
 
 template <>
-class Implementation<IntervalExchangeTransformation> {
+class ImplementationOf<IntervalExchangeTransformation> {
  public:
-  Implementation(std::shared_ptr<Lengths>, const std::vector<Label>&, const std::vector<Label>&);
+  ImplementationOf(std::shared_ptr<Lengths>, const std::vector<Label>&, const std::vector<Label>&);
 
   static IntervalExchangeTransformation withLengths(const IntervalExchangeTransformation&, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>&);
   static std::string render(const IntervalExchangeTransformation&, Label);
