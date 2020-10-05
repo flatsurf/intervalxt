@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
  * be safely shipped to the client, i.e., not the ones in config.h
  */
 
-#ifndef LIBINTERVALXT_INTERVALXT_HPP
-#define LIBINTERVALXT_INTERVALXT_HPP
+#ifndef LIBINTERVALXT_LOCAL_HPP
+#define LIBINTERVALXT_LOCAL_HPP
 
 #ifdef __CLING__
 
@@ -33,10 +33,5 @@
 #pragma cling load("libintervalxt")
 
 #endif  // __CLING__
-
-namespace intervalxt {
-template <typename = void>
-constexpr bool false_t = false;
-}
 
 #endif

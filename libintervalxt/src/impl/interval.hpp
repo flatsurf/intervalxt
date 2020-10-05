@@ -33,9 +33,9 @@ struct Interval : boost::equality_comparable<Interval>,
   explicit Interval(const Label label) :
     label(label) {}
 
-  inline operator Label() const noexcept { return label; }
-  inline bool operator==(const Interval& rhs) const noexcept { return label == rhs.label; }
-  inline bool operator==(const Label rhs) const noexcept { return label == rhs; }
+  inline operator Label() const { return label; }
+  inline bool operator==(const Interval& rhs) const { return label == rhs.label; }
+  inline bool operator==(const Label rhs) const { return label == rhs; }
 
   Label label;
   typename std::list<Interval>::iterator twin;

@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,45 +18,51 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STATE_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STATE_HPP
+#ifndef LIBINTERVALXT_CONTEXT_HPP
+#define LIBINTERVALXT_CONTEXT_HPP
 
+#include <boost/logic/tribool.hpp>
 #include <deque>
 #include <list>
-#include <memory>
-#include <unordered_map>
 
-#include "component_state.hpp"
-#include "forward.hpp"
-#include "lengths_with_connections.hpp"
+#include "../../intervalxt/interval_exchange_transformation.hpp"
 
 namespace intervalxt {
 
-template <typename T>
-using stable_container = std::deque<T>;
-
-using std::list;
-using std::unordered_map;
-
 struct DecompositionState {
-  struct HalfEdgeConnections {
-    // Connections to the left of this half edge, from bottom to top, each oriented from top to bottom.
-    list<Connection> left;
-    // Connections to the right of this half edge, from bottom to top, each oriented from bottom to top.
-    list<Connection> right;
+  struct Component {
+    IntervalExchangeTransformation iet;
+
+    boost::logic::tribool cylinder = boost::logic::indeterminate;
+    boost::logic::tribool withoutPeriodicTrajectory = boost::logic::indeterminate;
+    boost::logic::tribool keane = boost::logic::indeterminate;
   };
 
-  stable_container<ComponentState> components;
-  // Previously detected connections attached to top half edges.
-  unordered_map<Label, HalfEdgeConnections> top;
-  // Previously detected connections attached to bottom half edges.
-  unordered_map<Label, HalfEdgeConnections> bottom;
+  struct Separatrix {
+    enum class Orientation {
+      PARALLEL = -1,
+      ANTIPARALLEL = 1,
+    };
 
-  void check() const;
+    Label label;
+    Orientation orientation;
+  };
 
-  std::string render(Label) const;
+  struct Connection {
+    Separatrix source;
+    Separatrix target;
+  };
 
-  friend std::ostream& operator<<(std::ostream&, const DecompositionState&);
+  struct Connections {
+    std::list<Connection> topLeft;
+    std::list<Connection> topRight;
+    std::list<Connection> bottomLeft;
+    std::list<Connection> bottomRight;
+  };
+
+  std::deque<Component> components;
+
+  std::unordered_map<Label, Connections> connections;
 };
 
 }  // namespace intervalxt

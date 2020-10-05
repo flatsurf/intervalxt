@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,34 +18,16 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_COPYABLE
 
-#include "component.hpp"
-#include "connection.hpp"
-#include "half_edge.hpp"
+#include "external/spimpl/spimpl.h"
+#include "forward.hpp"
 
 namespace intervalxt {
 
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN,
-    WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR,
-    KEANE,
-  };
-
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<std::list<Side>> equivalent = {};
-  std::optional<Component> additionalComponent = {};
-};
-
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
+// A pointer-to-implementation (pimpl) for types that are not copyable but movable.
+template <typename T>
+using Movable = spimpl::unique_impl_ptr<ImplementationOf<T>>;
 
 }  // namespace intervalxt
 

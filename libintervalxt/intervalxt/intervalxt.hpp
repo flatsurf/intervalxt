@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,35 +18,19 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_DECOMPOSITION_STEP_HPP
-#define LIBINTERVALXT_DECOMPOSITION_STEP_HPP
+#ifndef LIBINTERVALXT_INTERVALXT_HPP
+#define LIBINTERVALXT_INTERVALXT_HPP
 
 #include "component.hpp"
 #include "connection.hpp"
+#include "decomposition_step.hpp"
+#include "dynamical_decomposition.hpp"
 #include "half_edge.hpp"
-
-namespace intervalxt {
-
-// The result of a call to Component::decompositionStep.
-struct DecompositionStep {
-  enum class Result {
-    LIMIT_REACHED,
-    CYLINDER,
-    SEPARATING_CONNECTION,
-    NON_SEPARATING_CONNECTION,
-    WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN,
-    WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR,
-    KEANE,
-  };
-
-  Result result;
-  std::optional<Connection> connection = {};
-  std::optional<std::list<Side>> equivalent = {};
-  std::optional<Component> additionalComponent = {};
-};
-
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
-
-}  // namespace intervalxt
+#include "induction_step.hpp"
+#include "interval_exchange_transformation.hpp"
+#include "label.hpp"
+#include "length.hpp"
+#include "lengths.hpp"
+#include "separatrix.hpp"
 
 #endif

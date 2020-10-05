@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,27 +18,14 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_COMPONENT_STATE_HPP
-#define LIBINTERVALXT_COMPONENT_STATE_HPP
+#ifndef LIBINTERVALXT_SEPARATRIX_DATA_HPP
+#define LIBINTERVALXT_SEPARATRIX_DATA_HPP
 
-#include <boost/logic/tribool.hpp>
-#include <vector>
-
-#include "../../intervalxt/interval_exchange_transformation.hpp"
-#include "forward.hpp"
+#include "../../intervalxt/label.hpp"
 
 namespace intervalxt {
 
-using std::vector;
-
-struct ComponentState {
-  ComponentState(IntervalExchangeTransformation&&);
-
-  IntervalExchangeTransformation iet;
-
-  boost::logic::tribool cylinder = boost::logic::indeterminate;
-  boost::logic::tribool withoutPeriodicTrajectory = boost::logic::indeterminate;
-  boost::logic::tribool keane = boost::logic::indeterminate;
+struct SeparatrixData {
 };
 
 }  // namespace intervalxt

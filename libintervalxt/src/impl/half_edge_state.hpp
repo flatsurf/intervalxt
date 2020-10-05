@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,19 +18,18 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include "impl/component_state.hpp"
+#ifndef LIBINTERVALXT_HALF_EDGE_STATE_HPP
+#define LIBINTERVALXT_HALF_EDGE_STATE_HPP
 
-#include <algorithm>
+#include <list>
 
-#include "../intervalxt/connection.hpp"
-#include "../intervalxt/interval_exchange_transformation.hpp"
+#include "connection_data.hpp"
 
 namespace intervalxt {
 
-using std::begin;
-using std::end;
-
-ComponentState::ComponentState(IntervalExchangeTransformation&& iet) :
-  iet(std::move(iet)) {}
+struct HalfEdgeState {
+};
 
 }  // namespace intervalxt
+
+#endif

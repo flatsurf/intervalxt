@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -25,21 +25,25 @@
 
 #include "../../intervalxt/connection.hpp"
 #include "../../intervalxt/separatrix.hpp"
-#include "forward.hpp"
+#include "implementation_of_decomposition.hpp"
 
 namespace intervalxt {
 
 template <>
-class Implementation<Connection> {
+class ImplementationOf<Connection> : public ImplementationOfDecomposition {
  public:
-  Implementation(std::shared_ptr<DecompositionState>, const Separatrix& source, const Separatrix& target);
+  ImplementationOf(const DynamicalDecomposition&, DecompositionState::Connection);
+  static Connection make(const DynamicalDecomposition&, DecompositionState::Connection);
 
-  static Connection make(std::shared_ptr<DecompositionState>, const Separatrix& source, const Separatrix& target);
-
-  std::shared_ptr<DecompositionState> decomposition;
-  Separatrix source;
-  Separatrix target;
+  // The underlying data of this connection.
+  // We could have stored a pointer into the DecompositionState here instead
+  // but this would make operator- much harder to implement.
+  DecompositionState::Connection connection;
 };
+
+template <typename... Args>
+Connection::Connection(PrivateConstructor, Args&&... args) :
+  self(spimpl::make_impl<ImplementationOf<Connection>>(std::forward<Args>(args)...)) {}
 
 }  // namespace intervalxt
 

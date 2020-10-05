@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,53 +23,49 @@
 #include <ostream>
 
 #include "impl/connection.impl.hpp"
+#include "impl/decomposition_state.hpp"
+#include "impl/implementation_of_decomposition.hpp"
+#include "impl/separatrix.impl.hpp"
 
 namespace intervalxt {
 
-Connection::Connection() :
-  // We assume that the caller sets impl.
-  impl(nullptr) {}
-
-Connection Connection::operator-() const noexcept {
-  return Implementation::make(impl->decomposition, impl->target, impl->source);
+Separatrix Connection::source() const {
+  return ImplementationOf<Separatrix>::make(self->decomposition, self->connection.source);
 }
 
-bool Connection::operator==(const Connection& rhs) const noexcept {
+Separatrix Connection::target() const {
+  return ImplementationOf<Separatrix>::make(self->decomposition, self->connection.target);
+}
+
+bool Connection::operator==(const Connection& rhs) const {
   // Note that we identify separatrices on different decompositions. This seems
   // wrong. However, it is currently, necessary because Lenghts are not shared
   // in libflatsurf between IETs, see #72.
-  return impl->source == rhs.impl->source && impl->target == rhs.impl->target;
+  return ImplementationOf<Separatrix>::make(self->decomposition, self->connection.source) == ImplementationOf<Separatrix>::make(rhs.self->decomposition, rhs.self->connection.source) && ImplementationOf<Separatrix>::make(self->decomposition, self->connection.target) == ImplementationOf<Separatrix>::make(rhs.self->decomposition, rhs.self->connection.target);
 }
 
-bool Connection::parallel() const noexcept {
-  return impl->source.parallel();
+bool Connection::parallel() const {
+  return ImplementationOf<Separatrix>::make(self->decomposition, self->connection.source).parallel();
 }
 
-bool Connection::antiparallel() const noexcept {
+bool Connection::antiparallel() const {
   return not parallel();
 }
 
-Separatrix Connection::source() const noexcept {
-  return impl->source;
+Connection Connection::operator-() const {
+  return ImplementationOf<Connection>::make(self->decomposition, {self->connection.target, self->connection.source});
 }
 
-Separatrix Connection::target() const noexcept {
-  return impl->target;
-}
+ImplementationOf<Connection>::ImplementationOf(const DynamicalDecomposition& decomposition, DecompositionState::Connection connection) :
+  ImplementationOfDecomposition(decomposition),
+  connection(std::move(connection)) {}
 
-Implementation<Connection>::Implementation(std::shared_ptr<DecompositionState> decomposition, const Separatrix& source, const Separatrix& target) :
-  decomposition(decomposition),
-  source(source),
-  target(target) {}
-
-Connection Implementation<Connection>::make(std::shared_ptr<DecompositionState> decomposition, const Separatrix& source, const Separatrix& target) {
-  Connection connection;
-  connection.impl = spimpl::make_impl<Implementation>(decomposition, source, target);
-  return connection;
+Connection ImplementationOf<Connection>::make(const DynamicalDecomposition& decomposition, DecompositionState::Connection connection) {
+  return Connection(PrivateConstructor{}, decomposition, std::move(connection));
 }
 
 std::ostream& operator<<(std::ostream& os, const Connection& self) {
-  return os << "[" << self.impl->source << " ⚯ " << self.impl->target << "]";
+  return os << "[" << self.source() << " ⚯ " << self.target() << "]";
 }
 
 }  // namespace intervalxt
@@ -78,7 +74,7 @@ namespace std {
 
 using namespace intervalxt;
 
-size_t hash<Connection>::operator()(const Connection& self) const noexcept {
+size_t hash<Connection>::operator()(const Connection& self) const {
   // We should use hash_combine here, see https://github.com/flatsurf/intervalxt/issues/67
   return hash<Separatrix>()(self.source()) + (hash<Separatrix>()(self.target()) << 32);
 }

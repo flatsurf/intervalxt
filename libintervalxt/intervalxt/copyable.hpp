@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2020 Vincent Delecroix
+ *        Copyright (C) 2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,28 +18,17 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_IMPL_HPP
-#define LIBINTERVALXT_RATIONAL_LINEAR_SUBSPACE_IMPL_HPP
+#ifndef LIBINTERVALXT_COPYABLE
 
-#include <ppl.hh>
-
-#include "rational_linear_subspace.hpp"
-
-using Parma_Polyhedra_Library::NNC_Polyhedron;
+#include "external/spimpl/spimpl.h"
+#include "forward.hpp"
 
 namespace intervalxt {
 
-template <>
-class Implementation<RationalLinearSubspace> {
- public:
-  Implementation();
-
-  Implementation(const std::vector<std::vector<mpq_class>>& vectors, bool equations);
-
-  NNC_Polyhedron subspace;
-  NNC_Polyhedron positive;
-  NNC_Polyhedron nonNegative;
-};
+// A pointer-to-implementation (pimpl) for types that are copyable and
+// moveable. Such types are copied by copying this underlying pimpl.
+template <typename T>
+using Copyable = spimpl::impl_ptr<ImplementationOf<T>>;
 
 }  // namespace intervalxt
 

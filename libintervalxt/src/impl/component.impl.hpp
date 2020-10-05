@@ -24,24 +24,25 @@
 #include <memory>
 
 #include "../../intervalxt/component.hpp"
-#include "component_state.hpp"
-#include "forward.hpp"
+#include "../../intervalxt/half_edge.hpp"
+#include "../../intervalxt/interval_exchange_transformation.hpp"
+#include "connection.impl.hpp"
+#include "decomposition_state.hpp"
+#include "implementation_of_decomposition.hpp"
 
 namespace intervalxt {
 
 template <>
-class Implementation<Component> {
+class ImplementationOf<Component> : public ImplementationOfDecomposition {
  public:
-  Implementation(std::shared_ptr<DecompositionState>, ComponentState*);
+  ImplementationOf(const DynamicalDecomposition&, DecompositionState::Component*);
+  static Component make(const DynamicalDecomposition&, DecompositionState::Component*);
 
-  static Component make(std::shared_ptr<DecompositionState>, ComponentState*);
   static std::optional<int> boshernitzanCost(const IntervalExchangeTransformation&);
   static std::vector<Side> horizontal(const Component& component, bool top);
-  static void registerSeparating(Component& left, const Connection&, Component& right);
+  static void registerSeparating(Component& left, DecompositionState::Connection, Component& right);
   static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
   static std::optional<HalfEdge> previous(const Component&, const HalfEdge&);
-
-  static std::shared_ptr<DecompositionState> parent(const Component&);
 
   // Return the connections for walking clockwise from the counterclockwise end
   // of from to the clockwise end of to.
@@ -51,9 +52,12 @@ class Implementation<Component> {
   // of from to the counterclockwise end of to.
   std::list<Side> walkCounterclockwise(HalfEdge from, HalfEdge to) const;
 
-  const std::shared_ptr<DecompositionState> decomposition;
-  ComponentState& state;
+  DecompositionState::Component* component;
 };
+
+template <typename... Args>
+Component::Component(PrivateConstructor, Args&&... args) :
+  self(spimpl::make_impl<ImplementationOf<Component>>(std::forward<Args>(args)...)) {}
 
 }  // namespace intervalxt
 

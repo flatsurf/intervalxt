@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@
 #include <algorithm>
 
 #include "../intervalxt/label.hpp"
-#include "impl/decomposition_state.hpp"
+#include "impl/dynamical_decomposition.impl.hpp"
 #include "impl/forward.hpp"
 #include "util/assert.ipp"
 
 namespace intervalxt {
 
-LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<DecompositionState> decomposition) :
+LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths, std::shared_ptr<ImplementationOf<DynamicalDecomposition>> decomposition) :
   lengths(lengths),
   decomposition(decomposition) {}
 
@@ -58,26 +58,24 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
   // Normalize top and bottom such that the minuend is on top and the
   // subtrahend on the bottom. Note that this search is very inefficient, see
   // #71.
-  bool minuendOnTop = std::any_of(begin(decomposition->components), end(decomposition->components),
+  bool minuendOnTop = std::any_of(begin(decomposition.lock()->decomposition.components), end(decomposition.lock()->decomposition.components),
       [&](const auto& component) { return *begin(component.iet.top()) == minuend && !component.iet.swapped(); });
 
-  auto& top = minuendOnTop ? decomposition->top : decomposition->bottom;
-  auto& bottom = minuendOnTop ? decomposition->bottom : decomposition->top;
+  auto& subtrahendHalfEdges = decomposition.lock()->decomposition.connections.at(subtrahend);
+  auto& minuendHalfEdges = decomposition.lock()->decomposition.connections.at(minuend);
 
   // The subtrahend takes the minuends top (left) list with it (this might be a
   // nop since bottom and top share this initial list of connections.)
-  auto& bottomSubtrahend = bottom.at(subtrahend).left;
+  auto& bottomSubtrahend = minuendOnTop ? subtrahendHalfEdges.bottomLeft : subtrahendHalfEdges.topLeft;
+  auto& topMinuend = minuendOnTop ? minuendHalfEdges.topLeft : minuendHalfEdges.bottomLeft;
+  auto& bottomMinuend = minuendOnTop ? minuendHalfEdges.bottomLeft : minuendHalfEdges.topLeft;
 
-  if (minuendOnTop)
-    bottomSubtrahend.splice(end(bottomSubtrahend), top.at(minuend).left);
-  else {
-    bottomSubtrahend.splice(begin(bottomSubtrahend), top.at(minuend).left);
-  }
+  bottomSubtrahend.splice(minuendOnTop ? end(bottomSubtrahend) : begin(bottomSubtrahend), topMinuend);
 
   // The subtrahend takes the minuends bottom left list.
   bottomSubtrahend.splice(
       minuendOnTop ? end(bottomSubtrahend) : begin(bottomSubtrahend),
-      bottom.at(minuend).left);
+      bottomMinuend);
 }
 
 Label LengthsWithConnections::subtractRepeated(Label minuend) {

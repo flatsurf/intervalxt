@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,25 +26,25 @@
 #include <list>
 #include <utility>
 
-#include "external/spimpl/spimpl.h"
-#include "forward.hpp"
+#include "copyable.hpp"
 
 namespace intervalxt {
 
 class HalfEdge : boost::equality_comparable<HalfEdge> {
- public:
-  // The top half edge with the given label.
-  HalfEdge(const Component&, const Label&);
+  // Half edges cannot be created directly but only taken from the contours of a Component.
+  template <typename... Args>
+  HalfEdge(PrivateConstructor, Args&&...);
 
+ public:
   Component component() const;
 
   // Whether this is a HalfEdge in the top contour.
-  bool top() const noexcept;
+  bool top() const;
   // Whether this is a HalfEdge in the bottom contour.
-  bool bottom() const noexcept;
+  bool bottom() const;
 
   // Return the equally labeled HalfEdge in the other contour.
-  HalfEdge operator-() const noexcept;
+  HalfEdge operator-() const;
 
   // Return the Separatrix following this HalfEdge (if this is not the last one)
   // the name of this half edge after skipping over all the collapsed
@@ -64,17 +64,16 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
   // Connections to the right of this half edge, from bottom to top, each oriented from bottom to top.
   std::list<Connection> right() const;
 
-  operator Label() const noexcept;
+  operator Label() const;
 
   bool operator==(const HalfEdge& rhs) const;
 
   friend std::ostream& operator<<(std::ostream&, const HalfEdge&);
 
  private:
-  using Implementation = ::intervalxt::Implementation<HalfEdge>;
-  spimpl::impl_ptr<Implementation> impl;
+  Copyable<HalfEdge> self;
 
-  friend Implementation;
+  friend ImplementationOf<HalfEdge>;
 };
 
 }  // namespace intervalxt
@@ -82,7 +81,7 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
 namespace std {
 
 template <>
-struct hash<intervalxt::HalfEdge> { size_t operator()(const intervalxt::HalfEdge&) const noexcept; };
+struct hash<intervalxt::HalfEdge> { size_t operator()(const intervalxt::HalfEdge&) const; };
 
 }  // namespace std
 

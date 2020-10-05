@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,33 +23,28 @@
 
 #include <memory>
 
-#include "../../intervalxt/label.hpp"
 #include "../../intervalxt/separatrix.hpp"
-#include "forward.hpp"
+#include "implementation_of_decomposition.hpp"
 
 namespace intervalxt {
 
 template <>
-class Implementation<Separatrix> {
+class ImplementationOf<Separatrix> : public ImplementationOfDecomposition {
  public:
-  enum class Orientation {
-    PARALLEL = -1,
-    ANTIPARALLEL = 1,
-  };
-
-  Implementation(std::shared_ptr<DecompositionState>, Label, Orientation);
-
-  static Separatrix make(std::shared_ptr<DecompositionState>, Label, Orientation);
+  ImplementationOf(const DynamicalDecomposition&, DecompositionState::Separatrix);
+  static Separatrix make(const DynamicalDecomposition&, DecompositionState::Separatrix separatrix);
 
   // Return the top separatrix that connections created right of the label would report now.
-  static Separatrix atTop(std::shared_ptr<DecompositionState>, Label);
+  static DecompositionState::Separatrix makeAtTop(const DynamicalDecomposition&, Label);
   // Return the bottom separatrix that connections created right of the label would report now.
-  static Separatrix atBottom(std::shared_ptr<DecompositionState>, Label);
+  static DecompositionState::Separatrix makeAtBottom(const DynamicalDecomposition&, Label);
 
-  const std::shared_ptr<DecompositionState> decomposition;
-  Label label;
-  Orientation orientation;
+  DecompositionState::Separatrix separatrix;
 };
+
+template <typename... Args>
+Separatrix::Separatrix(PrivateConstructor, Args&&... args) :
+  self(spimpl::make_impl<ImplementationOf<Separatrix>>(std::forward<Args>(args)...)) {}
 
 }  // namespace intervalxt
 

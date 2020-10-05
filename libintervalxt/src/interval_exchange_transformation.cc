@@ -76,9 +76,9 @@ std::vector<mpq_class>& operator-=(std::vector<mpq_class>& lhs, const std::vecto
 }  // namespace
 
 bool IntervalExchangeTransformation::zorichInduction() {
-  const auto top = begin(impl->top);
-  auto bottom = begin(impl->bottom);
-  auto& lengths = *impl->lengths;
+  const auto top = begin(self->top);
+  auto bottom = begin(self->bottom);
+  auto& lengths = *self->lengths;
 
   if (*top == *bottom)
     // The IET starts with a Cylinder
@@ -108,24 +108,24 @@ bool IntervalExchangeTransformation::zorichInduction() {
     bottom++;
   }
 
-  impl->bottom.splice(top->twin, impl->bottom, begin(impl->bottom), bottom);
+  self->bottom.splice(top->twin, self->bottom, begin(self->bottom), bottom);
 
-  return lengths.cmp(*begin(impl->top), *begin(impl->bottom)) == 0;
+  return lengths.cmp(*begin(self->top), *begin(self->bottom)) == 0;
 }
 
 std::vector<mpq_class> IntervalExchangeTransformation::safInvariant() const {
-  return impl->saf();
+  return self->saf();
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
-  const auto translations = impl->translations();
+  const auto translations = self->translations();
 
   if (translations[0].size() <= 1)
     return false;
 
   // When SAF = 0 the Boshernitzan is never going to report "true".
   // https://github.com/flatsurf/intervalxt/issues/86
-  if (impl->saf0())
+  if (self->saf0())
     return false;
 
   // Build the QQ-module of relations between translations, that is the space generated
@@ -145,7 +145,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     return {Result::CYLINDER};
   }
 
-  const bool saf0 = impl->saf0();
+  const bool saf0 = self->saf0();
 
   bool foundSaddleConnection = false;
 
@@ -153,7 +153,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     if (saf0) {
       // When SAF=0 the Boshernitzan criterion will not be useful so we try to
       // detect a loop directly.
-      if (impl->similarityTracker.loop(*this)) {
+      if (self->similarityTracker.loop(*this)) {
         return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
       }
     }
@@ -167,31 +167,31 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     if (foundSaddleConnection) break;
   }
 
-  const Interval firstTop = *begin(impl->top);
-  const Interval firstBottom = *begin(impl->bottom);
+  const Interval firstTop = *begin(self->top);
+  const Interval firstBottom = *begin(self->bottom);
 
   auto reducible = reduce();
   if (reducible) {
     return {
         Result::SEPARATING_CONNECTION,
-        std::pair(rbegin(impl->bottom)->label, rbegin(impl->top)->label),
+        std::pair(rbegin(self->bottom)->label, rbegin(self->top)->label),
         std::move(*reducible)};
   }
 
-  if (impl->lengths->cmp(firstTop, firstBottom) == 0) {
-    auto connection = std::pair(begin(impl->bottom)->label, begin(impl->top)->label);
+  if (self->lengths->cmp(firstTop, firstBottom) == 0) {
+    auto connection = std::pair(begin(self->bottom)->label, begin(self->top)->label);
 
     // We merge the labels on top and bottom by
     // replacing the top one with the bottom one.
-    auto bottomReplacement = impl->bottom.insert(firstTop.twin, firstBottom);
-    impl->bottom.erase(begin(impl->bottom));
+    auto bottomReplacement = self->bottom.insert(firstTop.twin, firstBottom);
+    self->bottom.erase(begin(self->bottom));
 
     // Fix the twin pointer of the bottom's twin to point to its new location.
     bottomReplacement->twin->twin = bottomReplacement;
 
     // Now drop the top label from top and bottom
-    impl->top.erase(begin(impl->top));
-    impl->bottom.erase(firstTop.twin);
+    self->top.erase(begin(self->top));
+    self->bottom.erase(firstTop.twin);
 
     return {
         Result::NON_SEPARATING_CONNECTION,
@@ -209,36 +209,36 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
 }
 
 IntervalExchangeTransformation::IntervalExchangeTransformation() :
-  impl(spimpl::make_unique_impl<Implementation>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
+  self(spimpl::make_unique_impl<ImplementationOf<IntervalExchangeTransformation>>(std::shared_ptr<Lengths>(nullptr), vector<Label>(), vector<Label>())) {}
 
 IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
-  impl(spimpl::make_unique_impl<Implementation>(std::move(lengths), top, bottom)) {
+  self(spimpl::make_unique_impl<ImplementationOf<IntervalExchangeTransformation>>(std::move(lengths), top, bottom)) {
   ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
 }
 
-vector<Label> IntervalExchangeTransformation::top() const noexcept {
-  return impl->top | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
+vector<Label> IntervalExchangeTransformation::top() const {
+  return self->top | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
 }
 
-vector<Label> IntervalExchangeTransformation::bottom() const noexcept {
-  return impl->bottom | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
+vector<Label> IntervalExchangeTransformation::bottom() const {
+  return self->bottom | rx::transform([](auto& i) { return i.label; }) | rx::to_vector();
 }
 
 void IntervalExchangeTransformation::swap() {
-  impl->top.swap(impl->bottom);
-  impl->swap = not impl->swap;
+  self->top.swap(self->bottom);
+  self->swap = not self->swap;
 }
 
-bool IntervalExchangeTransformation::swapped() const noexcept {
-  return impl->swap;
+bool IntervalExchangeTransformation::swapped() const {
+  return self->swap;
 }
 
 std::shared_ptr<const Lengths> IntervalExchangeTransformation::lengths() const {
-  return impl->lengths;
+  return self->lengths;
 }
 
-size_t IntervalExchangeTransformation::size() const noexcept {
-  return impl->top.size();
+size_t IntervalExchangeTransformation::size() const {
+  return self->top.size();
 }
 
 std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::reduce() {
@@ -251,11 +251,11 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   int top_ahead = 0;
   int bottom_ahead = 0;
 
-  auto topIterator = begin(impl->top);
-  auto bottomIterator = begin(impl->bottom);
+  auto topIterator = begin(self->top);
+  auto bottomIterator = begin(self->bottom);
   while (true) {
-    ASSERT(topIterator != end(impl->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
-    ASSERT(bottomIterator != end(impl->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+    ASSERT(topIterator != end(self->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+    ASSERT(bottomIterator != end(self->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
     if (seen.find(*topIterator) != end(seen)) {
       bottom_ahead--;
@@ -282,21 +282,21 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   ++topIterator;
   ++bottomIterator;
 
-  if (topIterator == end(impl->top)) {
-    ASSERT(bottomIterator == end(impl->bottom), "top & bottom do not have the same size");
+  if (topIterator == end(self->top)) {
+    ASSERT(bottomIterator == end(self->bottom), "top & bottom do not have the same size");
     return {};
   } else {
     vector<Label> newComponentTop;
     vector<Label> newComponentBottom;
 
-    for (; topIterator != end(impl->top); topIterator = impl->top.erase(topIterator))
+    for (; topIterator != end(self->top); topIterator = self->top.erase(topIterator))
       newComponentTop.push_back(topIterator->label);
-    for (; bottomIterator != end(impl->bottom); bottomIterator = impl->bottom.erase(bottomIterator))
+    for (; bottomIterator != end(self->bottom); bottomIterator = self->bottom.erase(bottomIterator))
       newComponentBottom.push_back(bottomIterator->label);
 
-    ASSERT(impl->top.size() == impl->bottom.size(), "top and bottom must have the same length after splitting of a component");
+    ASSERT(self->top.size() == self->bottom.size(), "top and bottom must have the same length after splitting of a component");
 
-    return IntervalExchangeTransformation(impl->lengths, newComponentTop, newComponentBottom);
+    return IntervalExchangeTransformation(self->lengths, newComponentTop, newComponentBottom);
   }
 }
 
@@ -315,25 +315,25 @@ bool IntervalExchangeTransformation::equivalent(const IntervalExchangeTransforma
     return top | rx::transform([&](const auto& label) { return lengths->get(label); }) | rx::to_vector();
   };
 
-  if (topLengths(top(), impl->lengths) != topLengths(rhs.top(), rhs.impl->lengths))
+  if (topLengths(top(), self->lengths) != topLengths(rhs.top(), rhs.self->lengths))
     return false;
 
   return true;
 }
 
 bool IntervalExchangeTransformation::operator==(const IntervalExchangeTransformation& rhs) const {
-  const std::vector<Label> labels = impl->top | rx::transform([](const auto& interval) { return interval.label; }) | rx::to_vector();
-  if (impl->top != rhs.impl->top || impl->bottom != rhs.impl->bottom)
+  const std::vector<Label> labels = self->top | rx::transform([](const auto& interval) { return interval.label; }) | rx::to_vector();
+  if (self->top != rhs.self->top || self->bottom != rhs.self->bottom)
     return false;
 
-  for (auto label : impl->top)
-    if (impl->lengths->get(label) != rhs.impl->lengths->get(label))
+  for (auto label : self->top)
+    if (self->lengths->get(label) != rhs.self->lengths->get(label))
       return false;
 
   return true;
 }
 
-Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
+ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
   top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   lengths(std::move(lengths)) {
@@ -355,7 +355,7 @@ Implementation<IntervalExchangeTransformation>::Implementation(std::shared_ptr<L
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
-std::vector<mpq_class> Implementation<IntervalExchangeTransformation>::saf() const {
+std::vector<mpq_class> ImplementationOf<IntervalExchangeTransformation>::saf() const {
   const auto coefficients = this->coefficients();
   const auto translations = this->translations();
 
@@ -371,16 +371,16 @@ std::vector<mpq_class> Implementation<IntervalExchangeTransformation>::saf() con
   return w;
 }
 
-bool Implementation<IntervalExchangeTransformation>::saf0() const {
+bool ImplementationOf<IntervalExchangeTransformation>::saf0() const {
   auto saf = this->saf();
   return std::none_of(begin(saf), end(saf), [](const auto& x) { return x; });
 }
 
-std::vector<std::vector<mpq_class>> Implementation<IntervalExchangeTransformation>::coefficients() const {
+std::vector<std::vector<mpq_class>> ImplementationOf<IntervalExchangeTransformation>::coefficients() const {
   return lengths->coefficients(top | rx::transform([](const auto& interval) { return static_cast<Label>(interval); }) | rx::to_vector());
 }
 
-std::vector<std::vector<mpq_class>> Implementation<IntervalExchangeTransformation>::translations() const {
+std::vector<std::vector<mpq_class>> ImplementationOf<IntervalExchangeTransformation>::translations() const {
   const auto coefficients = this->coefficients();
   std::unordered_map<Label, std::vector<mpq_class>> labelToCoefficient;
   for (const auto& [label, coefficient] : rx::zip(top, coefficients))
@@ -407,18 +407,18 @@ std::vector<std::vector<mpq_class>> Implementation<IntervalExchangeTransformatio
   return translations;
 }
 
-IntervalExchangeTransformation Implementation<IntervalExchangeTransformation>::withLengths(const IntervalExchangeTransformation& iet, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>& createLengths) {
-  return IntervalExchangeTransformation(createLengths(iet.impl->lengths), iet.top(), iet.bottom());
+IntervalExchangeTransformation ImplementationOf<IntervalExchangeTransformation>::withLengths(const IntervalExchangeTransformation& iet, const std::function<std::shared_ptr<Lengths>(std::shared_ptr<Lengths>)>& createLengths) {
+  return IntervalExchangeTransformation(createLengths(iet.self->lengths), iet.top(), iet.bottom());
 }
 
-std::string Implementation<IntervalExchangeTransformation>::render(const IntervalExchangeTransformation& iet, Label label) {
-  return iet.impl->lengths->render(label);
+std::string ImplementationOf<IntervalExchangeTransformation>::render(const IntervalExchangeTransformation& iet, Label label) {
+  return iet.self->lengths->render(label);
 }
 
 std::ostream& operator<<(std::ostream& os, const IntervalExchangeTransformation& self) {
   return os << fmt::format("{} / {}",
-             fmt::join(self.impl->top | rx::transform([&](const auto& interval) { return fmt::format("[{}: {}]", self.impl->lengths->render(interval), self.impl->lengths->get(interval)); }) | rx::to_vector(), " "),
-             fmt::join(self.impl->bottom | rx::transform([&](const auto& interval) { return fmt::format("[{}]", self.impl->lengths->render(interval)); }) | rx::to_vector(), " "));
+             fmt::join(self.self->top | rx::transform([&](const auto& interval) { return fmt::format("[{}: {}]", self.self->lengths->render(interval), self.self->lengths->get(interval)); }) | rx::to_vector(), " "),
+             fmt::join(self.self->bottom | rx::transform([&](const auto& interval) { return fmt::format("[{}]", self.self->lengths->render(interval)); }) | rx::to_vector(), " "));
 }
 
 }  // namespace intervalxt

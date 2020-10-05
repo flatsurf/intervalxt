@@ -20,8 +20,10 @@
 
 #include <fmt/format.h>
 
+#include "../intervalxt/connection.hpp"
 #include "../intervalxt/dynamical_decomposition.hpp"
 #include "../intervalxt/fmt.hpp"
+#include "../intervalxt/half_edge.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/sample/integer_coefficients.hpp"
 #include "../intervalxt/sample/integer_floor_division.hpp"
