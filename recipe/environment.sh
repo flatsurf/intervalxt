@@ -11,6 +11,5 @@ export GITHUB_REPOSITORY=intervalxt
 
 source $SNIPPETS_DIR/cxx/environment.sh
 source $SNIPPETS_DIR/make/environment.sh
-source $SNIPPETS_DIR/codecov/environment.sh
 
 export SUBDIRS=libintervalxt:pyintervalxt
