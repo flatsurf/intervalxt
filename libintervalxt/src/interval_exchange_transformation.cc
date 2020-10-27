@@ -357,11 +357,12 @@ ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_p
 
 std::vector<mpq_class> ImplementationOf<IntervalExchangeTransformation>::saf() const {
   const auto coefficients = this->coefficients();
-  const auto translations = this->translations();
 
   const auto degree = coefficients[0].size();
   if (degree <= 1)
     return {};
+
+  const auto translations = this->translations();
 
   std::vector<mpq_class> w(degree * (degree - 1) / 2);
 
