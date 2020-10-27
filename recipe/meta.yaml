@@ -85,6 +85,9 @@ requirements:
     - e-antic >=1.0.0rc3
     # enable check-valgrind in ./configure
     - valgrind >=3.15.0
+    # to run benchmarks
+    - benchmark
+    - asv
 {%- endif %}
   run:
 {%- if component == "pyintervalxt" %}
