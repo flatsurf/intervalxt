@@ -168,6 +168,8 @@ DecompositionStep Component::decompositionStep(int limit) {
 
   auto& component = *self->component;
 
+  const std::optional<int> boshernitzanCost = ImplementationOf<Component>::boshernitzanCost(component.iet);
+
   if (limit == -1) {
     limit = 0;
     while (true) {
@@ -176,11 +178,9 @@ DecompositionStep Component::decompositionStep(int limit) {
       if (step.result != DecompositionStep::Result::LIMIT_REACHED)
         return step;
 
-      limit = ImplementationOf<Component>::boshernitzanCost(component.iet).value_or(2 * (limit + 1));
+      limit = boshernitzanCost.value_or(2 * (limit + 1));
     }
   }
-
-  const std::optional<int> boshernitzanCost = ImplementationOf<Component>::boshernitzanCost(component.iet);
 
   InductionStep step;
 

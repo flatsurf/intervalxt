@@ -149,30 +149,32 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     return {Result::CYLINDER};
   }
 
-  const bool saf0 = self->saf0();
-
   bool foundSaddleConnection = false;
 
-  for (int i = 0; limit == -1 || i < limit; i++) {
-    if (saf0) {
-      // When SAF=0 the Boshernitzan criterion will not be useful so we try to
-      // detect a loop directly.
-      if (self->similarityTracker.loop(*this)) {
-        return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
+  if (limit != 0) {
+    const bool saf0 = self->saf0();
+
+    for (int i = 0; limit == -1 || i < limit; i++) {
+      if (saf0) {
+        // When SAF=0 the Boshernitzan criterion will not be useful so we try to
+        // find a loop in the IETs we see.
+        if (self->saf().size() == 0) {
+          // When all lengths are rational, then there cannot be any loops.
+          ;
+        } else if (self->similarityTracker.loop(*this)) {
+            return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
+        }
       }
+
+      foundSaddleConnection = zorichInduction();
+      if (foundSaddleConnection) break;
+
+      swap();
+      foundSaddleConnection = zorichInduction();
+      swap();
+      if (foundSaddleConnection) break;
     }
-
-    foundSaddleConnection = zorichInduction();
-    if (foundSaddleConnection) break;
-
-    swap();
-    foundSaddleConnection = zorichInduction();
-    swap();
-    if (foundSaddleConnection) break;
   }
-
-  const Interval firstTop = *begin(self->top);
-  const Interval firstBottom = *begin(self->bottom);
 
   auto reducible = reduce();
   if (reducible) {
@@ -181,6 +183,9 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
         std::pair(rbegin(self->bottom)->label, rbegin(self->top)->label),
         std::move(*reducible)};
   }
+
+  const Interval firstTop = *begin(self->top);
+  const Interval firstBottom = *begin(self->bottom);
 
   if (self->lengths->cmp(firstTop, firstBottom) == 0) {
     auto connection = std::pair(begin(self->bottom)->label, begin(self->top)->label);

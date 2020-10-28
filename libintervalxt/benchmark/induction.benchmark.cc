@@ -35,7 +35,7 @@ template <class T>
 void Induction(benchmark::State& state) {
   using TLengths = sample::Lengths<T>;
 
-  const int LIMIT = 22;
+  const int LIMIT = 33;
 
   for (auto _ : state) {
     for (int a = 1; a < LIMIT - 6; a++) {
