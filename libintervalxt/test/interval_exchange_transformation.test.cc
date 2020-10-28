@@ -327,6 +327,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
         iet.zorichInduction();
         iet.swap();
         auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return sign ? -x : x; }) | rx::to_vector();
+        CAPTURE(vv);
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
         sign ^= 1;
       }

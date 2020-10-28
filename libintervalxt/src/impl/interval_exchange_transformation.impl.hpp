@@ -45,12 +45,13 @@ class ImplementationOf<IntervalExchangeTransformation> {
   // Return the coefficient vectors for the labels on top.
   std::vector<std::vector<mpq_class>> coefficients() const;
 
-  std::vector<mpq_class> saf() const;
+  const std::vector<mpq_class>& saf() const;
   bool saf0() const;
 
   std::list<Interval> top;
   std::list<Interval> bottom;
   std::shared_ptr<Lengths> lengths;
+  mutable std::optional<std::vector<mpq_class>> safCache = std::nullopt;
   SimilarityTracker similarityTracker = {};
   bool swap = false;
 };

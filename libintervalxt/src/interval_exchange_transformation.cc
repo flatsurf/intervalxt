@@ -114,18 +114,22 @@ bool IntervalExchangeTransformation::zorichInduction() {
 }
 
 std::vector<mpq_class> IntervalExchangeTransformation::safInvariant() const {
-  return self->saf();
+  auto saf = self->saf();
+  if (self->swap)
+    for (auto& c : saf)
+      c = -c;
+  return saf;
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
-  const auto translations = self->translations();
-
-  if (translations[0].size() <= 1)
-    return false;
-
   // When SAF = 0 the Boshernitzan is never going to report "true".
   // https://github.com/flatsurf/intervalxt/issues/86
   if (self->saf0())
+    return false;
+
+  const auto translations = self->translations();
+
+  if (translations[0].size() <= 1)
     return false;
 
   // Build the QQ-module of relations between translations, that is the space generated
@@ -296,6 +300,7 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
 
     ASSERT(self->top.size() == self->bottom.size(), "top and bottom must have the same length after splitting of a component");
 
+    self->safCache = std::nullopt;
     return IntervalExchangeTransformation(self->lengths, newComponentTop, newComponentBottom);
   }
 }
@@ -355,25 +360,31 @@ ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_p
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
-std::vector<mpq_class> ImplementationOf<IntervalExchangeTransformation>::saf() const {
-  const auto coefficients = this->coefficients();
+const std::vector<mpq_class>& ImplementationOf<IntervalExchangeTransformation>::saf() const {
+  if (!safCache) {
+    const auto coefficients = this->coefficients();
 
-  const auto degree = coefficients[0].size();
-  if (degree <= 1)
-    return {};
+    const auto degree = coefficients[0].size();
+    if (degree <= 1)
+      safCache = std::vector<mpq_class>();
+    else {
+      const auto translations = this->translations();
 
-  const auto translations = this->translations();
+      safCache = std::vector<mpq_class>(degree * (degree - 1) / 2);
 
-  std::vector<mpq_class> w(degree * (degree - 1) / 2);
+      for (const auto& [c, t] : rx::zip(coefficients, translations))
+        *safCache += wedge(c, t);
+    }
 
-  for (const auto& [c, t] : rx::zip(coefficients, translations))
-    w += wedge(c, t);
-
-  return w;
+    if (swap)
+      for (auto& c: *safCache)
+        c = -c;
+  }
+  return *safCache;
 }
 
 bool ImplementationOf<IntervalExchangeTransformation>::saf0() const {
-  auto saf = this->saf();
+  const auto& saf = this->saf();
   return std::none_of(begin(saf), end(saf), [](const auto& x) { return x; });
 }
 
