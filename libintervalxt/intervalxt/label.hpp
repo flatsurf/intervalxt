@@ -24,6 +24,7 @@
 #include <boost/operators.hpp>
 #include <functional>
 
+#include "forward.hpp"
 #include "serializable.hpp"
 
 namespace intervalxt {
@@ -31,10 +32,9 @@ namespace intervalxt {
 // A label identifying a pair of intervals in an interval exchange
 // transformation. The label itself carries no information about the length of
 // the interval, the Lengths object knows about this and other metadata.
-// Note that this class has on purpose no printing operator<< on purpose; the
-// label itself is just some random id, only the Lengths object knows a
-// meaningful name for this id which can be determined by calling
-// Lengths::render().
+// Note that this class has no printing operator<< on purpose; the label
+// itself is just some random id, only the Lengths object knows a meaningful
+// name for this id which can be determined by calling Lengths::render().
 class Label : public boost::equality_comparable<Label>,
               public Serializable<Label> {
  public:
@@ -48,6 +48,7 @@ class Label : public boost::equality_comparable<Label>,
 
   friend Serialization<Label>;
   friend std::hash<Label>;
+  friend IntervalExchangeTransformation;
 };
 
 }  // namespace intervalxt

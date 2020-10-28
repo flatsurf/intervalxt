@@ -251,14 +251,8 @@ size_t IntervalExchangeTransformation::size() const {
 }
 
 std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::reduce() {
-  // NOTE: using a set here is algorithmically worse than the bitarray that
-  // used to be. We know exactly how many labels we have to fit. Instead of
-  // constant time searches and additions we have here logarithmic search and
-  // addition...then again many consider logarithms just big constants.
-  std::unordered_set<Label> seen;
-
-  int top_ahead = 0;
-  int bottom_ahead = 0;
+  int topAhead = 0;
+  int bottomAhead = 0;
 
   auto topIterator = begin(self->top);
   auto bottomIterator = begin(self->bottom);
@@ -266,21 +260,23 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
     ASSERT(topIterator != end(self->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
     ASSERT(bottomIterator != end(self->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
-    if (seen.find(*topIterator) != end(seen)) {
-      bottom_ahead--;
+    if (topIterator->label.id != topIterator->twin->label.id) {
+      bottomAhead--;
+      topIterator->twin->label.id ^= 1;
     } else {
-      top_ahead++;
-      seen.insert(*topIterator);
+      topAhead++;
+      topIterator->label.id ^= 1;
     }
 
-    if (seen.find(*bottomIterator) != end(seen)) {
-      top_ahead--;
+    if (bottomIterator->label.id != bottomIterator->twin->label.id) {
+      topAhead--;
+      bottomIterator->twin->label.id ^= 1;
     } else {
-      bottom_ahead++;
-      seen.insert(*bottomIterator);
+      bottomAhead++;
+      bottomIterator->label.id ^= 1;
     }
 
-    if (top_ahead == 0 && bottom_ahead == 0) {
+    if (topAhead == 0 && bottomAhead == 0) {
       break;
     }
 
