@@ -59,17 +59,17 @@ std::list<Side> HalfEdge::cross() const {
   std::list<Side> connections;
   if (top()) {
     for (auto connection : right())
-      connections.push_back(connection);
-    connections.push_back(*this);
+      connections.emplace_back(std::move(connection));
+    connections.emplace_back(*this);
     auto pos = end(connections);
     for (auto connection : left())
-      pos = connections.insert(pos, connection);
+      pos = connections.insert(pos, std::move(connection));
   } else {
     for (auto connection : left())
-      connections.push_front(connection);
+      connections.emplace_front(std::move(connection));
     connections.push_back(*this);
     for (auto connection : right())
-      connections.push_back(connection);
+      connections.emplace_back(std::move(connection));
   }
   return connections;
 }
