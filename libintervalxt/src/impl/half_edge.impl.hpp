@@ -38,10 +38,10 @@ class ImplementationOf<HalfEdge> : public ImplementationOfDecomposition {
     BOTTOM = 1,
   };
 
-  ImplementationOf(const DynamicalDecomposition&, const Component&, Label, Contour);
-  static HalfEdge make(const DynamicalDecomposition&, const Component&, Label, Contour);
+  ImplementationOf(const DynamicalDecomposition&, DecompositionState::Component*, Label, Contour);
+  static HalfEdge make(const DynamicalDecomposition&, DecompositionState::Component*, Label, Contour);
 
-  Component component;
+  DecompositionState::Component* component;
   Label label;
   Contour contour;
 };

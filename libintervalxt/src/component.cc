@@ -99,11 +99,11 @@ std::vector<HalfEdge> Component::bottomContour() const {
 }
 
 HalfEdge Component::topContour(Label label) const {
-  return ImplementationOf<HalfEdge>::make(self->decomposition, *this, label, ImplementationOf<HalfEdge>::Contour::TOP);
+  return ImplementationOf<HalfEdge>::make(self->decomposition, self->component, label, ImplementationOf<HalfEdge>::Contour::TOP);
 }
 
 HalfEdge Component::bottomContour(Label label) const {
-  return ImplementationOf<HalfEdge>::make(self->decomposition, *this, label, ImplementationOf<HalfEdge>::Contour::BOTTOM);
+  return ImplementationOf<HalfEdge>::make(self->decomposition, self->component, label, ImplementationOf<HalfEdge>::Contour::BOTTOM);
 }
 
 bool Component::operator==(const Component& rhs) const {
@@ -214,7 +214,7 @@ DecompositionStep Component::decompositionStep(int limit) {
     case InductionStep::Result::SEPARATING_CONNECTION: {
       auto [b, t] = *step.connection;
 
-      auto equivalent = self->walkClockwise(-ImplementationOf<HalfEdge>::make(self->decomposition, *this, *rbegin(bottomContour()), ImplementationOf<HalfEdge>::Contour::TOP), ImplementationOf<HalfEdge>::make(self->decomposition, *this, *rbegin(topContour()), ImplementationOf<HalfEdge>::Contour::TOP));
+      auto equivalent = self->walkClockwise(-ImplementationOf<HalfEdge>::make(self->decomposition, self->component, *rbegin(bottomContour()), ImplementationOf<HalfEdge>::Contour::TOP), ImplementationOf<HalfEdge>::make(self->decomposition, self->component, *rbegin(topContour()), ImplementationOf<HalfEdge>::Contour::TOP));
 
       auto connection = DecompositionState::Connection{
           ImplementationOf<Separatrix>::makeAtBottom(self->decomposition, b),
@@ -232,8 +232,8 @@ DecompositionStep Component::decompositionStep(int limit) {
       ASSERT(b != t, "Mistook cylinder for a non-separating connection");
 
       // t is not valid anymore but we can still use cross() on it.
-      auto equivalent = ImplementationOf<HalfEdge>::make(self->decomposition, *this, t, ImplementationOf<HalfEdge>::Contour::TOP).cross();
-      equivalent.splice(end(equivalent), (-ImplementationOf<HalfEdge>::make(self->decomposition, *this, b, ImplementationOf<HalfEdge>::Contour::TOP)).cross());
+      auto equivalent = ImplementationOf<HalfEdge>::make(self->decomposition, self->component, t, ImplementationOf<HalfEdge>::Contour::TOP).cross();
+      equivalent.splice(end(equivalent), (-ImplementationOf<HalfEdge>::make(self->decomposition, self->component, b, ImplementationOf<HalfEdge>::Contour::TOP)).cross());
       std::reverse(begin(equivalent), end(equivalent));
       for (auto& side : equivalent) {
         if (auto connection = std::get_if<intervalxt::Connection>(&side)) {
@@ -424,21 +424,21 @@ std::list<Side> ImplementationOf<Component>::walkClockwise(HalfEdge from, HalfEd
   return connections;
 }
 
-std::optional<HalfEdge> ImplementationOf<Component>::next(const Component& self, const HalfEdge& edge) {
-  auto contour = edge.top() ? self.self->component->iet.top() : self.self->component->iet.bottom();
+std::optional<HalfEdge> ImplementationOf<Component>::next(DecompositionState::Component* component, const HalfEdge& edge, const DynamicalDecomposition& decomposition) {
+  auto contour = edge.top() ? component->iet.top() : component->iet.bottom();
   auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
-  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
+  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
   if (++pos == end(contour)) return {};
-  HalfEdge next = ImplementationOf<HalfEdge>::make(self.self->decomposition, self, *pos, ImplementationOf<HalfEdge>::Contour::TOP);
+  HalfEdge next = ImplementationOf<HalfEdge>::make(decomposition, component, *pos, ImplementationOf<HalfEdge>::Contour::TOP);
   return edge.top() ? next : -next;
 }
 
-std::optional<HalfEdge> ImplementationOf<Component>::previous(const Component& self, const HalfEdge& edge) {
-  auto contour = edge.top() ? self.self->component->iet.top() : self.self->component->iet.bottom();
+std::optional<HalfEdge> ImplementationOf<Component>::previous(DecompositionState::Component* component, const HalfEdge& edge, const DynamicalDecomposition& decomposition) {
+  auto contour = edge.top() ? component->iet.top() : component->iet.bottom();
   auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
-  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << self)
+  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
   if (pos == begin(contour)) return {};
-  HalfEdge previous = ImplementationOf<HalfEdge>::make(self.self->decomposition, self, *--pos, ImplementationOf<HalfEdge>::Contour::TOP);
+  HalfEdge previous = ImplementationOf<HalfEdge>::make(decomposition, component, *--pos, ImplementationOf<HalfEdge>::Contour::TOP);
   return edge.top() ? previous : -previous;
 }
 
