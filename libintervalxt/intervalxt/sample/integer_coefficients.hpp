@@ -35,8 +35,9 @@ struct Coefficients<S, typename std::enable_if<std::is_integral_v<S>>::type> {
 
   std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
     std::vector<std::vector<mpq_class>> ret;
+    ret.reserve(elements.size());
     for (auto x : elements)
-      ret.push_back({mpq_class(gmpxxll::mpz_class(x))});
+      ret.emplace_back(std::vector{mpq_class(gmpxxll::mpz_class(x))});
 
     return ret;
   }
