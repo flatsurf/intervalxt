@@ -114,18 +114,22 @@ bool IntervalExchangeTransformation::zorichInduction() {
 }
 
 std::vector<mpq_class> IntervalExchangeTransformation::safInvariant() const {
-  return self->saf();
+  auto saf = self->saf();
+  if (self->swap)
+    for (auto& c : saf)
+      c = -c;
+  return saf;
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
-  const auto translations = self->translations();
-
-  if (translations[0].size() <= 1)
-    return false;
-
   // When SAF = 0 the Boshernitzan is never going to report "true".
   // https://github.com/flatsurf/intervalxt/issues/86
   if (self->saf0())
+    return false;
+
+  const auto translations = self->translations();
+
+  if (translations[0].size() <= 1)
     return false;
 
   // Build the QQ-module of relations between translations, that is the space generated
@@ -145,30 +149,32 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     return {Result::CYLINDER};
   }
 
-  const bool saf0 = self->saf0();
-
   bool foundSaddleConnection = false;
 
-  for (int i = 0; limit == -1 || i < limit; i++) {
-    if (saf0) {
-      // When SAF=0 the Boshernitzan criterion will not be useful so we try to
-      // detect a loop directly.
-      if (self->similarityTracker.loop(*this)) {
-        return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
+  if (limit != 0) {
+    const bool saf0 = self->saf0();
+
+    for (int i = 0; limit == -1 || i < limit; i++) {
+      if (saf0) {
+        // When SAF=0 the Boshernitzan criterion will not be useful so we try to
+        // find a loop in the IETs we see.
+        if (self->saf().size() == 0) {
+          // When all lengths are rational, then there cannot be any loops.
+          ;
+        } else if (self->similarityTracker.loop(*this)) {
+          return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
+        }
       }
+
+      foundSaddleConnection = zorichInduction();
+      if (foundSaddleConnection) break;
+
+      swap();
+      foundSaddleConnection = zorichInduction();
+      swap();
+      if (foundSaddleConnection) break;
     }
-
-    foundSaddleConnection = zorichInduction();
-    if (foundSaddleConnection) break;
-
-    swap();
-    foundSaddleConnection = zorichInduction();
-    swap();
-    if (foundSaddleConnection) break;
   }
-
-  const Interval firstTop = *begin(self->top);
-  const Interval firstBottom = *begin(self->bottom);
 
   auto reducible = reduce();
   if (reducible) {
@@ -177,6 +183,9 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
         std::pair(rbegin(self->bottom)->label, rbegin(self->top)->label),
         std::move(*reducible)};
   }
+
+  const Interval firstTop = *begin(self->top);
+  const Interval firstBottom = *begin(self->bottom);
 
   if (self->lengths->cmp(firstTop, firstBottom) == 0) {
     auto connection = std::pair(begin(self->bottom)->label, begin(self->top)->label);
@@ -242,14 +251,8 @@ size_t IntervalExchangeTransformation::size() const {
 }
 
 std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::reduce() {
-  // NOTE: using a set here is algorithmically worse than the bitarray that
-  // used to be. We know exactly how many labels we have to fit. Instead of
-  // constant time searches and additions we have here logarithmic search and
-  // addition...then again many consider logarithms just big constants.
-  std::unordered_set<Label> seen;
-
-  int top_ahead = 0;
-  int bottom_ahead = 0;
+  int topAhead = 0;
+  int bottomAhead = 0;
 
   auto topIterator = begin(self->top);
   auto bottomIterator = begin(self->bottom);
@@ -257,21 +260,23 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
     ASSERT(topIterator != end(self->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
     ASSERT(bottomIterator != end(self->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
-    if (seen.find(*topIterator) != end(seen)) {
-      bottom_ahead--;
+    if (topIterator->label.id != topIterator->twin->label.id) {
+      bottomAhead--;
+      topIterator->twin->label.id ^= 1;
     } else {
-      top_ahead++;
-      seen.insert(*topIterator);
+      topAhead++;
+      topIterator->label.id ^= 1;
     }
 
-    if (seen.find(*bottomIterator) != end(seen)) {
-      top_ahead--;
+    if (bottomIterator->label.id != bottomIterator->twin->label.id) {
+      topAhead--;
+      bottomIterator->twin->label.id ^= 1;
     } else {
-      bottom_ahead++;
-      seen.insert(*bottomIterator);
+      bottomAhead++;
+      bottomIterator->label.id ^= 1;
     }
 
-    if (top_ahead == 0 && bottom_ahead == 0) {
+    if (topAhead == 0 && bottomAhead == 0) {
       break;
     }
 
@@ -296,6 +301,7 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
 
     ASSERT(self->top.size() == self->bottom.size(), "top and bottom must have the same length after splitting of a component");
 
+    self->safCache = std::nullopt;
     return IntervalExchangeTransformation(self->lengths, newComponentTop, newComponentBottom);
   }
 }
@@ -355,24 +361,31 @@ ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_p
   ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
-std::vector<mpq_class> ImplementationOf<IntervalExchangeTransformation>::saf() const {
-  const auto coefficients = this->coefficients();
-  const auto translations = this->translations();
+const std::vector<mpq_class>& ImplementationOf<IntervalExchangeTransformation>::saf() const {
+  if (!safCache) {
+    const auto coefficients = this->coefficients();
 
-  const auto degree = coefficients[0].size();
-  if (degree <= 1)
-    return {};
+    const auto degree = coefficients[0].size();
+    if (degree <= 1)
+      safCache = std::vector<mpq_class>();
+    else {
+      const auto translations = this->translations();
 
-  std::vector<mpq_class> w(degree * (degree - 1) / 2);
+      safCache = std::vector<mpq_class>(degree * (degree - 1) / 2);
 
-  for (const auto& [c, t] : rx::zip(coefficients, translations))
-    w += wedge(c, t);
+      for (const auto& [c, t] : rx::zip(coefficients, translations))
+        *safCache += wedge(c, t);
+    }
 
-  return w;
+    if (swap)
+      for (auto& c : *safCache)
+        c = -c;
+  }
+  return *safCache;
 }
 
 bool ImplementationOf<IntervalExchangeTransformation>::saf0() const {
-  auto saf = this->saf();
+  const auto& saf = this->saf();
   return std::none_of(begin(saf), end(saf), [](const auto& x) { return x; });
 }
 

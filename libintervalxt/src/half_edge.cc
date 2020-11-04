@@ -59,57 +59,58 @@ std::list<Side> HalfEdge::cross() const {
   std::list<Side> connections;
   if (top()) {
     for (auto connection : right())
-      connections.push_back(connection);
-    connections.push_back(*this);
+      connections.emplace_back(std::move(connection));
+    connections.emplace_back(*this);
     auto pos = end(connections);
     for (auto connection : left())
-      pos = connections.insert(pos, connection);
+      pos = connections.insert(pos, std::move(connection));
   } else {
     for (auto connection : left())
-      connections.push_front(connection);
+      connections.emplace_front(std::move(connection));
     connections.push_back(*this);
     for (auto connection : right())
-      connections.push_back(connection);
+      connections.emplace_back(std::move(connection));
   }
   return connections;
 }
 
 std::list<Connection> HalfEdge::left() const {
-  const auto makeConnection = [&](const auto& connection) { return ImplementationOf<Connection>::make(self->decomposition, connection); };
-  if (top())
-    return self->connections(*this).topLeft | rx::transform(makeConnection) | rx::to_list();
-  else
-    return self->connections(*this).bottomLeft | rx::transform(makeConnection) | rx::to_list();
+  const auto makeConnection = [&](const auto& connectionState) { return ImplementationOf<Connection>::make(self->decomposition, connectionState); };
+  std::list<Connection> left;
+  for (auto& connection : top() ? self->connections(*this).topLeft : self->connections(*this).bottomLeft)
+    left.emplace_back(makeConnection(connection));
+  return left;
 }
 
 std::list<Connection> HalfEdge::right() const {
-  const auto makeConnection = [&](const auto& connection) { return ImplementationOf<Connection>::make(self->decomposition, connection); };
-  if (top())
-    return self->connections(*this).topRight | rx::transform(makeConnection) | rx::to_list();
-  else
-    return self->connections(*this).bottomRight | rx::transform(makeConnection) | rx::to_list();
+  const auto makeConnection = [&](const auto& connectionState) { return ImplementationOf<Connection>::make(self->decomposition, connectionState); };
+  std::list<Connection> right;
+  for (auto& connection : top() ? self->connections(*this).topRight : self->connections(*this).bottomRight)
+    right.emplace_back(makeConnection(connection));
+  return right;
 }
 
 std::optional<HalfEdge> HalfEdge::next() const {
-  return ::intervalxt::ImplementationOf<Component>::next(self->component, *this);
+  return ::intervalxt::ImplementationOf<Component>::next(self->component, *this, self->decomposition);
 }
 
 std::optional<HalfEdge> HalfEdge::previous() const {
-  return ::intervalxt::ImplementationOf<Component>::previous(self->component, *this);
+  return ::intervalxt::ImplementationOf<Component>::previous(self->component, *this, self->decomposition);
 }
 
 Component HalfEdge::component() const {
+  Component component = ImplementationOf<Component>::make(self->decomposition, self->component);
   ASSERT([&]() {
     if (top()) {
-      auto top = self->component.topContour();
+      auto top = component.topContour();
       return std::find(begin(top), end(top), *this) != end(top);
     } else {
-      auto bottom = self->component.bottomContour();
+      auto bottom = component.bottomContour();
       return std::find(begin(bottom), end(bottom), *this) != end(bottom);
     }
   }(),
-      "half edge " << *this << " is not in the component " << self->component << " for which it was created anymore");
-  return self->component;
+      "half edge " << *this << " is not in the component " << component << " for which it was created anymore");
+  return component;
 }
 
 HalfEdge HalfEdge::operator-() const {
@@ -128,13 +129,13 @@ std::optional<Separatrix> HalfEdge::separatrix() const {
                                                                      : ::intervalxt::ImplementationOf<Separatrix>::makeAtBottom(self->decomposition, self->label));
 }
 
-ImplementationOf<HalfEdge>::ImplementationOf(const DynamicalDecomposition& decomposition, const Component& component, Label label, Contour contour) :
+ImplementationOf<HalfEdge>::ImplementationOf(const DynamicalDecomposition& decomposition, DecompositionState::Component* component, Label label, Contour contour) :
   ImplementationOfDecomposition(decomposition),
   component(component),
   label(label),
   contour(contour) {}
 
-HalfEdge ImplementationOf<HalfEdge>::make(const DynamicalDecomposition& decomposition, const Component& component, Label label, Contour contour) {
+HalfEdge ImplementationOf<HalfEdge>::make(const DynamicalDecomposition& decomposition, DecompositionState::Component* component, Label label, Contour contour) {
   return HalfEdge(PrivateConstructor{}, decomposition, component, label, contour);
 }
 

@@ -41,8 +41,8 @@ class ImplementationOf<Component> : public ImplementationOfDecomposition {
   static std::optional<int> boshernitzanCost(const IntervalExchangeTransformation&);
   static std::vector<Side> horizontal(const Component& component, bool top);
   static void registerSeparating(Component& left, DecompositionState::Connection, Component& right);
-  static std::optional<HalfEdge> next(const Component&, const HalfEdge&);
-  static std::optional<HalfEdge> previous(const Component&, const HalfEdge&);
+  static std::optional<HalfEdge> next(DecompositionState::Component*, const HalfEdge&, const DynamicalDecomposition&);
+  static std::optional<HalfEdge> previous(DecompositionState::Component*, const HalfEdge&, const DynamicalDecomposition&);
 
   // Return the connections for walking clockwise from the counterclockwise end
   // of from to the clockwise end of to.

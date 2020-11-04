@@ -95,8 +95,18 @@ AX_CXX_CHECK_LIB([exactreal], [exactreal::Arb], [ ], [AX_WITHOUT_EXACTREAL([exac
 
 AM_CONDITIONAL([HAVE_EXACTREAL], [test "x$have_exactreal" = "xyes"])
 
+#######################
+# CHECK FOR BENCHMARK #
+#######################
+AC_ARG_WITH([benchmark], AS_HELP_STRING([--without-benchmark], [Do not build C++ benchmarks that require google/benchmark]))
+AS_IF([test "x$with_benchmark" != "xno"],
+      [
+       with_benchmark=yes
+       AC_CHECK_HEADERS([benchmark/benchmark.h], , AC_MSG_ERROR([benchmark headers not found; run --without-benchmark to disable building of benchmark/]))
+      ], [])
+AM_CONDITIONAL([HAVE_BENCHMARK], [test "x$with_benchmark" = "xyes"])
 
 AC_CONFIG_HEADERS([intervalxt/config.h])
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile benchmark/Makefile])
 
 AC_OUTPUT

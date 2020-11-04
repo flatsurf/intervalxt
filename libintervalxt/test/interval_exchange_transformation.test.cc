@@ -303,7 +303,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
   SECTION("Integer Lengths") {
     auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
     auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
-    (void)iet.safInvariant();
+    REQUIRE(iet.safInvariant() == std::vector<mpq_class>{});
   }
 
   SECTION("Non-zero Invariants") {
@@ -316,19 +316,22 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
       CAPTURE(iet);
 
+      // Check that SAF invariant can be computed in an initiallly swapped IET.
+      iet.swap();
+      iet.safInvariant();
+      iet.swap();
       auto v = iet.safInvariant();
       CAPTURE(v);
 
       REQUIRE((v | rx::any_of([](const auto& x) { return x != 0; })));
 
-      int sign = 1;
-
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return sign ? -x : x; }) | rx::to_vector();
+        const auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return iet.swapped() ? -x : x; }) | rx::to_vector();
+        CAPTURE(vv);
+        CAPTURE(iet.swapped());
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-        sign ^= 1;
       }
     }
     {
@@ -345,14 +348,13 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
 
       REQUIRE((v | rx::any_of([](const auto& x) { return x != 0; })));
 
-      int sign = 1;
-
       for (int i = 0; i < 10; i++) {
         iet.zorichInduction();
         iet.swap();
-        auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return sign ? -x : x; }) | rx::to_vector();
+        const auto vv = iet.safInvariant() | rx::transform([&](const auto& x) { return iet.swapped() ? -x : x; }) | rx::to_vector();
+        CAPTURE(vv);
+        CAPTURE(iet.swapped());
         REQUIRE(std::equal(std::begin(v), std::end(v), std::begin(vv), std::end(vv)));
-        sign ^= 1;
       }
     }
 
