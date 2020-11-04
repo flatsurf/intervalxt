@@ -75,7 +75,7 @@ std::list<Side> HalfEdge::cross() const {
 }
 
 std::list<Connection> HalfEdge::left() const {
-  const auto makeConnection = [&](const auto& connection) { return ImplementationOf<Connection>::make(self->decomposition, connection); };
+  const auto makeConnection = [&](const auto& connectionState) { return ImplementationOf<Connection>::make(self->decomposition, connectionState); };
   std::list<Connection> left;
   for (auto& connection : top() ? self->connections(*this).topLeft : self->connections(*this).bottomLeft)
     left.emplace_back(makeConnection(connection));
@@ -83,7 +83,7 @@ std::list<Connection> HalfEdge::left() const {
 }
 
 std::list<Connection> HalfEdge::right() const {
-  const auto makeConnection = [&](const auto& connection) { return ImplementationOf<Connection>::make(self->decomposition, connection); };
+  const auto makeConnection = [&](const auto& connectionState) { return ImplementationOf<Connection>::make(self->decomposition, connectionState); };
   std::list<Connection> right;
   for (auto& connection : top() ? self->connections(*this).topRight : self->connections(*this).bottomRight)
     right.emplace_back(makeConnection(connection));
