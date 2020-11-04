@@ -303,7 +303,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
   SECTION("Integer Lengths") {
     auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
     auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
-    REQUIRE(iet.safInvariant() == {});
+    REQUIRE(iet.safInvariant() == std::vector<mpq_class>{});
   }
 
   SECTION("Non-zero Invariants") {
