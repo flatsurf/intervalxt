@@ -44,7 +44,7 @@ void Induction(benchmark::State& state) {
           for (int d = 1; d < LIMIT - a - b - c - 3; d++) {
             for (int e = 1; e < LIMIT - a - b - c - d - 2; e++) {
               for (int f = 1; f < LIMIT - a - b - c - d - e - 1; f++) {
-                int  g = LIMIT - a - b - c - d - e -f;
+                int g = LIMIT - a - b - c - d - e - f;
                 assert(g > 0);
 
                 auto&& [lengths, aa, bb, cc, dd, ee, ff, gg] = TLengths::make(a, b, c, d, e, f, g);
@@ -62,4 +62,4 @@ void Induction(benchmark::State& state) {
 }
 BENCHMARK_TEMPLATE(Induction, int)->Arg(8)->Arg(34);
 
-}
+}  // namespace intervalxt::test

@@ -162,7 +162,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
           // When all lengths are rational, then there cannot be any loops.
           ;
         } else if (self->similarityTracker.loop(*this)) {
-            return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
+          return {Result::WITHOUT_PERIODIC_TRAJECTORY_AUTO_SIMILAR};
         }
       }
 
@@ -378,7 +378,7 @@ const std::vector<mpq_class>& ImplementationOf<IntervalExchangeTransformation>::
     }
 
     if (swap)
-      for (auto& c: *safCache)
+      for (auto& c : *safCache)
         c = -c;
   }
   return *safCache;
