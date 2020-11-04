@@ -58,7 +58,7 @@ requirements:
   host:
 {%- if libintervalxt_requirements %}
     - boost-cpp
-    - fmt
+    - fmt >=7.1.1
     - gmp
     - ppl
 {%- endif %}
