@@ -303,7 +303,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
   SECTION("Integer Lengths") {
     auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
     auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
-    (void)iet.safInvariant();
+    REQUIRE(iet.safInvariant() == {});
   }
 
   SECTION("Non-zero Invariants") {
@@ -316,7 +316,10 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
       CAPTURE(iet);
 
+      // Check that SAF invariant can be computed in a swapped IET.
+      iet.swap();
       auto v = iet.safInvariant();
+      iet.swap();
       CAPTURE(v);
 
       REQUIRE((v | rx::any_of([](const auto& x) { return x != 0; })));
