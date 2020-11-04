@@ -4,6 +4,17 @@ intervalxt Change Log
 
 .. current developments
 
+v3.0.1
+====================
+
+**Fixed:**
+
+* commit links in ASV reports
+* Report coverage changes on Pull Requests
+* Do not build conda package against broken fmt-7.1.0
+
+
+
 v3.0.0
 ====================
 
