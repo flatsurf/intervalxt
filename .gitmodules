@@ -13,6 +13,3 @@
 [submodule "libintervalxt/src/external/rx-ranges"]
 	path = libintervalxt/src/external/rx-ranges
 	url = https://github.com/simonask/rx-ranges
-[submodule "recipe/snippets"]
-	path = recipe/snippets
-	url = https://github.com/flatsurf/conda-recipes.git
