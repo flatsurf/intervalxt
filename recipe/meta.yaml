@@ -82,7 +82,7 @@ requirements:
     # we test a sample::Coefficients provider for exact-real
     - libexactreal
     # we test a sample::Coefficients provider for e-antic
-    - e-antic >=1.0.0rc5
+    - e-antic >=1.0.0rc8
     # enable check-valgrind in ./configure
     - valgrind >=3.15.0
     # to run benchmarks
