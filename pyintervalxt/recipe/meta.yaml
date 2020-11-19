@@ -1,0 +1,43 @@
+{% set version = '3.0.1' %}
+
+package:
+  name: pyintervalxt
+  version: {{ version }}
+
+source:
+  path: ../
+
+build:
+  number: 0
+  # libintervalxt is not available on Windows yet
+  skip: True  # [win]
+  # libintervalxt is not available on Windows yet
+  skip: True  # [osx]
+
+requirements:
+  build:
+    - libtool
+    - automake
+    - coreutils
+    - {{ compiler('cxx') }}
+  host:
+    - python
+    - setuptools
+    - cppyythonizations
+    - gmpxxyy
+    - pyeantic >=1.1.1
+    - pyexactreal >=1.3.1
+    - libintervalxt
+  run:
+    - python
+    - cppyy
+
+test:
+  imports:
+    - pyintervalxt
+
+about:
+  home: https://github.com/flatsurf/intervalxt
+  license: GPL-3.0-or-later
+  license_file: COPYING
+  summary: Boshernitzan Algorithm with Interval Exchange Transformations

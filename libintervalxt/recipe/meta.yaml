@@ -1,0 +1,39 @@
+{% set version = '3.0.1' %}
+
+package:
+  name: libintervalxt
+  version: {{ version }}
+
+source:
+  path: ../
+
+build:
+  number: 0
+  # e-antic is not available on Windows yet
+  skip: True  # [win]
+  # e-antic is not available on macOS yet
+  skip: True  # [osx]
+  run_exports:
+    - {{ pin_subpackage("libintervalxt", max_pin="x") }}
+
+requirements:
+  build:
+    - libtool
+    - automake
+    - coreutils
+    - {{ compiler('cxx') }}
+  host:
+    - boost-cpp
+    - fmt >=7.1.1
+    - gmp
+    - ppl
+
+test:
+  commands:
+    - test -f ${PREFIX}/lib/libintervalxt.so
+
+about:
+  home: https://github.com/flatsurf/intervalxt
+  license: GPL-3.0-or-later
+  license_file: COPYING
+  summary: Boshernitzan Algorithm with Interval Exchange Transformations

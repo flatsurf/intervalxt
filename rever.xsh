@@ -24,7 +24,7 @@ try:
 except KeyboardInterrupt:
   sys.exit(1)
 
-sys.path.insert(0, 'recipe/snippets/rever')
+sys.path.insert(0, 'tools/rever')
 
 import dist
 

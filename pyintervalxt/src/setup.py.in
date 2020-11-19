@@ -12,5 +12,5 @@ setup(
     install_requires=[
         'cppyy'
     ],
-    long_description = open('@top_srcdir@/README').read(),
+    long_description = open('@top_srcdir@/README.md').read(),
 )
