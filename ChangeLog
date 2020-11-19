@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.0.2
+====================
+
+**Performance:**
+
+* use specialized `renf_elem_fdiv` for floor divisions with e-antic elements
+
+
+
 v3.0.1
 ====================
 
