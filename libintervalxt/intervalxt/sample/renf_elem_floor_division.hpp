@@ -34,7 +34,7 @@ struct FloorDivision<eantic::renf_elem_class> {
   using T = eantic::renf_elem_class;
 
   mpz_class operator()(const T& divident, const T& divisor) {
-    return (divident / divisor).floor();
+    return divident.floordiv(divisor);
   }
 };
 
