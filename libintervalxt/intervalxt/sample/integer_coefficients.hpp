@@ -22,7 +22,6 @@
 #define LIBINTERVALXT_SAMPLE_INTEGER_COEFFICIENTS_HPP
 
 #include "../external/gmpxxll/mpz_class.hpp"
-
 #include "coefficients.hpp"
 
 namespace intervalxt::sample {
