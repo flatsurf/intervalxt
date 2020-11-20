@@ -42,13 +42,6 @@ conda create -n intervalxt -c flatsurf libintervalxt pyintervalxt
 conda activate intervalxt
 ```
 
-The Python wrapper `pyintervalxt` is based on [cppyy](https://cppyy.readthedocs.io/) which is [not available on conda-forge yet](https://bitbucket.org/wlav/cppyy/issues/55/package-for-conda-forge). Therefore, to use the Python wrapper, you need to install cppyy from PyPI:
-
-```
-conda install pip
-pip install cppyy
-```
-
 ## Run with binder in the Cloud
 
 You can try out the projects in this repository in a very limited environment online by clicking the following links:
@@ -58,8 +51,8 @@ You can try out the projects in this repository in a very limited environment on
 
 ## Build from the Source Code Repository
 
-We are following a standard autoconf setup, i.e., you can create the library
-`src/libintervalxt` with the following:
+We are following a standard autoconf setup, i.e., you can build intervalxt with
+the following:
 
 ```
 git clone --recurse-submodules https://github.com/flatsurf/intervalxt.git
@@ -103,8 +96,8 @@ run
 
 ```
 conda config --add channels conda-forge
-conda config --add channels flatsurf # if you want to pull in the latest version of dependencies
-conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt=6 gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind
+conda config --add channels flatsurf
+conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind benchmark
 conda activate intervalxt-build
 export CPPFLAGS="-isystem $CONDA_PREFIX/include"
 export CFLAGS="$CPPFLAGS"
@@ -120,39 +113,30 @@ make
 
 ## Build from the Source Code Repository with Conda
 
-The conda recipe in `recipe/` is built automatically as part of our Continuous
-Integration. If you want to build the recipe manually, something like the
-following should work:
+The conda recipes in `{lib,py}intervalxt/recipe/` are built automatically as
+part of our Continuous Integration. If you want to build the recipe manually,
+something like the following should work:
 
 ```
 git clone --recurse-submodules https://github.com/flatsurf/intervalxt.git
 cd intervalxt
 conda activate root
 conda config --add channels conda-forge
-conda config --add channels flatsurf # if you want to pull in the latest version of dependencies
-conda install conda-build conda-forge-ci-setup=2
-export FEEDSTOCK_ROOT=`pwd`
-export RECIPE_ROOT=${FEEDSTOCK_ROOT}/recipe
-export CI_SUPPORT=${FEEDSTOCK_ROOT}/.ci_support
-export CONFIG=linux_
-make_build_number "${FEEDSTOCK_ROOT}" "${RECIPE_ROOT}" "${CI_SUPPORT}/${CONFIG}.yaml"
-conda build "${RECIPE_ROOT}" -m "${CI_SUPPORT}/${CONFIG}.yaml" --clobber-file "${CI_SUPPORT}/clobber_${CONFIG}.yaml"
+conda config --add channels flatsurf
+conda install conda-build
+conda build libintervalxt/recipe pyintervalxt/recipe
 ```
 
 You can then try out the package that you just built with:
 ```
-conda create -n intervalxt-test --use-local libintervalxt
+conda create -n intervalxt-test --use-local libintervalxt pyintervalxt
 conda activate intervalxt-test
 ```
 
 ## Run Tests and Benchmark
 
 `make check` runs all tests and benchmarks. During development `make check TESTS=module`
-only runs the tests for `module`. For randomized tests, you might want to add
-`GTEST_REPEAT=1024` to run such tests repeatedly. Note that the environment
-variable `INTERVALXT_CHECK` is passed on to the tests and benchmarks, i.e., you
-could add `INTERVALXT_CHECK="--benchmark_min_time=.02"` to not let the
-benchmarks run as long as they would usually.
+only runs the tests for `module`.
 
 ## Maintainers
 
