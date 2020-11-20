@@ -1,7 +1,7 @@
 name: Cancel outdated runs
 on:
   workflow_run:
-    workflows: ['Test']
+    workflows: ['Test', 'Code Coverage', 'Publish to Anacond']
     types: ['requested']
 
 jobs:
@@ -11,6 +11,5 @@ jobs:
       - uses: potiuk/cancel-workflow-runs@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          cancelMode: allDuplicates
           sourceRunId: ${{ github.event.workflow_run.id }}
           skipEventTypes: '["push", "schedule"]'
