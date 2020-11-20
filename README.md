@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/flatsurf/conda/_apis/build/status/flatsurf.intervalxt?branchName=master)](https://dev.azure.com/flatsurf/conda/_build/latest?definitionId=4&branchName=master)
+![Test](https://github.com/flatsurf/intervalxt/workflows/Test/badge.svg)
 [![codecov](https://codecov.io/gh/flatsurf/intervalxt/branch/master/graph/badge.svg)](https://codecov.io/gh/flatsurf/intervalxt)
 [![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/intervalxt-asv/)
 
