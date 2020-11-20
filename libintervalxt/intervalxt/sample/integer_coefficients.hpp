@@ -21,7 +21,7 @@
 #ifndef LIBINTERVALXT_SAMPLE_INTEGER_COEFFICIENTS_HPP
 #define LIBINTERVALXT_SAMPLE_INTEGER_COEFFICIENTS_HPP
 
-#include <gmpxxll/mpz_class.hpp>
+#include "../external/gmpxxll/mpz_class.hpp"
 
 #include "coefficients.hpp"
 
