@@ -10,8 +10,7 @@ jobs:
     steps:
       - uses: potiuk/cancel-workflow-runs@master
         with:
-          cancelMode: duplicates
-          cancelFutureDuplicates: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          cancelMode: allDuplicates
           sourceRunId: ${{ github.event.workflow_run.id }}
           skipEventTypes: '["push", "schedule"]'
