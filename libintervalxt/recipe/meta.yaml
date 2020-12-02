@@ -23,9 +23,9 @@ requirements:
     - coreutils
     - {{ compiler('cxx') }}
   host:
-    - boost-cpp
-    - fmt >=7.1.1
-    - gmp
+    - boost-cpp {{ boost_cpp }}
+    - fmt {{ fmt }}
+    - gmp {{ gmp }}
     - ppl
 
 test:
