@@ -30,8 +30,7 @@ jobs:
           make
           make V=1 ${{ matrix.target }}
       - name: show logs
-        run: |
-          grep "" /dev/null **/*.log
+        run: grep "" /dev/null `find -name '*.log'`
         if: ${{ always() }}
   test-pyintervalxt:
     runs-on: ubuntu-20.04
@@ -63,7 +62,7 @@ jobs:
           cd pyintervalxt
           make ${{ matrix.target }}
       - name: show logs
-        run: grep "" /dev/null **/*.log
+        run: grep "" /dev/null `find -name '*.log'`
         if: ${{ always() }}
   distcheck:
     runs-on: ubuntu-20.04
@@ -81,7 +80,7 @@ jobs:
           ./configure --prefix="$PREFIX"
           make distcheck
       - name: show logs
-        run: grep "" /dev/null **/*.log
+        run: grep "" /dev/null `find -name '*.log'`
         if: ${{ always() }}
 
 env:
