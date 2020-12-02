@@ -27,14 +27,10 @@
 
 using boost::numeric_cast;
 
-using Parma_Polyhedra_Library::Constraint;
 using Parma_Polyhedra_Library::Constraint_System;
 using Parma_Polyhedra_Library::Generator_System;
 using Parma_Polyhedra_Library::Linear_Expression;
-using Parma_Polyhedra_Library::Linear_System;
 using Parma_Polyhedra_Library::NNC_Polyhedron;
-using Parma_Polyhedra_Library::NOT_NECESSARILY_CLOSED;
-using Parma_Polyhedra_Library::SPARSE;
 using Parma_Polyhedra_Library::Variable;
 
 // Note: there are global point and ray in the ppl header.

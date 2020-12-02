@@ -11,7 +11,7 @@ build:
   number: 0
   # libintervalxt is not available on Windows yet
   skip: True  # [win]
-  # libintervalxt is not available on Windows yet
+  # libintervalxt is not available on macOS yet
   skip: True  # [osx]
 
 requirements:
