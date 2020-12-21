@@ -31,7 +31,7 @@ AM_CPPFLAGS = -I $(srcdir)/../ -I $(builddir)/../ -isystem $(srcdir)/external/ce
 AM_LDFLAGS = $(builddir)/../src/libintervalxt.la
 
 if HAVE_EANTIC
-AM_LDFLAGS += -leantic -leanticxx -lflint -lantic
+AM_LDFLAGS += -leantic -leanticxx -lflint
 endif
 
 if HAVE_EXACTREAL

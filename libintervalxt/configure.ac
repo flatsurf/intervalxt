@@ -66,34 +66,36 @@ AC_CHECK_HEADERS([ppl.hh], , AC_MSG_ERROR([Parma Polyhedra Library (PPL) not fou
 #####################
 # CHECK FOR E-ANTIC #
 #####################
-have_eantic=yes
-m4_define([AX_WITHOUT_EANTIC], [have_eantic=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
+AC_ARG_WITH([eantic], AS_HELP_STRING([--without-eantic], [Do not build C++ tests that require e-antic]))
+AS_IF([test "x$with_eantic" != "xno"],
+      [
+       with_eantic=yes
+       m4_define([AX_WITHOUT_EANTIC], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests without it; run --without-eantic to disable building those tests.])])
 
-AC_CHECK_HEADERS([e-antic/renfxx.h], , [AX_WITHOUT_EANTIC([E-ANTIC headers not found])])
-AC_CHECK_LIB([eantic], [renf_elem_clear], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
-AX_CXX_CHECK_LIB([eanticxx], [eantic::renf_elem_class], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
+       AC_CHECK_HEADERS([e-antic/renfxx.h], , [AX_WITHOUT_EANTIC([E-ANTIC headers not found])])
+       AC_CHECK_LIB([eantic], [renf_elem_clear], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
+       AX_CXX_CHECK_LIB([eanticxx], [eantic::renf_elem_class], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
 
-dnl antic is used directly by e-antic in its headers
-AC_CHECK_LIB([antic], [nf_elem_sub_si], [ ], [AX_WITHOUT_EANTIC([ANTIC library not found])], [-lmpfr])
+       dnl We use FLINT's flint_cleanup() to be able to find memory leaks
+       AC_CHECK_LIB([flint], [flint_cleanup], [ ], [AX_WITHOUT_EANTIC([FLINT library not found])], [-lmpfr])
 
-dnl We use FLINT's fmpq_sub_si through renfxx.h
-AC_CHECK_LIB([flint], [fmpq_sub_si], [ ], [AX_WITHOUT_EANTIC([FLINT library not found])], [-lmpfr])
-
-AC_CHECK_HEADERS([arb.h], , [AX_WITHOUT_EANTIC([Arb headers not found])])
-AC_CHECK_LIB([arb], [arb_init], [ ], [AX_WITHOUT_EANTIC([Arb library not found])], [-lmpfr])
-
-AM_CONDITIONAL([HAVE_EANTIC], [test "x$have_eantic" = "xyes"])
+       AC_DEFINE([HAVE_EANTIC], [], [Whether e-antic headers and library are present])
+      ], [])
+AM_CONDITIONAL([HAVE_EANTIC], [test "x$with_eantic" = "xyes"])
 
 ########################
 # CHECK FOR EXACT-REAL #
 ########################
-have_exactreal=yes
-m4_define([AX_WITHOUT_EXACTREAL], [have_exactreal=no; AC_MSG_WARN([$1. This is not required to build libintervalxt but you might not be able to run tests without it or some tests may be skipped, in short make and make install work but make test might throw errors.])])
+AC_ARG_WITH([exactreal], AS_HELP_STRING([--without-exactreal], [Do not build C++ tests that require libexactreal]))
+AS_IF([test "x$with_exactreal" != "xno"],
+      [
+       with_exactreal=yes
+       m4_define([AX_WITHOUT_EXACTREAL], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests without it; run --without-exactreal to disable building those tests.])])
 
-AC_CHECK_HEADERS([exact-real/element.hpp], , [AX_WITHOUT_EXACTREAL([exact-real headers not found])])
-AX_CXX_CHECK_LIB([exactreal], [exactreal::Arb], [ ], [AX_WITHOUT_EXACTREAL([exact-real library not found])])
-
-AM_CONDITIONAL([HAVE_EXACTREAL], [test "x$have_exactreal" = "xyes"])
+       AC_CHECK_HEADERS([exact-real/element.hpp], , [AX_WITHOUT_EXACTREAL([exact-real headers not found])])
+       AX_CXX_CHECK_LIB([exactreal], [exactreal::Arb], [ ], [AX_WITHOUT_EXACTREAL([exact-real library not found])])
+      ], [])
+AM_CONDITIONAL([HAVE_EXACTREAL], [test "x$with_exactreal" = "xyes"])
 
 #######################
 # CHECK FOR BENCHMARK #

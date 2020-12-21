@@ -20,7 +20,11 @@
 
 // Shared entry point of all test binaries
 
+#include "../intervalxt/config.h"
+
+#ifdef HAVE_EANTIC
 #include <flint/flint.h>
+#endif
 
 #define CATCH_CONFIG_RUNNER
 #include "external/catch2/single_include/catch2/catch.hpp"
@@ -28,7 +32,9 @@
 int main(int argc, char* argv[]) {
   int result = Catch::Session().run(argc, argv);
 
+#ifdef HAVE_EANTIC
   flint_cleanup();
+#endif
 
   return result;
 }
