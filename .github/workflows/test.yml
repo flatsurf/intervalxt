@@ -9,8 +9,6 @@ jobs:
         target:
           - check
           - check-valgrind
-        include:
-          - target: check-valgrind
     steps:
       - uses: actions/checkout@v2
         with: { submodules: recursive }
@@ -27,6 +25,7 @@ jobs:
           cd libintervalxt
           ./bootstrap
           ./configure --prefix="$PREFIX" --without-benchmark
+          export CXXFLAGS="$CXXFLAGS -UNDEBUG"
           make
           make V=1 ${{ matrix.target }}
       - name: show logs
@@ -58,6 +57,7 @@ jobs:
           conda activate test
           ./bootstrap
           ./configure --prefix="$PREFIX" --without-benchmark
+          export CXXFLAGS="$CXXFLAGS -UNDEBUG"
           make
           cd pyintervalxt
           make ${{ matrix.target }}
