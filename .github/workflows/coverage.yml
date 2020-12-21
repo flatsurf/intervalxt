@@ -14,7 +14,7 @@ jobs:
           mamba install --yes --quiet automake boost-cpp coreutils cppyy cppyythonizations cxx-compiler fmt gmp gmpxxll gmpxxyy libtool ppl 'pyeantic>=1.0.0rc8' pyexactreal pytest python setuptools
           conda activate test
           ./bootstrap
-          ./configure --prefix="$PREFIX" CXXFLAGS="--coverage -O0 $CXXFLAGS" --without-benchmark
+          ./configure --prefix="$PREFIX" CXXFLAGS="$CXXFLAGS --coverage -O0 -UNDEBUG" --without-benchmark
           make check
       - uses: codecov/codecov-action@v1
 
