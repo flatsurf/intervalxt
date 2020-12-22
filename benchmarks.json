@@ -1,13 +1,20 @@
 {
-    "Benchmarks.track_Induction5_int_": {
-        "code": "def asv_method(self, t=time): return t",
-        "name": "Benchmarks.track_Induction5_int_",
-        "param_names": [],
-        "params": [],
+    "Induction\u27e8int\u27e9.track_time": {
+        "code": "class <locals>:\n    def run_benchmark(self, params=None):\n        filter = f\"{name}\"\n        if params:\n            filter = f\"{name}/{params.replace(', ', '/')}\"\n        out = subprocess.check_output([benchmark, f\"--benchmark_filter={filter}\", \"--benchmark_format=json\"])\n    \n        import json\n        out = json.loads(out)\n    \n        assert(len(out[\"benchmarks\"]) == 1)\n        time = out[\"benchmarks\"][0][\"cpu_time\"]\n        unit = out[\"benchmarks\"][0][\"time_unit\"]\n    \n        if unit == \"s\":\n            time *= 1000\n            unit = \"ms\"\n        if unit == \"ms\":\n            time *= 1000\n            unit = \"us\"\n        if unit == \"us\":\n            time *= 1000\n            unit = \"ns\"\n    \n        assert(unit == \"ns\")\n    \n        return time",
+        "name": "Induction\u27e8int\u27e9.track_time",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'8'",
+                "'34'"
+            ]
+        ],
         "timeout": 60.0,
         "type": "track",
         "unit": "ns",
-        "version": "95504a3a7767fc6ea8c8805b5e5bf9157a3a0b5f0c0fda6bf99e361d0bb4b107"
+        "version": "0"
     },
     "version": 2
 }
