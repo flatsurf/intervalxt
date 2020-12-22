@@ -1,0 +1,25 @@
+# This file lists the dependencies needed to build and test all of libintervalxt.
+# # Create a conda environment with these dependencies preinstalled with:
+# conda env create -f environment.yml
+name: libintervalxt-build
+channels:
+  - flatsurf
+  - conda-forge
+  - defaults
+dependencies:
+  - automake
+  - benchmark
+  - boost-cpp
+  - coreutils
+  - cxx-compiler
+  - e-antic>=1.0.0rc9
+  - libflint
+  - fmt
+  - gmp
+  - gmpxxll
+  - libexactreal
+  - libtool
+  - make
+  - ppl
+  # valgrind is only needed for make check-valgrind
+  # - valgrind

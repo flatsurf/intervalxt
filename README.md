@@ -1,6 +1,6 @@
 ![Test](https://github.com/flatsurf/intervalxt/workflows/Test/badge.svg)
 [![codecov](https://codecov.io/gh/flatsurf/intervalxt/branch/master/graph/badge.svg)](https://codecov.io/gh/flatsurf/intervalxt)
-[![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/intervalxt-asv/)
+[![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/intervalxt/asv/)
 
 ## Interval Exchange Transformations
 
@@ -95,9 +95,9 @@ conda. Download and install [Miniconda](https://conda.io/miniconda.html), then
 run
 
 ```
-conda config --add channels conda-forge
-conda config --add channels flatsurf
-conda create -n intervalxt-build libtool automake coreutils cxx-compiler boost-cpp e-antic fmt gmp ppl python setuptools cppyythonizations gmpxxyy pyeantic cppyy # and to run tests: pytest valgrind benchmark
+conda create -n intervalxt-build
+conda env update -n intervalxt-build -f libintervalxt/environment.yml
+conda env create -n intervalxt-build -f pyintervalxt/environment.yml
 conda activate intervalxt-build
 export CPPFLAGS="-isystem $CONDA_PREFIX/include"
 export CFLAGS="$CPPFLAGS"
