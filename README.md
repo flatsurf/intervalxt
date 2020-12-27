@@ -34,11 +34,10 @@ This repository contains two related projects:
 
 ## Install with Conda
 
-You can install this package with conda. Download and install [Miniconda](https://conda.io/miniconda.html), then run
+You can install this package with conda. Download and install [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge), then run
 
 ```
-conda config --add channels conda-forge
-conda create -n intervalxt -c flatsurf libintervalxt pyintervalxt
+mamba create -n intervalxt -c flatsurf libintervalxt pyintervalxt
 conda activate intervalxt
 ```
 
@@ -91,25 +90,28 @@ the time of this writing.
 To build this package, you need a fairly recent C++ compiler and probably some
 packages that might not be readily available on your system. If you don't want
 to use your distribution's packages, you can provide these dependencies with
-conda. Download and install [Miniconda](https://conda.io/miniconda.html), then
-run
+conda. Download and install
+[Mambaforge](https://github.com/conda-forge/miniforge#mambaforge), then run
 
 ```
-conda create -n intervalxt-build
-conda env update -n intervalxt-build -f libintervalxt/environment.yml
-conda env create -n intervalxt-build -f pyintervalxt/environment.yml
+mamba create -n intervalxt-build
+mamba env update -n intervalxt-build -f libintervalxt/environment.yml
+mamba env create -n intervalxt-build -f pyintervalxt/environment.yml
 conda activate intervalxt-build
-export CPPFLAGS="-isystem $CONDA_PREFIX/include"
-export CFLAGS="$CPPFLAGS"
-export LDFLAGS="-L$CONDA_PREFIX/lib -Wl,-rpath-link=$CONDA_PREFIX/lib"
-export CC="ccache cc"
-export CXX="ccache c++"
+
 git clone --recurse-submodules https://github.com/flatsurf/intervalxt.git
 cd intervalxt
 ./bootstrap
-./configure --prefix="$CONDA_PREFIX"
+./configure
 make
 ```
+
+Note that the C++ compiler package from conda disabled all assertions. To
+enable assertions `export CPPFLAGS="$CPPFLAGS -UNDEBUG"` before running
+configure and make.
+
+For faster compile times, you might want to `mamba install ccache` and set
+`export CXX="ccache c++"` before running configure and make.
 
 ## Build from the Source Code Repository with Conda
 
@@ -121,15 +123,14 @@ something like the following should work:
 git clone --recurse-submodules https://github.com/flatsurf/intervalxt.git
 cd intervalxt
 conda activate root
-conda config --add channels conda-forge
 conda config --add channels flatsurf
-conda install conda-build
+mamba install conda-build
 conda build libintervalxt/recipe pyintervalxt/recipe
 ```
 
 You can then try out the package that you just built with:
 ```
-conda create -n intervalxt-test --use-local libintervalxt pyintervalxt
+mamba create -n intervalxt-test --use-local libintervalxt pyintervalxt
 conda activate intervalxt-test
 ```
 
