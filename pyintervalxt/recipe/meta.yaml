@@ -29,6 +29,7 @@ requirements:
     - pyexactreal >=1.4.3,<2
     - libintervalxt
   run:
+    - boost-cpp
     - python
     - cppyy
 
