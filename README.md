@@ -94,13 +94,14 @@ conda. Download and install
 [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge), then run
 
 ```
-mamba create -n intervalxt-build
-mamba env update -n intervalxt-build -f libintervalxt/environment.yml
-mamba env create -n intervalxt-build -f pyintervalxt/environment.yml
-conda activate intervalxt-build
-
 git clone --recurse-submodules https://github.com/flatsurf/intervalxt.git
 cd intervalxt
+
+mamba create -n intervalxt-build
+mamba env update -n intervalxt-build -f libintervalxt/environment.yml
+mamba env update -n intervalxt-build -f pyintervalxt/environment.yml
+conda activate intervalxt-build
+
 ./bootstrap
 ./configure
 make
