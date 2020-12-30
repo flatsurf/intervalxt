@@ -56,6 +56,8 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   bool hasNonZeroNonNegativeVector() const;
   bool hasPositiveVector() const;
 
+  bool hasNonZeroNonNegativeVectorViaQuotient() const;
+
   bool operator==(const RationalLinearSubspace&) const;
 
   friend std::ostream& operator<<(std::ostream&, const RationalLinearSubspace&);
@@ -67,5 +69,6 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
 };
 
 }  // namespace intervalxt
+
 
 #endif

@@ -31,6 +31,7 @@ using Parma_Polyhedra_Library::Constraint_System;
 using Parma_Polyhedra_Library::Generator_System;
 using Parma_Polyhedra_Library::Linear_Expression;
 using Parma_Polyhedra_Library::NNC_Polyhedron;
+using Parma_Polyhedra_Library::C_Polyhedron;
 using Parma_Polyhedra_Library::Variable;
 
 // Note: there are global point and ray in the ppl header.
@@ -122,6 +123,49 @@ bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   auto polyhedron = NNC_Polyhedron(subspace);
   polyhedron.intersection_assign(nonNegative);
   return !polyhedron.is_bounded();
+}
+
+bool RationalLinearSubspace::hasNonZeroNonNegativeVectorViaQuotient() const {
+  auto dim = subspace.space_dimension();
+
+  if (dim == 0) {
+    return false;
+  }
+
+  auto equations = subspace.minimized_constraints();
+  int num_equations = 0;
+  for (auto equation : equations) {
+    assert(equation.is_equality() && equation.inhomogeneous_term() == 0);
+    num_equations++;
+  }
+  assert(subspace.affine_dimension() == dim - num_equations);
+  if (num_equations == 0) {
+    return true;
+  }
+
+  auto generators = Generator_System();
+  generators.insert(point((Linear_Expression) 0));
+  for (int i = 0; i < dim; i++) {
+    Linear_Expression linear = (Linear_Expression) 0;
+    int j = 0;
+    for (auto equation : equations) {
+      linear = linear + equation.coefficient(Variable(i)) * Variable(j);
+      j++;
+    }
+    if (linear.is_zero()) { // basis vector inside the space
+      return true;
+    }
+    generators.insert(ray(linear));
+  }
+
+  auto polyhedron = C_Polyhedron(generators);
+  for (auto g : polyhedron.minimized_generators()) {
+    if (g.is_line()) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 bool RationalLinearSubspace::hasPositiveVector() const {

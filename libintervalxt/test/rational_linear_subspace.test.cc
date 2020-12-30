@@ -45,6 +45,23 @@ TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[ratio
     REQUIRE(!RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVector());
   }
 
+  SECTION("hasNonZeroNonNegativeVectorViaQuotient()") {
+    REQUIRE(!RationalLinearSubspace().hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(RationalLinearSubspace::fromEquations({{1, 0}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 0}, {0, 1}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(RationalLinearSubspace::fromEquations({{1, -1}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 1}}).hasNonZeroNonNegativeVectorViaQuotient());
+
+    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(RationalLinearSubspace::fromGenerators({{0, 1}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(RationalLinearSubspace::fromGenerators({{0, -1}}).hasNonZeroNonNegativeVector());
+    REQUIRE(!RationalLinearSubspace::fromGenerators({{0, 0}}).hasNonZeroNonNegativeVectorViaQuotient());
+    REQUIRE(!RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVectorViaQuotient());
+  }
+
   SECTION("hasPositiveVector") {
     REQUIRE(!RationalLinearSubspace().hasPositiveVector());
     REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{}).hasPositiveVector());
