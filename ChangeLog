@@ -4,6 +4,26 @@ intervalxt Change Log
 
 .. current developments
 
+v3.0.3
+====================
+
+**Added:**
+
+* run CI and deploy with Python 3.8 and Python 3.9.
+
+**Changed:**
+
+* use GitHub Actions for CI
+
+**Fixed:**
+
+* Test with assertions enabled and also publish to anaconda with assertions enabled.
+* Do not run GitHub Actions on forks but only on Pull Requests. If you really want this, you could push to your fork's master branch.
+* simplified build instructions with conda/mamba in README
+* Rever script now bumps the version number of the conda package correctly.
+
+
+
 v3.0.2
 ====================
 
