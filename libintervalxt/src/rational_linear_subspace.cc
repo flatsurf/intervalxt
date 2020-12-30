@@ -36,6 +36,7 @@ using Parma_Polyhedra_Library::Variable;
 // Note: there are global point and ray in the ppl header.
 using Parma_Polyhedra_Library::point;
 using Parma_Polyhedra_Library::ray;
+using Parma_Polyhedra_Library::line;
 
 namespace {
 struct SwapDimensions {
@@ -87,7 +88,7 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
     generators.insert(point());
     for (auto generator : vectors) {
       Linear_Expression linear = linearExpressionFromVector(generator);
-      if (!linear.is_zero()) generators.insert(ray(linear));
+      if (!linear.is_zero()) generators.insert(line(linear));
     }
     subspace = NNC_Polyhedron(generators);
   }

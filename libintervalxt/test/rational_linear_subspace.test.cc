@@ -40,6 +40,7 @@ TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[ratio
     REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
     REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector());
     REQUIRE(RationalLinearSubspace::fromGenerators({{0, 1}}).hasNonZeroNonNegativeVector());
+    REQUIRE(RationalLinearSubspace::fromGenerators({{0, -1}}).hasNonZeroNonNegativeVector());
     REQUIRE(!RationalLinearSubspace::fromGenerators({{0, 0}}).hasNonZeroNonNegativeVector());
     REQUIRE(!RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVector());
   }
