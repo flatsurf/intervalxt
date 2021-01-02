@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2020 Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
  *********************************************************************/
 
 #include "impl/rational_linear_subspace.hpp"
+
+#include "util/assert.ipp"
+
+#include "external/rx-ranges/include/rx/ranges.hpp"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <ostream>
@@ -115,57 +119,47 @@ RationalLinearSubspace RationalLinearSubspace::fromGenerators(const std::vector<
   return RationalLinearSubspace(generators, false);
 }
 
+template <RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
 bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
-  if (subspace.space_dimension() == 0) {
+  if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
+    return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>();
+
+  if (subspace.space_dimension() == 0)
     return false;
-  }
 
-  auto polyhedron = NNC_Polyhedron(subspace);
-  polyhedron.intersection_assign(nonNegative);
-  return !polyhedron.is_bounded();
-}
+  if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON) {
+    auto polyhedron = NNC_Polyhedron(subspace);
+    polyhedron.intersection_assign(nonNegative);
+    return !polyhedron.is_bounded();
+  } else if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT) {
+    const auto equations = subspace.minimized_constraints();
 
-bool RationalLinearSubspace::hasNonZeroNonNegativeVectorViaQuotient() const {
-  auto dim = subspace.space_dimension();
+    ASSERT(equations | rx::all_of([](const auto& equation) { return equation.is_equality(); }), "equations defining the subspace must be equalities");
+    ASSERT(equations | rx::all_of([](const auto& equation) { return equation.inhomogeneous_term() == 0; }), "equations defining the subspace must be homogeneous");
+    ASSERT(subspace.affine_dimension() == subspace.space_dimension() - std::distance(std::begin(equations), std::end(equations)), "the number of equations must match the codimension");
 
-  if (dim == 0) {
-    return false;
-  }
-
-  auto equations = subspace.minimized_constraints();
-  int num_equations = 0;
-  for (auto equation : equations) {
-    assert(equation.is_equality() && equation.inhomogeneous_term() == 0);
-    num_equations++;
-  }
-  assert(subspace.affine_dimension() == dim - num_equations);
-  if (num_equations == 0) {
-    return true;
-  }
-
-  auto generators = Generator_System();
-  generators.insert(point((Linear_Expression) 0));
-  for (int i = 0; i < dim; i++) {
-    Linear_Expression linear = (Linear_Expression) 0;
-    int j = 0;
-    for (auto equation : equations) {
-      linear = linear + equation.coefficient(Variable(i)) * Variable(j);
-      j++;
-    }
-    if (linear.is_zero()) { // basis vector inside the space
+    if (equations.empty())
       return true;
-    }
-    generators.insert(ray(linear));
-  }
 
-  auto polyhedron = C_Polyhedron(generators);
-  for (auto g : polyhedron.minimized_generators()) {
-    if (g.is_line()) {
-      return true;
-    }
-  }
+    auto generators = Generator_System();
+    generators.insert(point(static_cast<Linear_Expression>(0)));
+    for (int i = 0; i < subspace.space_dimension(); i++) {
+      Linear_Expression linear = static_cast<Linear_Expression>(0);
+      int j = 0;
+      for (auto equation : equations)
+        linear += equation.coefficient(Variable(i)) * Variable(j++);
 
-  return false;
+      // basis vector inside the space
+      if (linear.is_zero())
+        return true;
+
+      generators.insert(ray(linear));
+    }
+
+    return C_Polyhedron(generators).minimized_generators() | rx::any_of([](const auto& g) { return g.is_line(); });
+  } else {
+    UNREACHABLE("unknown implementation for hasNonZeroNonNegativeVector selected");
+  }
 }
 
 bool RationalLinearSubspace::hasPositiveVector() const {
@@ -193,5 +187,11 @@ void RationalLinearSubspace::elementaryTransformation(int i, int j, mpq_class c)
 std::ostream& operator<<(std::ostream& os, const RationalLinearSubspace& self) {
   return Parma_Polyhedra_Library::IO_Operators::operator<<(os, self.subspace);
 }
+
+// Explicit instantiations so that implementations are generated for the linker.
+
+template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>() const;
+template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>() const;
+template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>() const;
 
 }  // namespace intervalxt

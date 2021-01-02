@@ -53,10 +53,15 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
   // Act with the permutation: x_i ↔ x_j
   void swap(int i, int j);
 
+  enum class HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION {
+    DEFAULT = 0,
+    PPL_POLYHEDRON = 1,
+    PPL_QUOTIENT = 2,
+  };
+
+  template <HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION algorithm = HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>
   bool hasNonZeroNonNegativeVector() const;
   bool hasPositiveVector() const;
-
-  bool hasNonZeroNonNegativeVectorViaQuotient() const;
 
   bool operator==(const RationalLinearSubspace&) const;
 
