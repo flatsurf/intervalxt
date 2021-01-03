@@ -122,7 +122,7 @@ RationalLinearSubspace RationalLinearSubspace::fromGenerators(const std::vector<
 template <RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
 bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
-    return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>();
+    return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>();
 
   if (subspace.space_dimension() == 0)
     return false;
