@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -85,5 +85,11 @@ void throw_for_assert(const E& e) { throw e; }
 #define ASSERT(CONDITION, MESSAGE) ASSERT_(CONDITION, std::logic_error, MESSAGE)
 
 #endif
+
+#define UNREACHABLE(MESSAGE)                  \
+  {                                           \
+    ASSERT_(false, std::logic_error, MESSAGE) \
+    __builtin_unreachable();                  \
+  }
 
 #endif

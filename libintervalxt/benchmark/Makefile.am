@@ -1,6 +1,6 @@
 noinst_PROGRAMS = benchmark
 
-benchmark_SOURCES = main.cc induction.benchmark.cc
+benchmark_SOURCES = main.cc induction.benchmark.cc rational_linear_subspace.benchmark.cc
 
 AM_CPPFLAGS = -I $(srcdir)/.. -I $(builddir)/..
 AM_LDFLAGS = $(builddir)/../src/libintervalxt.la

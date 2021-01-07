@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2020 Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,23 +27,28 @@ using std::vector;
 
 namespace intervalxt::test {
 
-TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]") {
+TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]", (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>)) {
+  constexpr auto IMPLEMENTATION = TestType::value;
+
   SECTION("hasNonZeroNonNegativeVector()") {
-    REQUIRE(!RationalLinearSubspace().hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector());
-    REQUIRE(RationalLinearSubspace::fromEquations({{1, 0}}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 0}, {0, 1}}).hasNonZeroNonNegativeVector());
-    REQUIRE(RationalLinearSubspace::fromEquations({{1, -1}}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 1}}).hasNonZeroNonNegativeVector());
+    REQUIRE(!RationalLinearSubspace().hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(RationalLinearSubspace::fromEquations({{1, 0}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 0}, {0, 1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(RationalLinearSubspace::fromEquations({{1, -1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromEquations({{1, 1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
 
-    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector());
-    REQUIRE(RationalLinearSubspace::fromGenerators({{0, 1}}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromGenerators({{0, 0}}).hasNonZeroNonNegativeVector());
-    REQUIRE(!RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVector());
+    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromGenerators(vector<vector<mpq_class>>{{}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(RationalLinearSubspace::fromGenerators({{0, 1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(RationalLinearSubspace::fromGenerators({{0, -1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromGenerators({{0, 0}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalLinearSubspace::fromGenerators({{1, -1}}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
   }
+}
 
+TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]") {
   SECTION("hasPositiveVector") {
     REQUIRE(!RationalLinearSubspace().hasPositiveVector());
     REQUIRE(!RationalLinearSubspace::fromEquations(vector<vector<mpq_class>>{}).hasPositiveVector());
