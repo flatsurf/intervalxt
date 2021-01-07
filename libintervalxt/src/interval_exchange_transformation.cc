@@ -26,6 +26,8 @@
 #include <algorithm>
 #include <list>
 #include <unordered_set>
+#include <iostream>
+#include <chrono>
 
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
@@ -139,7 +141,14 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
     for (size_t d = 0; d < t.size(); d++)
       relations[d].push_back(t[d]);
 
-  return not RationalLinearSubspace::fromEquations(relations).hasNonZeroNonNegativeVector();
+  const auto space = RationalLinearSubspace::fromEquations(relations);
+  auto start = std::chrono::high_resolution_clock::now();
+  bool ret = not space.hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>();
+  std::cout << static_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
+  start = std::chrono::high_resolution_clock::now();
+  ret = not space.hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>();
+  std::cout << static_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
+  return ret;
 }
 
 InductionStep IntervalExchangeTransformation::induce(int limit) {

@@ -37,6 +37,8 @@ using Parma_Polyhedra_Library::Linear_Expression;
 using Parma_Polyhedra_Library::NNC_Polyhedron;
 using Parma_Polyhedra_Library::C_Polyhedron;
 using Parma_Polyhedra_Library::Variable;
+using Parma_Polyhedra_Library::MIP_Problem;
+using Parma_Polyhedra_Library::Variables_Set;
 
 // Note: there are global point and ray in the ppl header.
 using Parma_Polyhedra_Library::point;
@@ -87,7 +89,6 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
       constraints.insert(linear == 0);
     }
     subspace = NNC_Polyhedron(constraints);
-
   } else {
     // Initialize from generators
     generators.insert(point());
@@ -98,17 +99,24 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
     subspace = NNC_Polyhedron(generators);
   }
 
-  constraints.clear();
-  for (size_t i = 0; i < subspace.space_dimension(); i++) {
-    constraints.insert(Variable(i) >= 0);
-  }
-  nonNegative = NNC_Polyhedron(constraints);
+}
 
-  constraints.clear();
-  for (size_t i = 0; i < subspace.space_dimension(); i++) {
+NNC_Polyhedron RationalLinearSubspace::positive() const {
+  Constraint_System constraints;
+
+  for (size_t i = 0; i < subspace.space_dimension(); i++)
     constraints.insert(Variable(i) > 0);
-  }
-  positive = NNC_Polyhedron(constraints);
+
+  return NNC_Polyhedron(constraints);
+}
+
+NNC_Polyhedron RationalLinearSubspace::nonNegative() const {
+  Constraint_System constraints;
+
+  for (size_t i = 0; i < subspace.space_dimension(); i++)
+    constraints.insert(Variable(i) >= 0);
+
+  return NNC_Polyhedron(constraints);
 }
 
 RationalLinearSubspace RationalLinearSubspace::fromEquations(const std::vector<std::vector<mpq_class>>& equations) {
@@ -122,14 +130,14 @@ RationalLinearSubspace RationalLinearSubspace::fromGenerators(const std::vector<
 template <RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
 bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
-    return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>();
+    return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>();
 
   if (subspace.space_dimension() == 0)
     return false;
 
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON) {
     auto polyhedron = NNC_Polyhedron(subspace);
-    polyhedron.intersection_assign(nonNegative);
+    polyhedron.intersection_assign(nonNegative());
     return !polyhedron.is_bounded();
   } else if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT) {
     const auto equations = subspace.minimized_constraints();
@@ -157,6 +165,27 @@ bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
     }
 
     return C_Polyhedron(generators).minimized_generators() | rx::any_of([](const auto& g) { return g.is_line(); });
+  } else if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP) {
+    Parma_Polyhedra_Library::MIP_Problem problem;
+
+    problem.add_space_dimensions_and_embed(subspace.space_dimension());
+
+    auto ivar = Variables_Set();
+    auto objective = Linear_Expression(0);
+    for (size_t i = 0; i < subspace.space_dimension(); i++) {
+      ivar.insert(Variable(i));
+      objective = objective + Linear_Expression(Variable(i));
+      problem.add_constraint(Variable(i) >= 0);
+    }
+    problem.add_to_integer_space_dimensions(ivar);
+    problem.set_objective_function(objective);
+
+    for (auto constraint : subspace.constraints())
+      problem.add_constraint(constraint);
+
+    problem.set_optimization_mode(Parma_Polyhedra_Library::Optimization_Mode::MAXIMIZATION);
+
+    return problem.solve() == Parma_Polyhedra_Library::UNBOUNDED_MIP_PROBLEM;
   } else {
     UNREACHABLE("unknown implementation for hasNonZeroNonNegativeVector selected");
   }
@@ -168,7 +197,7 @@ bool RationalLinearSubspace::hasPositiveVector() const {
   }
 
   auto polyhedron = NNC_Polyhedron(subspace);
-  polyhedron.intersection_assign(positive);
+  polyhedron.intersection_assign(positive());
   return !polyhedron.is_empty();
 }
 
@@ -193,5 +222,6 @@ std::ostream& operator<<(std::ostream& os, const RationalLinearSubspace& self) {
 template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>() const;
 template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>() const;
 template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>() const;
+template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>() const;
 
 }  // namespace intervalxt

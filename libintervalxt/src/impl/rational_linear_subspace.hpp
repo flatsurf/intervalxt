@@ -57,6 +57,7 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
     DEFAULT = 0,
     PPL_POLYHEDRON = 1,
     PPL_QUOTIENT = 2,
+    PPL_MIP = 3,
   };
 
   template <HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION algorithm = HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>
@@ -69,8 +70,9 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
 
  private:
   Parma_Polyhedra_Library::NNC_Polyhedron subspace;
-  Parma_Polyhedra_Library::NNC_Polyhedron positive;
-  Parma_Polyhedra_Library::NNC_Polyhedron nonNegative;
+
+  Parma_Polyhedra_Library::NNC_Polyhedron positive() const;
+  Parma_Polyhedra_Library::NNC_Polyhedron nonNegative() const;
 };
 
 }  // namespace intervalxt

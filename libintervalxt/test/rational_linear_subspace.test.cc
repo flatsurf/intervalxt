@@ -27,7 +27,7 @@ using std::vector;
 
 namespace intervalxt::test {
 
-TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]", (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>)) {
+TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]", (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>)) {
   constexpr auto IMPLEMENTATION = TestType::value;
 
   SECTION("hasNonZeroNonNegativeVector()") {
