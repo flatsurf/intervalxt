@@ -20,30 +20,29 @@
 
 #include "impl/rational_linear_subspace.hpp"
 
-#include "util/assert.ipp"
-
-#include "external/rx-ranges/include/rx/ranges.hpp"
-
 #include <boost/numeric/conversion/cast.hpp>
 #include <ostream>
 #include <ppl.hh>
 #include <vector>
 
+#include "external/rx-ranges/include/rx/ranges.hpp"
+#include "util/assert.ipp"
+
 using boost::numeric_cast;
 
+using Parma_Polyhedra_Library::C_Polyhedron;
 using Parma_Polyhedra_Library::Constraint_System;
 using Parma_Polyhedra_Library::Generator_System;
 using Parma_Polyhedra_Library::Linear_Expression;
-using Parma_Polyhedra_Library::NNC_Polyhedron;
-using Parma_Polyhedra_Library::C_Polyhedron;
-using Parma_Polyhedra_Library::Variable;
 using Parma_Polyhedra_Library::MIP_Problem;
+using Parma_Polyhedra_Library::NNC_Polyhedron;
+using Parma_Polyhedra_Library::Variable;
 using Parma_Polyhedra_Library::Variables_Set;
 
 // Note: there are global point and ray in the ppl header.
+using Parma_Polyhedra_Library::line;
 using Parma_Polyhedra_Library::point;
 using Parma_Polyhedra_Library::ray;
-using Parma_Polyhedra_Library::line;
 
 namespace {
 struct SwapDimensions {
@@ -98,7 +97,6 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
     }
     subspace = NNC_Polyhedron(generators);
   }
-
 }
 
 NNC_Polyhedron RationalLinearSubspace::positive() const {

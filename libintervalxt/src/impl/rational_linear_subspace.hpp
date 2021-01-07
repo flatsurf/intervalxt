@@ -77,5 +77,4 @@ class RationalLinearSubspace : boost::equality_comparable<RationalLinearSubspace
 
 }  // namespace intervalxt
 
-
 #endif

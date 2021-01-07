@@ -24,10 +24,10 @@
 #include <gmpxx.h>
 
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 #include <list>
 #include <unordered_set>
-#include <iostream>
-#include <chrono>
 
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
