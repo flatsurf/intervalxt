@@ -34,6 +34,9 @@ jobs:
           export CXXFLAGS="$CXXFLAGS -UNDEBUG"
           make
           make V=1 ${{ matrix.target }}
+      - name: check that gitignore is complete
+        run: |
+          [[ -n `git status --porcelain | grep '??'` ]]
       - name: show logs
         run: grep "" /dev/null `find -name '*.log'` || true
         if: ${{ always() }}
