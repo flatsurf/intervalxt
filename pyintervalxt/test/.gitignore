@@ -3,3 +3,4 @@
 
 # generated files
 /test-env.sh
+/python-doctest.sh

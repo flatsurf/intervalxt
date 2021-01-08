@@ -1,50 +1,5 @@
-### C++ ###
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-/label
-/induction_benchmark
-/interval_exchange_transformation
+# Scripts for the test binaries
 /rational_linear_subspace
-/cereal
-/dynamical_decomposition
+/label
+/component
 
-### Autotools Generated Files
-/.deps
-/.libs
-/.dirstamp
-/stamp-h1
-
-### googletest Generated Files
-/*.log
-/*.trs
-/*.json

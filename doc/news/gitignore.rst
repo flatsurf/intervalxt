@@ -1,0 +1,3 @@
+**Fixed:**
+
+* updated .gitignore files

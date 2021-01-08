@@ -17,6 +17,7 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include <iostream>
 #include <benchmark/benchmark.h>
 
 #include "../intervalxt/dynamical_decomposition.hpp"
