@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-        with: { submodules: recursive }
+        with: { submodules: recursive, fetch-depth: 0 }
       - uses: conda-incubator/setup-miniconda@v2
         with: { mamba-version: "*", channels: "flatsurf,conda-forge", channel-priority: true }
       - name: install dependencies
@@ -17,12 +17,22 @@ jobs:
           mamba env update --quiet -n test -f libintervalxt/environment.yml
           mamba env update --quiet -n test -f pyintervalxt/environment.yml
           conda list
-      - shell: bash -l {0}
+      - name: make check
+        shell: bash -l {0}
         run: |
           ./bootstrap
           ./configure --prefix="$PREFIX" CXXFLAGS="$CXXFLAGS --coverage -O0 -UNDEBUG" --without-benchmark
           make check
-      - uses: codecov/codecov-action@v1
+      - name: create & post coverage report
+        shell: bash -l {0}
+        run: |
+          pushd libintervalxt/test
+          find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
+          popd
+          pushd libintervalxt/src
+          find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
+          popd
+          curl -s https://codecov.io/bash | bash -s - -X gcov -R `pwd` .
 
 env:
   MAKEFLAGS: -j2
