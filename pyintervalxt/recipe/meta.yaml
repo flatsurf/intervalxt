@@ -32,6 +32,7 @@ requirements:
     - boost-cpp
     - python
     - cppyy
+    - cppyythonizations
 
 test:
   imports:
