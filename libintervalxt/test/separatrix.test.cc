@@ -17,13 +17,12 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include "../intervalxt/separatrix.hpp"
-#include "../intervalxt/sample/lengths.hpp"
+#include "../intervalxt/dynamical_decomposition.hpp"
+#include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/sample/integer_coefficients.hpp"
 #include "../intervalxt/sample/integer_floor_division.hpp"
-#include "../intervalxt/interval_exchange_transformation.hpp"
-#include "../intervalxt/dynamical_decomposition.hpp"
-
+#include "../intervalxt/sample/lengths.hpp"
+#include "../intervalxt/separatrix.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 namespace intervalxt::test {
@@ -55,33 +54,33 @@ TEST_CASE("Separatrices of Injected Connections in Decompositions") {
   auto&& [lengths, a, b, c, d] = IntLengths::make(1, 1, 1, 1);
 
   Component components[] = {
-    // We start from two unrelated IETs which have a single component each:
-    //
-    // a b
-    // / ╲
-    // ╲ /
-    // b a
-    //
-    // c d
-    // / ╲
-    // ╲ /
-    // d c
-    DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a})).components()[0],
-    DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {c, d}, {d, c})).components()[0],
+      // We start from two unrelated IETs which have a single component each:
+      //
+      // a b
+      // / ╲
+      // ╲ /
+      // b a
+      //
+      // c d
+      // / ╲
+      // ╲ /
+      // d c
+      DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a})).components()[0],
+      DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {c, d}, {d, c})).components()[0],
   };
 
   // Now we inject a vertical connection in each that connects these components:
   //
   // a b   c d
   // / ╲   / ╲
-  //    r l  
+  //    r l
   // ╲ /   ╲ /
   // b a   d c
 
-  const auto [_, r] = components[0].inject(components[0].bottomContour()[1], {}, { std::make_pair(a, b) });
+  const auto [_, r] = components[0].inject(components[0].bottomContour()[1], {}, {std::make_pair(a, b)});
   CAPTURE(r);
   CAPTURE(components[0]);
-  const auto [l, __] = components[1].inject(components[1].bottomContour()[0], { std::make_pair(b, a) }, {});
+  const auto [l, __] = components[1].inject(components[1].bottomContour()[0], {std::make_pair(b, a)}, {});
   CAPTURE(l);
   CAPTURE(components[1]);
 
@@ -89,4 +88,4 @@ TEST_CASE("Separatrices of Injected Connections in Decompositions") {
   REQUIRE(begin(r)->target() == begin(l)->source());
 }
 
-}
+}  // namespace intervalxt::test

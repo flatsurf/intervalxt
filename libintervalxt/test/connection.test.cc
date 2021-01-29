@@ -18,12 +18,11 @@
  *********************************************************************/
 
 #include "../intervalxt/connection.hpp"
-#include "../intervalxt/sample/lengths.hpp"
+#include "../intervalxt/dynamical_decomposition.hpp"
+#include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/sample/integer_coefficients.hpp"
 #include "../intervalxt/sample/integer_floor_division.hpp"
-#include "../intervalxt/interval_exchange_transformation.hpp"
-#include "../intervalxt/dynamical_decomposition.hpp"
-
+#include "../intervalxt/sample/lengths.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 namespace intervalxt::test {
@@ -45,19 +44,19 @@ TEST_CASE("Injected Connections in Decompositions") {
   auto&& [lengths, a, b, c, d, e] = IntLengths::make(1, 1, 1, 1, 0);
 
   Component components[] = {
-    // We start from two unrelated IETs which have a single component each:
-    //
-    // a b
-    // / ╲
-    // ╲ /
-    // b a
-    //
-    // c d
-    // / ╲
-    // ╲ /
-    // d c
-    DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a})).components()[0],
-    DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {c, d}, {d, c})).components()[0],
+      // We start from two unrelated IETs which have a single component each:
+      //
+      // a b
+      // / ╲
+      // ╲ /
+      // b a
+      //
+      // c d
+      // / ╲
+      // ╲ /
+      // d c
+      DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b}, {b, a})).components()[0],
+      DynamicalDecomposition(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {c, d}, {d, c})).components()[0],
   };
 
   // Now we inject a vertical connection in each that connects these components:
@@ -69,15 +68,14 @@ TEST_CASE("Injected Connections in Decompositions") {
   // ╲ /    l/
   // b a   d c
 
-  const auto [_, r] = components[0].inject(components[0].topContour()[0], {}, { std::make_pair(e, a) });
+  const auto [_, r] = components[0].inject(components[0].topContour()[0], {}, {std::make_pair(e, a)});
   CAPTURE(r);
   CAPTURE(components[0]);
-  const auto [l, __] = components[1].inject(components[1].bottomContour()[1], { std::make_pair(a, e) }, {});
+  const auto [l, __] = components[1].inject(components[1].bottomContour()[1], {std::make_pair(a, e)}, {});
   CAPTURE(l);
   CAPTURE(components[1]);
 
   REQUIRE(*begin(r) == -*begin(l));
 }
 
-}
-
+}  // namespace intervalxt::test
