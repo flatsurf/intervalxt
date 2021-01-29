@@ -97,6 +97,7 @@ cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self,
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_label(labels(), self.render))), "intervalxt::cppyy")
+cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("render")(lambda self, render, label: str(render(label)))), "intervalxt::cppyy")
 
 
 # Set EXTRA_CLING_ARGS="-I /usr/include" or wherever intervalxt/cppyy.hpp can
