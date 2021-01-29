@@ -4,6 +4,20 @@ intervalxt Change Log
 
 .. current developments
 
+v3.0.4
+====================
+
+**Fixed:**
+
+* Require `cppyythonizations` for `pyintervalxt` conda package.
+* updated .gitignore files
+
+**Performance:**
+
+* speed up the Boshernitzan criterion by using a Mixed Integer Program internally instead of Polyhedra functionality in PPL.
+
+
+
 v3.0.3
 ====================
 
