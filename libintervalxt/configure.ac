@@ -70,7 +70,7 @@ AC_ARG_WITH([eantic], AS_HELP_STRING([--without-eantic], [Do not build C++ tests
 AS_IF([test "x$with_eantic" != "xno"],
       [
        with_eantic=yes
-       m4_define([AX_WITHOUT_EANTIC], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests without it; run --without-eantic to disable building those tests.])])
+       m4_define([AX_WITHOUT_EANTIC], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests and benchmarks without it; run --without-eantic to disable building those tests.])])
 
        AC_CHECK_HEADERS([e-antic/renfxx.h], , [AX_WITHOUT_EANTIC([E-ANTIC headers not found])])
        AC_CHECK_LIB([eantic], [renf_elem_clear], [ ], [AX_WITHOUT_EANTIC([E-ANTIC library not found])], [-lmpfr])
@@ -90,7 +90,7 @@ AC_ARG_WITH([exactreal], AS_HELP_STRING([--without-exactreal], [Do not build C++
 AS_IF([test "x$with_exactreal" != "xno"],
       [
        with_exactreal=yes
-       m4_define([AX_WITHOUT_EXACTREAL], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests without it; run --without-exactreal to disable building those tests.])])
+       m4_define([AX_WITHOUT_EXACTREAL], [AC_MSG_ERROR([$1. This is not required to build libintervalxt but you can not run all tests and benchmarks without it; run --without-exactreal to disable building those tests.])])
 
        AC_CHECK_HEADERS([exact-real/element.hpp], , [AX_WITHOUT_EXACTREAL([exact-real headers not found])])
        AX_CXX_CHECK_LIB([exactreal], [exactreal::Arb], [ ], [AX_WITHOUT_EXACTREAL([exact-real library not found])])

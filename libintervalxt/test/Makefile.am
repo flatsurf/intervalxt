@@ -1,4 +1,4 @@
-check_PROGRAMS = rational_linear_subspace label component
+check_PROGRAMS = rational_linear_subspace label component separatrix connection
 
 if HAVE_EANTIC
 if HAVE_EXACTREAL
@@ -15,6 +15,8 @@ dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 cereal_SOURCES = cereal.test.cc main.cc
 coefficients_SOURCES = coefficients.test.cc main.cc
 component_SOURCES = component.test.cc main.cc
+separatrix_SOURCES = separatrix.test.cc main.cc
+connection_SOURCES = connection.test.cc main.cc
 
 # We vendor the header-only library Cereal (serialization with C++ to be able
 # to run the tests even when cereal is not installed.

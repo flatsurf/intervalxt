@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -41,6 +41,12 @@ class Separatrix : boost::equality_comparable<Separatrix> {
   // Whether the separatrix goes from top to bottom.
   bool antiparallel() const;
 
+  // Return whether two separatrices are considered equal.
+  // Note that we consider two separatrices as equal when they have the same
+  // orientation and are attached to the same label, i.e., even if they come
+  // from different dynamical decompositions. We do this to make
+  // `Connection::source` and `Connection::target` consistent with
+  // `Connection::operator==`, see the comment there.
   bool operator==(const Separatrix&) const;
 
   friend std::ostream& operator<<(std::ostream&, const Separatrix&);
