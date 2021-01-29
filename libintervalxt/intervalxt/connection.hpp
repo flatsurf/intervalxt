@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +37,12 @@ class Connection : boost::equality_comparable<Connection> {
  public:
   Connection operator-() const;
 
+  // Return whether two connections are considered equal.
+  // Note that we consider two connections as equal when they have the same
+  // orientation and are attached to the same labels, i.e., even if they come
+  // from different dynamical decompositions. We do this to make
+  // DynamicalDecomposition::inject() work which can create pairs of
+  // connections on different decompositions.
   bool operator==(const Connection&) const;
 
   // Whether the connection is going from bottom to top.

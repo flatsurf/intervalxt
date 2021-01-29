@@ -58,8 +58,10 @@ class Component : boost::equality_comparable<Component> {
   std::vector<Side> perimeter() const;
 
   // The portion of the perimeter that is on the left end (from top to bottom.)
+  // Note that each entry is a Connection.
   std::vector<Side> left() const;
   // The portion of the perimeter that is on the right end (from bottom to top.)
+  // Note that each entry is a Connection.
   std::vector<Side> right() const;
   // The portion of the perimeter that is on the bottom (from left to right.)
   std::vector<Side> bottom() const;
@@ -85,7 +87,7 @@ class Component : boost::equality_comparable<Component> {
 
   // Insert (artificial) connections left and right of the given half edge. The
   // labels specify the source and target separatrices of the new connections;
-  // the entries of left and right are proceding towards the interior, the left
+  // the entries of left and right are proceeding towards the interior, the left
   // ones are oriented top to bottom whereas the right ones are oriented bottom
   // to top.
   std::pair<std::list<Connection>, std::list<Connection>> inject(const HalfEdge&, const std::vector<std::pair<Label, Label>>& left, const std::vector<std::pair<Label, Label>>& right);

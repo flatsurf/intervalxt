@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -38,9 +38,6 @@ bool Separatrix::antiparallel() const {
 }
 
 bool Separatrix::operator==(const Separatrix& rhs) const {
-  // Note that we identify separatrices on different decompositions. This seems
-  // wrong. However, it is currently, necessary because Lenghts are not shared
-  // in libflatsurf between IETs, see #72.
   return self->separatrix.label == rhs.self->separatrix.label && self->separatrix.orientation == rhs.self->separatrix.orientation;
 }
 
