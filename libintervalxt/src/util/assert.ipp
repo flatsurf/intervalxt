@@ -67,16 +67,16 @@ bool noassert() {
 }
 } // namespace intervalxt
 
-#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                \
-  while (not(CONDITION)) {                                                    \
-    std::stringstream user_message, assertion_message;                        \
-    user_message << MESSAGE;                                                  \
-    assertion_message << (#CONDITION " does not hold");                       \
-    if (user_message.str().size())                                            \
-      assertion_message << ": " << user_message.str();                        \
-    else                                                                      \
-      assertion_message << " ";                                               \
-    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);    \
+#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                  \
+  while (BOOST_UNLIKELY(not(CONDITION))) {                                      \
+    std::stringstream user_message, assertion_message;                          \
+    user_message << MESSAGE;                                                    \
+    assertion_message << (#CONDITION " does not hold");                         \
+    if (user_message.str().size())                                              \
+      assertion_message << ": " << user_message.str();                          \
+    else                                                                        \
+      assertion_message << " ";                                                 \
+    assertion_message << " in " __FILE__ ":" BOOST_PP_STRINGIZE(__LINE__);      \
     ::intervalxt::throw_for_assert(EXCEPTION(assertion_message.str().c_str())); \
   }
 
