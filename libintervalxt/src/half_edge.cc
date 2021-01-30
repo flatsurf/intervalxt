@@ -45,7 +45,7 @@ bool HalfEdge::bottom() const {
 
 bool HalfEdge::operator==(const HalfEdge& rhs) const {
   if (self->label == rhs.self->label) {
-    ASSERT(self->decomposition != rhs.self->decomposition || self->component == rhs.self->component, "half edge is not in the component for which it was created anymore");
+    LIBINTERVALXT_ASSERT(self->decomposition != rhs.self->decomposition || self->component == rhs.self->component, "half edge is not in the component for which it was created anymore");
     return self->component == rhs.self->component && self->contour == rhs.self->contour;
   }
   return false;
@@ -100,7 +100,7 @@ std::optional<HalfEdge> HalfEdge::previous() const {
 
 Component HalfEdge::component() const {
   Component component = ImplementationOf<Component>::make(self->decomposition, self->component);
-  ASSERT([&]() {
+  LIBINTERVALXT_ASSERT([&]() {
     if (top()) {
       auto top = component.topContour();
       return std::find(begin(top), end(top), *this) != end(top);

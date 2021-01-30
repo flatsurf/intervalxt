@@ -67,7 +67,7 @@ bool noassert() {
 }  // namespace
 }  // namespace intervalxt
 
-#define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                  \
+#define LIBINTERVALXT_ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                  \
   while (BOOST_UNLIKELY(static_cast<bool>(not(CONDITION)))) {                   \
     std::stringstream user_message, assertion_message;                          \
     user_message << MESSAGE;                                                    \
@@ -82,27 +82,27 @@ bool noassert() {
 
 // Run a (cheap) check that a (user provided) argument is valid.
 // If the check should be disabled when NDEBUG is defined, e.g., because it
-// occurs in a hotspot, use ASSERT_ARGUMENT instead.
-#define CHECK_ARGUMENT_(CONDITION) ASSERT_(nocheck() || (CONDITION), std::invalid_argument, "")
-#define CHECK_ARGUMENT(CONDITION, MESSAGE) ASSERT_(nocheck() || (CONDITION), std::invalid_argument, MESSAGE)
+// occurs in a hotspot, use LIBFLATSURF_ASSERT_ARGUMENT instead.
+#define LIBINTERVALXT_CHECK_ARGUMENT_(CONDITION) LIBINTERVALXT_ASSERT_(::intervalxt::nocheck() || (CONDITION), std::invalid_argument, "")
+#define LIBINTERVALXT_CHECK_ARGUMENT(CONDITION, MESSAGE) LIBINTERVALXT_ASSERT_(::intervalxt::nocheck() || (CONDITION), std::invalid_argument, MESSAGE)
 
 #ifdef NDEBUG
 
-#define ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(true || (CONDITION))
-#define ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(true || (CONDITION), MESSAGE)
-#define ASSERT(CONDITION, MESSAGE) ASSERT_(true || (CONDITION), std::logic_error, MESSAGE)
+#define LIBINTERVALXT_ASSERT_CONDITION(CONDITION) (true || ::intervalxt::noassert() || (CONDITION))
 
 #else
 
-#define ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(noassert() || (CONDITION))
-#define ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(noassert() || (CONDITION), MESSAGE)
-#define ASSERT(CONDITION, MESSAGE) ASSERT_(noassert() || (CONDITION), std::logic_error, MESSAGE)
+#define LIBINTERVALXT_ASSERT_CONDITION(CONDITION) (::intervalxt::noassert() || (CONDITION))
 
 #endif
 
-#define UNREACHABLE(MESSAGE)                  \
+#define LIBINTERVALXT_ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(LIBINTERVALXT_ASSERT_CONDITION(CONDITION))
+#define LIBINTERVALXT_ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(LIBINTERVALXT_ASSERT_CONDITION(CONDITION), MESSAGE)
+#define LIBINTERVALXT_ASSERT(CONDITION, MESSAGE) LIBINTERVALXT_ASSERT_(LIBINTERVALXT_ASSERT_CONDITION(CONDITION), std::logic_error, MESSAGE)
+
+#define LIBINTERVALXT_UNREACHABLE(MESSAGE)    \
   {                                           \
-    ASSERT_(false, std::logic_error, MESSAGE) \
+    LIBINTERVALXT_ASSERT_(false, std::logic_error, MESSAGE) \
     __builtin_unreachable();                  \
   }
 
