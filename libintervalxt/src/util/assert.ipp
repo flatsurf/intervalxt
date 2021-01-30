@@ -83,8 +83,8 @@ bool noassert() {
 // Run a (cheap) check that a (user provided) argument is valid.
 // If the check should be disabled when NDEBUG is defined, e.g., because it
 // occurs in a hotspot, use ASSERT_ARGUMENT instead.
-#define CHECK_ARGUMENT_(CONDITION) ASSERT_(nocheck() || (CONDITION), std::invalid_argument, "")
-#define CHECK_ARGUMENT(CONDITION, MESSAGE) ASSERT_(nocheck() || (CONDITION), std::invalid_argument, MESSAGE)
+#define CHECK_ARGUMENT_(CONDITION) ASSERT_(::intervalxt::nocheck() || (CONDITION), std::invalid_argument, "")
+#define CHECK_ARGUMENT(CONDITION, MESSAGE) ASSERT_(::intervalxt::nocheck() || (CONDITION), std::invalid_argument, MESSAGE)
 
 #ifdef NDEBUG
 
@@ -94,9 +94,9 @@ bool noassert() {
 
 #else
 
-#define ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(noassert() || (CONDITION))
-#define ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(noassert() || (CONDITION), MESSAGE)
-#define ASSERT(CONDITION, MESSAGE) ASSERT_(noassert() || (CONDITION), std::logic_error, MESSAGE)
+#define ASSERT_ARGUMENT_(CONDITION) CHECK_ARGUMENT_(::intervalxt::noassert() || (CONDITION))
+#define ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(::intervalxt::noassert() || (CONDITION), MESSAGE)
+#define ASSERT(CONDITION, MESSAGE) ASSERT_(::intervalxt::noassert() || (CONDITION), std::logic_error, MESSAGE)
 
 #endif
 
