@@ -47,7 +47,7 @@ namespace intervalxt {
 std::vector<Side> Component::perimeter() const {
   auto perimeter = rx::chain(bottom(), right(), top(), left()) | rx::to_vector();
 
-  ASSERT(std::unordered_set<Side>(begin(perimeter), end(perimeter)).size() == perimeter.size(), "Perimeter must not contain duplicates.");
+  LIBINTERVALXT_ASSERT(std::unordered_set<Side>(begin(perimeter), end(perimeter)).size() == perimeter.size(), "Perimeter must not contain duplicates.");
 
   return perimeter;
 }
@@ -128,7 +128,7 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     if (top) std::reverse(begin(left), end(left));
 
-    ASSERT(left.empty() || topLeftConnections.empty(), "cannot inject into a component with existing connections");
+    LIBINTERVALXT_ASSERT(left.empty() || topLeftConnections.empty(), "cannot inject into a component with existing connections");
 
     for (const auto& [source, target] : left) {
       topLeftConnections.push_back({
@@ -147,7 +147,7 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 
     if (top) std::reverse(begin(right), end(right));
 
-    ASSERT(right.empty() || topRightConnections.empty(), "cannot inject into a component with existing connections");
+    LIBINTERVALXT_ASSERT(right.empty() || topRightConnections.empty(), "cannot inject into a component with existing connections");
 
     for (const auto& [source, target] : right) {
       topRightConnections.push_back({{source, Orientation::PARALLEL},
@@ -164,7 +164,7 @@ std::pair<std::list<Connection>, std::list<Connection>> Component::inject(const 
 }
 
 DecompositionStep Component::decompositionStep(int limit) {
-  ASSERT(!cylinder() || !keane(), "Component " << *this << " is already fully decomposed.");
+  LIBINTERVALXT_ASSERT(!cylinder() || !keane(), "Component " << *this << " is already fully decomposed.");
 
   auto& component = *self->component;
 
@@ -229,7 +229,7 @@ DecompositionStep Component::decompositionStep(int limit) {
     case InductionStep::Result::NON_SEPARATING_CONNECTION: {
       // We found a non-separating connection b ⚯ t.
       auto [b, t] = *step.connection;
-      ASSERT(b != t, "Mistook cylinder for a non-separating connection");
+      LIBINTERVALXT_ASSERT(b != t, "Mistook cylinder for a non-separating connection");
 
       // t is not valid anymore but we can still use cross() on it.
       auto equivalent = ImplementationOf<HalfEdge>::make(self->decomposition, self->component, t, ImplementationOf<HalfEdge>::Contour::TOP).cross();
@@ -248,7 +248,7 @@ DecompositionStep Component::decompositionStep(int limit) {
           ImplementationOf<Separatrix>::makeAtBottom(self->decomposition, b),
           ImplementationOf<Separatrix>::makeAtTop(self->decomposition, t)};
 
-      ASSERT(*begin(component.iet.top()) != t, "Label t has been eliminated already.");
+      LIBINTERVALXT_ASSERT(*begin(component.iet.top()) != t, "Label t has been eliminated already.");
 
       // Register the new connection right of b.
       self->connections(b).bottomRight.push_back(connection);
@@ -267,7 +267,7 @@ DecompositionStep Component::decompositionStep(int limit) {
       self->connections(b).bottomLeft.splice(end(self->connections(b).bottomLeft), self->connections(t).bottomLeft);
       self->connections(b).bottomRight.splice(end(self->connections(b).bottomRight), self->connections(t).bottomRight);
 
-      ASSERT(not left().empty(), "we just added a left boundary so it cannot be empty");
+      LIBINTERVALXT_ASSERT(not left().empty(), "we just added a left boundary so it cannot be empty");
 
       return {
           DecompositionStep::Result::NON_SEPARATING_CONNECTION,
@@ -332,14 +332,14 @@ void ImplementationOf<Component>::registerSeparating(Component& left, Decomposit
   auto& decomposition = left.self->decomposition;
 
   const auto connection = ImplementationOf<Connection>::make(decomposition, separating);
-  ASSERT(connection.parallel(), "separating connection must by convention be from bottom to top");
-  ASSERT(left != right, "separating connection must separate distinct components");
+  LIBINTERVALXT_ASSERT(connection.parallel(), "separating connection must by convention be from bottom to top");
+  LIBINTERVALXT_ASSERT(left != right, "separating connection must separate distinct components");
 
   left.self->connections(*rbegin(left.self->component->iet.bottom())).bottomRight.push_back(separating);
   left.self->connections(*begin(right.self->component->iet.bottom())).bottomLeft.push_back({separating.target, separating.source});
 
-  ASSERT(not left.right().empty(), "we just added a right boundary so it cannot be empty");
-  ASSERT(not right.left().empty(), "we just added a left boundary so it cannot be empty");
+  LIBINTERVALXT_ASSERT(not left.right().empty(), "we just added a right boundary so it cannot be empty");
+  LIBINTERVALXT_ASSERT(not right.left().empty(), "we just added a left boundary so it cannot be empty");
 }
 
 std::optional<int> ImplementationOf<Component>::boshernitzanCost(const IntervalExchangeTransformation& iet) {
@@ -358,7 +358,7 @@ std::optional<int> ImplementationOf<Component>::boshernitzanCost(const IntervalE
 
 // It would be easier to always walk counterclockwise as that is compatible with the order in cross(), see #69.
 std::list<Side> ImplementationOf<Component>::walkClockwise(HalfEdge from, HalfEdge to) const {
-  ASSERT(from.component() == to.component(), "Cannot walk between components");
+  LIBINTERVALXT_ASSERT(from.component() == to.component(), "Cannot walk between components");
 
   const auto& component = from.component();
 
@@ -427,7 +427,7 @@ std::list<Side> ImplementationOf<Component>::walkClockwise(HalfEdge from, HalfEd
 std::optional<HalfEdge> ImplementationOf<Component>::next(DecompositionState::Component* component, const HalfEdge& edge, const DynamicalDecomposition& decomposition) {
   auto contour = edge.top() ? component->iet.top() : component->iet.bottom();
   auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
-  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
+  LIBINTERVALXT_ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
   if (++pos == end(contour)) return {};
   HalfEdge next = ImplementationOf<HalfEdge>::make(decomposition, component, *pos, ImplementationOf<HalfEdge>::Contour::TOP);
   return edge.top() ? next : -next;
@@ -436,7 +436,7 @@ std::optional<HalfEdge> ImplementationOf<Component>::next(DecompositionState::Co
 std::optional<HalfEdge> ImplementationOf<Component>::previous(DecompositionState::Component* component, const HalfEdge& edge, const DynamicalDecomposition& decomposition) {
   auto contour = edge.top() ? component->iet.top() : component->iet.bottom();
   auto pos = std::find(begin(contour), end(contour), static_cast<Label>(edge));
-  ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
+  LIBINTERVALXT_ASSERT(pos != end(contour), "half edge " << edge << " not in component " << ImplementationOf<Component>::make(decomposition, component));
   if (pos == begin(contour)) return {};
   HalfEdge previous = ImplementationOf<HalfEdge>::make(decomposition, component, *--pos, ImplementationOf<HalfEdge>::Contour::TOP);
   return edge.top() ? previous : -previous;

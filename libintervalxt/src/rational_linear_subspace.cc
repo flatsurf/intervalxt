@@ -140,9 +140,9 @@ bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   } else if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT) {
     const auto equations = subspace.minimized_constraints();
 
-    ASSERT(equations | rx::all_of([](const auto& equation) { return equation.is_equality(); }), "equations defining the subspace must be equalities");
-    ASSERT(equations | rx::all_of([](const auto& equation) { return equation.inhomogeneous_term() == 0; }), "equations defining the subspace must be homogeneous");
-    ASSERT(subspace.affine_dimension() == subspace.space_dimension() - std::distance(std::begin(equations), std::end(equations)), "the number of equations must match the codimension");
+    LIBINTERVALXT_ASSERT(equations | rx::all_of([](const auto& equation) { return equation.is_equality(); }), "equations defining the subspace must be equalities");
+    LIBINTERVALXT_ASSERT(equations | rx::all_of([](const auto& equation) { return equation.inhomogeneous_term() == 0; }), "equations defining the subspace must be homogeneous");
+    LIBINTERVALXT_ASSERT(subspace.affine_dimension() == subspace.space_dimension() - std::distance(std::begin(equations), std::end(equations)), "the number of equations must match the codimension");
 
     if (equations.empty())
       return true;
@@ -185,7 +185,7 @@ bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
 
     return problem.solve() == Parma_Polyhedra_Library::UNBOUNDED_MIP_PROBLEM;
   } else {
-    UNREACHABLE("unknown implementation for hasNonZeroNonNegativeVector selected");
+    LIBINTERVALXT_UNREACHABLE("unknown implementation for hasNonZeroNonNegativeVector selected");
   }
 }
 

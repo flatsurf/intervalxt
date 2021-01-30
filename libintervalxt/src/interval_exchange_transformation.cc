@@ -44,7 +44,7 @@ namespace {
 
 template <typename T>
 std::vector<T> wedge(std::vector<T> v1, std::vector<T> v2) {
-  CHECK_ARGUMENT(v1.size() == v2.size(), "vectors must have same size but " << v1.size() << " != " << v2.size());
+  LIBINTERVALXT_CHECK_ARGUMENT(v1.size() == v2.size(), "vectors must have same size but " << v1.size() << " != " << v2.size());
 
   size_t d = v1.size();
   std::vector<T> res(d * (d - 1) / 2);
@@ -60,14 +60,14 @@ std::vector<T> wedge(std::vector<T> v1, std::vector<T> v2) {
 }
 
 std::vector<mpq_class>& operator+=(std::vector<mpq_class>& lhs, const std::vector<mpq_class>& rhs) {
-  ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
+  LIBINTERVALXT_ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
   for (size_t i = 0; i < lhs.size(); i++)
     lhs[i] += rhs[i];
   return lhs;
 }
 
 std::vector<mpq_class>& operator-=(std::vector<mpq_class>& lhs, const std::vector<mpq_class>& rhs) {
-  ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
+  LIBINTERVALXT_ASSERT(lhs.size() == rhs.size(), "cannot add vectors of different size");
   for (size_t i = 0; i < lhs.size(); i++)
     lhs[i] -= rhs[i];
   return lhs;
@@ -209,7 +209,7 @@ InductionStep IntervalExchangeTransformation::induce(int limit) {
     };
   }
 
-  ASSERT(!foundSaddleConnection, "Zorich Induction found a Saddle Connection in " << *this << " but induce() failed to see it.");
+  LIBINTERVALXT_ASSERT(!foundSaddleConnection, "Zorich Induction found a Saddle Connection in " << *this << " but induce() failed to see it.");
 
   if (boshernitzanNoPeriodicTrajectory()) {
     return {Result::WITHOUT_PERIODIC_TRAJECTORY_BOSHERNITZAN};
@@ -223,7 +223,7 @@ IntervalExchangeTransformation::IntervalExchangeTransformation() :
 
 IntervalExchangeTransformation::IntervalExchangeTransformation(std::shared_ptr<Lengths> lengths, const vector<Label>& top, const vector<Label>& bottom) :
   self(spimpl::make_unique_impl<ImplementationOf<IntervalExchangeTransformation>>(std::move(lengths), top, bottom)) {
-  ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
+  LIBINTERVALXT_ASSERT(top.size() != 0, "IntervalExchangeTransformation cannot be empty");
 }
 
 vector<Label> IntervalExchangeTransformation::top() const {
@@ -258,8 +258,8 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   auto topIterator = begin(self->top);
   auto bottomIterator = begin(self->bottom);
   while (true) {
-    ASSERT(topIterator != end(self->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
-    ASSERT(bottomIterator != end(self->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+    LIBINTERVALXT_ASSERT(topIterator != end(self->top), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
+    LIBINTERVALXT_ASSERT(bottomIterator != end(self->bottom), "top_ahead == 0 && bottom_ahead == 0 must hold eventually.");
 
     if (topIterator->label.id != topIterator->twin->label.id) {
       bottomAhead--;
@@ -289,7 +289,7 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
   ++bottomIterator;
 
   if (topIterator == end(self->top)) {
-    ASSERT(bottomIterator == end(self->bottom), "top & bottom do not have the same size");
+    LIBINTERVALXT_ASSERT(bottomIterator == end(self->bottom), "top & bottom do not have the same size");
     return {};
   } else {
     vector<Label> newComponentTop;
@@ -300,7 +300,7 @@ std::optional<IntervalExchangeTransformation> IntervalExchangeTransformation::re
     for (; bottomIterator != end(self->bottom); bottomIterator = self->bottom.erase(bottomIterator))
       newComponentBottom.push_back(bottomIterator->label);
 
-    ASSERT(self->top.size() == self->bottom.size(), "top and bottom must have the same length after splitting of a component");
+    LIBINTERVALXT_ASSERT(self->top.size() == self->bottom.size(), "top and bottom must have the same length after splitting of a component");
 
     self->safCache = std::nullopt;
     return IntervalExchangeTransformation(self->lengths, newComponentTop, newComponentBottom);
@@ -344,11 +344,11 @@ ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_p
   top(top | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   bottom(bottom | rx::transform([](const Label label) { return Interval(label); }) | rx::to_list()),
   lengths(std::move(lengths)) {
-  ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
+  LIBINTERVALXT_ASSERT(top.size() == bottom.size(), "top and bottom must have the same length");
 
-  ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
+  LIBINTERVALXT_ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == std::unordered_set<Label>(begin(bottom), end(bottom)).size(), "top and bottom must consist of the same labels");
 
-  ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == top.size(), "top and bottom must not contain duplicates");
+  LIBINTERVALXT_ASSERT(std::unordered_set<Label>(begin(top), end(top)).size() == top.size(), "top and bottom must not contain duplicates");
 
   for (auto t = begin(this->top); t != end(this->top); t++) {
     for (auto b = begin(this->bottom); b != end(this->bottom); b++) {
@@ -359,7 +359,7 @@ ImplementationOf<IntervalExchangeTransformation>::ImplementationOf(std::shared_p
     }
   }
 
-  ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
+  LIBINTERVALXT_ASSERT(std::all_of(top.begin(), top.end(), [&](Label label) { return static_cast<bool>(this->lengths->get(label)); }), "all lengths must be positive");
 }
 
 const std::vector<mpq_class>& ImplementationOf<IntervalExchangeTransformation>::saf() const {

@@ -90,7 +90,7 @@ void ImplementationOf<DynamicalDecomposition>::check(const DynamicalDecompositio
     for (const auto& left : {halfEdge.second.topLeft, halfEdge.second.bottomLeft}) {
       for (const auto& data : left) {
         const auto connection = ImplementationOf<Connection>::make(decomposition, data);
-        ASSERT(connection.antiparallel(), "left connection must be antiparallel, i.e., going from top to bottom");
+        LIBINTERVALXT_ASSERT(connection.antiparallel(), "left connection must be antiparallel, i.e., going from top to bottom");
         connections[connection.source()].push_back(connection);
         connections[connection.target()].push_back(connection);
       }
@@ -98,7 +98,7 @@ void ImplementationOf<DynamicalDecomposition>::check(const DynamicalDecompositio
     for (const auto& right : {halfEdge.second.topRight, halfEdge.second.bottomRight}) {
       for (const auto& data : right) {
         const auto connection = ImplementationOf<Connection>::make(decomposition, data);
-        ASSERT(connection.parallel(), "right connection must be parallel, i.e., going from bottom to top");
+        LIBINTERVALXT_ASSERT(connection.parallel(), "right connection must be parallel, i.e., going from bottom to top");
         connections[connection.source()].push_back(connection);
         connections[connection.target()].push_back(connection);
       }
@@ -106,9 +106,9 @@ void ImplementationOf<DynamicalDecomposition>::check(const DynamicalDecompositio
   }
 
   for (const auto& [separatrix, atSeparatrix] : connections) {
-    ASSERT(atSeparatrix.size() <= 2, "Only a single connection may begin at separatrix " << separatrix);
+    LIBINTERVALXT_ASSERT(atSeparatrix.size() <= 2, "Only a single connection may begin at separatrix " << separatrix);
     if (atSeparatrix.size() == 2) {
-      ASSERT(atSeparatrix[0] == -atSeparatrix[1], "Connections at separatrix " << separatrix << " do not match; found " << atSeparatrix[0] << " and " << atSeparatrix[1]);
+      LIBINTERVALXT_ASSERT(atSeparatrix[0] == -atSeparatrix[1], "Connections at separatrix " << separatrix << " do not match; found " << atSeparatrix[0] << " and " << atSeparatrix[1]);
     }
   }
 }

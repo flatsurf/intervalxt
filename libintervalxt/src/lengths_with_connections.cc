@@ -34,13 +34,13 @@ LengthsWithConnections::LengthsWithConnections(std::shared_ptr<Lengths> lengths,
   decomposition(decomposition) {}
 
 void LengthsWithConnections::push(Label label) {
-  ASSERT(std::find(begin(stack), end(stack), label) == end(stack), "label cannot be pushed more than once");
+  LIBINTERVALXT_ASSERT(std::find(begin(stack), end(stack), label) == end(stack), "label cannot be pushed more than once");
   stack.push_back(label);
   lengths->push(label);
 }
 
 void LengthsWithConnections::pop() {
-  ASSERT(not stack.empty(), "cannot pop from an empty stack of labels");
+  LIBINTERVALXT_ASSERT(not stack.empty(), "cannot pop from an empty stack of labels");
   stack.pop_back();
   lengths->pop();
 }
@@ -79,7 +79,7 @@ void LengthsWithConnections::subtract(Label minuend, Label subtrahend) {
 }
 
 Label LengthsWithConnections::subtractRepeated(Label minuend) {
-  ASSERT(not stack.empty(), "cannot subtract nothing repeatedly as no return value can be determined");
+  LIBINTERVALXT_ASSERT(not stack.empty(), "cannot subtract nothing repeatedly as no return value can be determined");
 
   Label ret = lengths->subtractRepeated(minuend);
 

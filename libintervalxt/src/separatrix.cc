@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream& os, const Separatrix& self) {
 DecompositionState::Separatrix ImplementationOf<Separatrix>::makeAtTop(const DynamicalDecomposition& decomposition, Label label) {
   DecompositionState::Separatrix separatrix = {label, DecompositionState::Separatrix::Orientation::ANTIPARALLEL};
   ImplementationOf<DynamicalDecomposition>::self(decomposition).decomposition.connections.at(label).topRight | rx::reverse() | rx::for_each([&](const auto& connection) {
-    ASSERT(make(decomposition, separatrix) == make(decomposition, connection.target), "connection separatrices do not form a continuous chain");
+    LIBINTERVALXT_ASSERT(make(decomposition, separatrix) == make(decomposition, connection.target), "connection separatrices do not form a continuous chain");
     separatrix.label = connection.source.label;
   });
 
@@ -66,7 +66,7 @@ DecompositionState::Separatrix ImplementationOf<Separatrix>::makeAtTop(const Dyn
 DecompositionState::Separatrix ImplementationOf<Separatrix>::makeAtBottom(const DynamicalDecomposition& decomposition, Label label) {
   DecompositionState::Separatrix separatrix = {label, DecompositionState::Separatrix::Orientation::PARALLEL};
   ImplementationOf<DynamicalDecomposition>::self(decomposition).decomposition.connections.at(label).bottomRight | rx::for_each([&](const auto& connection) {
-    ASSERT(make(decomposition, separatrix) == make(decomposition, connection.source), "connection separatrices do not form a continuous chain");
+    LIBINTERVALXT_ASSERT(make(decomposition, separatrix) == make(decomposition, connection.source), "connection separatrices do not form a continuous chain");
     separatrix.label = connection.target.label;
   });
 
