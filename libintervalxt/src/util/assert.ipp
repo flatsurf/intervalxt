@@ -20,8 +20,8 @@
 #ifndef LIBINTERVALXT_UTIL_ASSERT_IPP
 #define LIBINTERVALXT_UTIL_ASSERT_IPP
 
-#include <boost/preprocessor/stringize.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/preprocessor/stringize.hpp>
 #include <cstdlib>
 #include <sstream>
 
@@ -64,8 +64,8 @@ bool noassert() {
   return value;
 }
 
-}
-} // namespace intervalxt
+}  // namespace
+}  // namespace intervalxt
 
 #define ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                  \
   while (BOOST_UNLIKELY(static_cast<bool>(not(CONDITION)))) {                   \
