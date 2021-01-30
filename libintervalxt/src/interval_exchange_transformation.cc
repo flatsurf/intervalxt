@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@
 #include <gmpxx.h>
 
 #include <algorithm>
-#include <chrono>
-#include <iostream>
 #include <list>
 #include <unordered_set>
 
@@ -142,13 +140,7 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
       relations[d].push_back(t[d]);
 
   const auto space = RationalLinearSubspace::fromEquations(relations);
-  auto start = std::chrono::high_resolution_clock::now();
-  bool ret = not space.hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>();
-  std::cout << static_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
-  start = std::chrono::high_resolution_clock::now();
-  ret = not space.hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>();
-  std::cout << static_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
-  return ret;
+  return not space.hasNonZeroNonNegativeVector();
 }
 
 InductionStep IntervalExchangeTransformation::induce(int limit) {
