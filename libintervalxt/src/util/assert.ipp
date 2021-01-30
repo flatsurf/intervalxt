@@ -67,7 +67,7 @@ bool noassert() {
 }  // namespace
 }  // namespace intervalxt
 
-#define LIBINTERVALXT_ASSERT_(CONDITION, EXCEPTION, MESSAGE)                                  \
+#define LIBINTERVALXT_ASSERT_(CONDITION, EXCEPTION, MESSAGE)                    \
   while (BOOST_UNLIKELY(static_cast<bool>(not(CONDITION)))) {                   \
     std::stringstream user_message, assertion_message;                          \
     user_message << MESSAGE;                                                    \
@@ -100,10 +100,10 @@ bool noassert() {
 #define LIBINTERVALXT_ASSERT_ARGUMENT(CONDITION, MESSAGE) CHECK_ARGUMENT(LIBINTERVALXT_ASSERT_CONDITION(CONDITION), MESSAGE)
 #define LIBINTERVALXT_ASSERT(CONDITION, MESSAGE) LIBINTERVALXT_ASSERT_(LIBINTERVALXT_ASSERT_CONDITION(CONDITION), std::logic_error, MESSAGE)
 
-#define LIBINTERVALXT_UNREACHABLE(MESSAGE)    \
-  {                                           \
+#define LIBINTERVALXT_UNREACHABLE(MESSAGE)                  \
+  {                                                         \
     LIBINTERVALXT_ASSERT_(false, std::logic_error, MESSAGE) \
-    __builtin_unreachable();                  \
+    __builtin_unreachable();                                \
   }
 
 #endif
