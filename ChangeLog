@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.1.1
+====================
+
+**Fixed:**
+
+* serialization of IETs with e-antic and exactreal lengths
+
+
+
 v3.1.0
 ====================
 
