@@ -56,10 +56,21 @@ class LengthRegistrar:
     def __call__(self):
         for length, headers in self.known_lengths:
             if length not in LengthRegistrar.REGISTERED_LENGTHS:
+                if length == "intervalxt::cppyy::Lengths<std::vector<__gmp_expr<__mpz_struct[1],__mpz_struct[1]> > >":
+                    import logging
+                    logging.warning("GMP does not provide a cereal interface yet. Therefore serialization of mpz lengths is not supported yet.")
+                    continue
+
+                if length == "intervalxt::cppyy::Lengths<std::vector<__gmp_expr<__mpq_struct[1],__mpq_struct[1]> > >":
+                    import logging
+                    logging.warning("GMP does not provide a cereal interface yet. Therefore serialization of mpq lengths is not supported yet.")
+                    continue
+
                 for header in headers:
                     cppyy.include(header)
 
                 cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (%s));'%(length,))
+
             LengthRegistrar.REGISTERED_LENGTHS.add(length)
 
 
@@ -124,9 +135,9 @@ def Lengths(lengths, headers=None):
         elif type(lengths) == cppyy.gbl.std.vector["mpq_class"]:
             headers = ["intervalxt/sample/mpq_coefficients.hpp", "intervalxt/sample/mpq_floor_division.hpp"]
         elif type(lengths) == cppyy.gbl.std.vector["eantic::renf_elem_class"]:
-            headers = ["intervalxt/sample/renf_elem_coefficients.hpp", "intervalxt/sample/renf_elem_floor_division.hpp"]
-        elif type(lengths) in [cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"]]:
-            headers = ["intervalxt/sample/element_coefficients.hpp", "intervalxt/sample/element_floor_division.hpp"]
+            headers = ["intervalxt/sample/renf_elem_coefficients.hpp", "intervalxt/sample/renf_elem_floor_division.hpp", "e-antic/renfxx_cereal.h"]
+        elif type(lengths) in [cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::RationalField>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::NumberField>"]]:
+            headers = ["intervalxt/sample/element_coefficients.hpp", "intervalxt/sample/element_floor_division.hpp", "exact-real/cereal.hpp"]
         else:
             raise TypeError("unknown length type %s; you need to specify the headers that are needed to unpickle such lengths, i.e., the headers containing floor division and coefficients for that type"%(lengths))
 

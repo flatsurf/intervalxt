@@ -20,12 +20,10 @@
 
 #include <boost/type_erasure/any_cast.hpp>
 #include <cereal/archives/json.hpp>
-#include <cereal/types/polymorphic.hpp>
-#include <memory>
-#include <vector>
-
+#include <e-antic/renfxx_cereal.h>
+#include <exact-real/cereal.hpp>
+ 
 #include "../intervalxt/cereal.hpp"
-#include "../intervalxt/erased/cereal.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
 #include "../intervalxt/length.hpp"
@@ -33,15 +31,30 @@
 #include "../intervalxt/sample/cereal.hpp"
 #include "../intervalxt/sample/integer_coefficients.hpp"
 #include "../intervalxt/sample/integer_floor_division.hpp"
+// Since mpz_class and mpq_class define no standard cereal interface, serializing IETs with such coefficients is not supported.
+// #include "../intervalxt/sample/mpz_coefficients.hpp"
+// #include "../intervalxt/sample/mpz_floor_division.hpp"
+// #include "../intervalxt/sample/mpq_coefficients.hpp"
+// #include "../intervalxt/sample/mpq_floor_division.hpp"
+#include "../intervalxt/sample/renf_elem_coefficients.hpp"
+#include "../intervalxt/sample/renf_elem_floor_division.hpp"
+#include "../intervalxt/sample/element_coefficients.hpp"
+#include "../intervalxt/sample/element_floor_division.hpp"
 #include "../intervalxt/sample/lengths.hpp"
+
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<int>))
+// Since mpz_class and mpq_class define no standard cereal interface, serializing IETs with such coefficients is not supported.
+// LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<mpz_class>))
+// LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<mpq_class>))
+LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<eantic::renf_elem_class>))
+LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<exactreal::Element<exactreal::IntegerRing>>))
+LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<exactreal::Element<exactreal::RationalField>>))
+LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<exactreal::Element<exactreal::NumberField>>))
 
 using cereal::JSONInputArchive;
 using cereal::JSONOutputArchive;
-
-using IntLengths = ::intervalxt::sample::Lengths<int>;
 
 namespace intervalxt::test {
 
@@ -55,6 +68,8 @@ T test_serialization(
     archive(cereal::make_nvp("serializedTo", x));
   }
 
+  CAPTURE(s.str());
+
   T y;
   {
     JSONInputArchive archive(s);
@@ -62,7 +77,6 @@ T test_serialization(
   }
 
   CAPTURE(x);
-  CAPTURE(s.str());
   CAPTURE(y);
   REQUIRE(equality(x, y));
 
@@ -74,25 +88,31 @@ TEST_CASE("Serialization of Label", "[cereal][label]") {
   test_serialization(Label(1337));
 }
 
-TEST_CASE("Serialization of Lengths", "[cereal][lengths]") {
+TEMPLATE_TEST_CASE("Serialization of Lengths", "[cereal][lengths]", (int), (eantic::renf_elem_class), (exactreal::Element<exactreal::IntegerRing>), (exactreal::Element<exactreal::RationalField>), (exactreal::Element<exactreal::NumberField>)) {
+  using T = TestType;
+  using TLengths = ::intervalxt::sample::Lengths<T>;
+
   SECTION("Serialization of Lengths Without Type Erasure") {
-    IntLengths lengths({1, 2, 3});
+    TLengths lengths({T(1), T(2), T(3)});
     test_serialization(lengths);
   }
 
   SECTION("Serialization of Lengths With Type Erasure") {
     const auto equality = [](const Lengths& lhs, const Lengths& rhs) {
-      return boost::type_erasure::any_cast<IntLengths>(lhs) == boost::type_erasure::any_cast<IntLengths>(rhs);
+      return boost::type_erasure::any_cast<TLengths>(lhs) == boost::type_erasure::any_cast<TLengths>(rhs);
     };
 
-    IntLengths unerased({1, 2, 3});
+    TLengths unerased({T(1), T(2), T(3)});
     Lengths erased = unerased;
     test_serialization<Lengths>(erased, equality);
   }
 }
 
-TEST_CASE("Serialization of IntervalExchangeTransformation", "[cereal][interval_exchange_transformation]") {
-  auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
+TEMPLATE_TEST_CASE("Serialization of IntervalExchangeTransformation", "[cereal][interval_exchange_transformation]", (int), (eantic::renf_elem_class), (exactreal::Element<exactreal::IntegerRing>), (exactreal::Element<exactreal::RationalField>), (exactreal::Element<exactreal::NumberField>)) {
+  using T = TestType;
+  using TLengths = ::intervalxt::sample::Lengths<T>;
+
+  auto&& [lengths, a, b, c, d] = TLengths::make(T(18), T(3), T(1), T(1));
 
   test_serialization(IntervalExchangeTransformation());
   test_serialization(IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {a, b, c, d}, {d, a, b, c}));

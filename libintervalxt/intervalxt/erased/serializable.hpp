@@ -22,6 +22,7 @@
 #define LIBINTERVALXT_ERASED_SERIALIZABLE_HPP
 
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 
 #include "detail/serializable.hpp"
