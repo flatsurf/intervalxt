@@ -28,8 +28,14 @@ The lengths in the above example are limited to small (32bit) integers, if you
 need larger entries, you might want to use mpz integers::
 
     >>> from gmpxxyy import mpz
-    >>> IntervalExchangeTransformation((mpz(str(2**128)), mpz(1)), (1, 0))
-    [a: 340282366920938463463374607431768211456] [b: 1] / [b] [a]
+    >>> iet = IntervalExchangeTransformation((mpz(str(2**128)), mpz(1)), (1, 0))
+
+Note however, that such IETs cannot be serialized yet::
+
+    >>> loads(dumps(iet))
+    Traceback (most recent call last):
+    ...
+    cppyy.gbl.cereal.Exception: ...
 
 Rational numbers can be modeled with mpq fractions::
 
@@ -37,13 +43,36 @@ Rational numbers can be modeled with mpq fractions::
     >>> IntervalExchangeTransformation((mpq(13, 37), mpq(23, 32)), (1, 0))
     [a: 13/37] [b: 23/32] / [b] [a]
 
-You can also use number algebraic lengths with pyeantic::
+Again, such IETs cannot be serialized yet::
+
+    >>> loads(dumps(iet))
+    Traceback (most recent call last):
+    ...
+    cppyy.gbl.cereal.Exception: ...
+
+You can also use algebraic lengths with pyeantic::
 
     >>> from pyeantic import eantic
     >>> L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
     >>> lengths = [L.gen(), eantic.renf_elem(L, "2*a^2 - 3")]
-    >>> IntervalExchangeTransformation(lengths, [1, 0])
+    >>> iet = IntervalExchangeTransformation(lengths, [1, 0])
+
+And these IETs can be serialized and deserialized::
+
+    >>> loads(dumps(iet))
     [a: (a ~ 1.8392868)] [b: (2*a^2 - 3 ~ 3.7659515)] / [b] [a]
+
+We also support IETs with transcendental lengths provided by pyexactreal::
+
+    >>> from pyexactreal import NumberFieldModule, RealNumber
+    >>> M = NumberFieldModule(L, RealNumber.rational(1), RealNumber.random())
+    >>> lengths = [M.gen(0), M.gen(1)]
+    >>> iet = IntervalExchangeTransformation(lengths, [1, 0])
+
+These can also be serialized and deserialized::
+
+    >>> loads(dumps(iet))
+    [a: 1] [b: ℝ(0...)] / [b] [a]
 
 TESTS:
 

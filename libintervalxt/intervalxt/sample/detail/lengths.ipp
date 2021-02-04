@@ -114,7 +114,7 @@ void Lengths<T, FloorDivision, Coefficients>::clear() {
 
 template <typename T, typename FloorDivision, typename Coefficients>
 int Lengths<T, FloorDivision, Coefficients>::cmp(Label rhs) const {
-  return ::intervalxt::sample::cmp<T>(*this, at(rhs));
+  return ::intervalxt::sample::cmp<T>(static_cast<T>(*this), at(rhs));
 }
 
 template <typename T, typename FloorDivision, typename Coefficients>

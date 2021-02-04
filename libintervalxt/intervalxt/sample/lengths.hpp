@@ -47,7 +47,7 @@ class Lengths : public Serializable<Lengths<T>> {
 
   std::vector<Label> labels() const;
 
-  operator T() const;
+  explicit operator T() const;
   explicit operator bool() const;
 
   void push(Label);

@@ -22,6 +22,7 @@
 #define LIBINTERVALXT_ERASED_SERIALIZABLE_HPP
 
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 
 #include "detail/serializable.hpp"
@@ -76,7 +77,7 @@ void loadErased(Archive& archive, T& self) {
   self = tmp->erased();
 }
 
-// Turns an unerased object into a polymorphic serilizable
+// Turns an unerased object into a polymorphic serializable
 // wrapper. This method is picked up automatically through
 // some ADL magic (it appears.)
 template <typename Erased, typename T>
