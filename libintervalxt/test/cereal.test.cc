@@ -18,11 +18,12 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include <e-antic/renfxx_cereal.h>
+
 #include <boost/type_erasure/any_cast.hpp>
 #include <cereal/archives/json.hpp>
-#include <e-antic/renfxx_cereal.h>
 #include <exact-real/cereal.hpp>
- 
+
 #include "../intervalxt/cereal.hpp"
 #include "../intervalxt/interval_exchange_transformation.hpp"
 #include "../intervalxt/label.hpp"
@@ -36,12 +37,11 @@
 // #include "../intervalxt/sample/mpz_floor_division.hpp"
 // #include "../intervalxt/sample/mpq_coefficients.hpp"
 // #include "../intervalxt/sample/mpq_floor_division.hpp"
-#include "../intervalxt/sample/renf_elem_coefficients.hpp"
-#include "../intervalxt/sample/renf_elem_floor_division.hpp"
 #include "../intervalxt/sample/element_coefficients.hpp"
 #include "../intervalxt/sample/element_floor_division.hpp"
 #include "../intervalxt/sample/lengths.hpp"
-
+#include "../intervalxt/sample/renf_elem_coefficients.hpp"
+#include "../intervalxt/sample/renf_elem_floor_division.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (::intervalxt::sample::Lengths<int>))
