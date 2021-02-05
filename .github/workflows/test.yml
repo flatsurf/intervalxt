@@ -39,8 +39,7 @@ jobs:
       - name: check that gitignore is complete
         run: |
           [[ -n `git status --porcelain | grep '??'` ]]
-      - name: show logs
-        run: grep "" /dev/null `find -name '*.log'` || true
+      - uses: flatsurf/actions/show-logs@main
         if: ${{ always() }}
   test-pyintervalxt:
     runs-on: ubuntu-20.04
@@ -79,8 +78,7 @@ jobs:
           make
           cd pyintervalxt
           make ${{ matrix.target }}
-      - name: show logs
-        run: grep "" /dev/null `find -name '*.log'` || true
+      - uses: flatsurf/actions/show-logs@main
         if: ${{ always() }}
   distcheck:
     runs-on: ubuntu-20.04
@@ -101,8 +99,7 @@ jobs:
           ./bootstrap
           ./configure --prefix="$PREFIX"
           make distcheck
-      - name: show logs
-        run: grep "" /dev/null `find -name '*.log'` || true
+      - uses: flatsurf/actions/show-logs@main
         if: ${{ always() }}
 
 env:
