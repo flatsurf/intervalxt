@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.1.2
+====================
+
+**Fixed:**
+
+* Cylinders and components without periodic trajectories next to undetermined components are now properly detected and not reported as undetermined as well.
+
+
+
 v3.1.1
 ====================
 
