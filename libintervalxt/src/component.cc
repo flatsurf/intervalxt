@@ -444,12 +444,21 @@ std::optional<HalfEdge> ImplementationOf<Component>::previous(DecompositionState
 
 bool Component::decompose(std::function<bool(const Component&)> target, int limit) {
   bool limitReached = false;
+
   while (!target(*this)) {
     auto step = decompositionStep(limit);
-    if (step.result == DecompositionStep::Result::LIMIT_REACHED)
-      return false;
+
+    if (step.result == DecompositionStep::Result::LIMIT_REACHED) {
+      limitReached = true;
+      break;
+    }
+
     if (step.additionalComponent) {
-      limitReached = limitReached || !step.additionalComponent->decompose(target, limit);
+      // Recurse into the newly created component and try to establish the target there.
+      // Note that we do this even if another such component failed to reach
+      // that target for some types of searches this might be not be desirable
+      // and we would prefer to globally abort the search. But this is currently not implemented.
+      limitReached = !step.additionalComponent->decompose(target, limit) || limitReached;
     }
   }
   return not limitReached;
