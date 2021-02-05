@@ -105,8 +105,8 @@ def name_label(labels, name):
 cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self, __str__: self._name if hasattr(self, "_name") else __str__())), "intervalxt")
 
 
-cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
-cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths.render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_label(labels(), self.render))), "intervalxt::cppyy")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("render")(lambda self, render, label: str(render(label)))), "intervalxt::cppyy")
 
@@ -159,7 +159,12 @@ def IntervalExchangeTransformation(lengths, permutation):
 
     iet = intervalxt.cppyy.IntervalExchangeTransformation(lengths, permutation)
 
-    iet.lengths = lengths
+    iet.lengths = lambda: lengths
+    # In a previous iteration of pyintervalxt, iet.lengths was a property and
+    # not a method (as it is in the C++ interface.) To keep backwards
+    # compatibility, we expose all of lengths() on lengths itself.
+    for attr in dir(lengths):
+        if not attr.startswith('__'): setattr(iet.lengths, attr, getattr(lengths, attr))
 
     return iet
 
