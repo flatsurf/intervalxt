@@ -160,6 +160,11 @@ def IntervalExchangeTransformation(lengths, permutation):
     iet = intervalxt.cppyy.IntervalExchangeTransformation(lengths, permutation)
 
     iet.lengths = lambda: lengths
+    # In a previous iteration of pyintervalxt, iet.lengths was a property and
+    # not a method (as it is in the C++ interface.) To keep backwards
+    # compatibility, we expose all of lengths() on lengths itself.
+    for attr in dir(lengths):
+        if not attr.startswith('__'): setattr(iet.lengths, attr, getattr(lengths, attr))
 
     return iet
 
