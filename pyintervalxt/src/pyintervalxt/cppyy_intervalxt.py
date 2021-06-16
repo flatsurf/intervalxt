@@ -2,7 +2,7 @@
 #  This file is part of intervalxt.
 #
 #        Copyright (C) 2019-2020 Vincent Delecroix
-#        Copyright (C) 2019-2020 Julian Rüth
+#        Copyright (C) 2019-2021 Julian Rüth
 #
 #  intervalxt is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -105,6 +105,11 @@ def name_label(labels, name):
 cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self, __str__: self._name if hasattr(self, "_name") else __str__())), "intervalxt")
 
 
+# TODO: render is not available on C++ erased lengths...we probably need to unerase all the methods here.
+# This is horrible, but fixes it:
+# import cppyy
+# import pyintervalxt
+# iet.lengths = lambda: pyintervalxt.Lengths(list(tuple(cppyy.gbl.construction(iet))[0]))
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_label(labels(), self.render))), "intervalxt::cppyy")
@@ -135,7 +140,7 @@ def Lengths(lengths, headers=None):
         elif type(lengths) == cppyy.gbl.std.vector["mpq_class"]:
             headers = ["intervalxt/sample/mpq_coefficients.hpp", "intervalxt/sample/mpq_floor_division.hpp"]
         elif type(lengths) == cppyy.gbl.std.vector["eantic::renf_elem_class"]:
-            headers = ["intervalxt/sample/renf_elem_coefficients.hpp", "intervalxt/sample/renf_elem_floor_division.hpp", "e-antic/renfxx_cereal.h"]
+            headers = ["intervalxt/sample/renf_elem_coefficients.hpp", "intervalxt/sample/renf_elem_floor_division.hpp", "e-antic/cereal.hpp"]
         elif type(lengths) in [cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::RationalField>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::NumberField>"]]:
             headers = ["intervalxt/sample/element_coefficients.hpp", "intervalxt/sample/element_floor_division.hpp", "exact-real/cereal.hpp"]
         else:
