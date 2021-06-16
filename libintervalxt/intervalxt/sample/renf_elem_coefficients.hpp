@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,19 +37,19 @@ struct Coefficients<eantic::renf_elem_class> {
     if (elements.size() == 0)
       return {};
 
-    auto parent = elements[0].parent().shared_from_this();
+    const auto* parent = &elements[0].parent();
     for (auto& x : elements) {
       if (x.is_rational())
         continue;
       if (parent->degree() == 1)
-        parent = x.parent().shared_from_this();
+        parent = &x.parent();
       if (*parent != x.parent())
         throw std::logic_error("not implemented: cannot coerce elements living in different number fields to a common parent yet");
     }
 
     std::vector<std::vector<mpq_class>> ret;
     for (auto x : elements) {
-      x = eantic::renf_elem_class(parent, x);
+      x = eantic::renf_elem_class(*parent, x);
 
       std::vector<mpq_class> coefficients;
       const auto den = x.den();

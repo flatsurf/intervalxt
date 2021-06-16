@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ TEST_CASE("Decomposition of an IET") {
   using EAnticLengths = sample::Lengths<eantic::renf_elem_class>;
   auto K = eantic::renf_class::make("a^2 - 2", "a", "1.414 +/- 0.01");
 
-  auto&& [lengths, a, b, c, d, e] = EAnticLengths::make(eantic::renf_elem_class(K, 1), eantic::renf_elem_class(K, 3), K->gen(), eantic::renf_elem_class(K, 3), eantic::renf_elem_class(K, 3));
+  auto&& [lengths, a, b, c, d, e] = EAnticLengths::make(eantic::renf_elem_class(*K, 1), eantic::renf_elem_class(*K, 3), K->gen(), eantic::renf_elem_class(*K, 3), eantic::renf_elem_class(*K, 3));
   auto iet = IntervalExchangeTransformation(std::make_shared<Lengths>(lengths), {b, a, c, d, e}, {d, c, a, e, b});
   auto decomposition = DynamicalDecomposition(iet);
 
