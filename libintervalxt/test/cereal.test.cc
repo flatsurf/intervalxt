@@ -18,10 +18,9 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include <e-antic/cereal.hpp>
-
 #include <boost/type_erasure/any_cast.hpp>
 #include <cereal/archives/json.hpp>
+#include <e-antic/cereal.hpp>
 #include <exact-real/cereal.hpp>
 
 #include "../intervalxt/cereal.hpp"
