@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.1.4
+====================
+
+**Fixed:**
+
+* Remove debug output.
+
+
+
 v3.1.3
 ====================
 

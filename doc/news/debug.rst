@@ -1,3 +1,0 @@
-**Fixed:**
-
-* Remove debug output.
