@@ -109,7 +109,6 @@ bool IntervalExchangeTransformation::zorichInduction() {
   }
 
   self->bottom.splice(top->twin, self->bottom, begin(self->bottom), bottom);
-  std::cout << "bottom now starts with " << lengths.render(begin(self->bottom)->label) << std::endl;
 
   return lengths.cmp(*begin(self->top), *begin(self->bottom)) == 0;
 }
