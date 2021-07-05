@@ -31,7 +31,8 @@ requirements:
   run:
     - boost-cpp
     - python
-    - cppyy
+    # The latest cppyy has trouble with serializations, see https://bitbucket.org/wlav/cppyy/issues/364/segfault-in-clang-cxxrecorddecl
+    - cppyy <2
     - cppyythonizations
 
 test:
