@@ -25,14 +25,13 @@ requirements:
     - setuptools
     - cppyythonizations
     - gmpxxyy
-    - pyeantic >=1.0.0rc9,<2
-    - pyexactreal >=1.4.3,<2
+    - pyeantic >=1.0.0,<2
+    - pyexactreal >=2.0.0,<3
     - libintervalxt
   run:
     - boost-cpp
     - python
-    # The latest cppyy has trouble with serializations, see https://bitbucket.org/wlav/cppyy/issues/364/segfault-in-clang-cxxrecorddecl
-    - cppyy <2
+    - cppyy
     - cppyythonizations
 
 test:

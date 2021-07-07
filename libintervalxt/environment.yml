@@ -12,7 +12,7 @@ dependencies:
   - boost-cpp
   - coreutils
   - cxx-compiler
-  - e-antic>=1.0.0rc15,<2
+  - e-antic>=1.0.0,<2
   - libflint
   - fmt
   - gmp
