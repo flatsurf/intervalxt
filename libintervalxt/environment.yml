@@ -20,6 +20,6 @@ dependencies:
   - libexactreal>=2.0.0,<3
   - libtool
   - make
-  - ppl
+  - ppl>=1.2=*_1004
   # valgrind is only needed for make check-valgrind
   # - valgrind
