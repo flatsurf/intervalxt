@@ -1,6 +1,7 @@
 ![Test](https://github.com/flatsurf/intervalxt/workflows/Test/badge.svg)
 [![codecov](https://codecov.io/gh/flatsurf/intervalxt/branch/master/graph/badge.svg)](https://codecov.io/gh/flatsurf/intervalxt)
 [![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/intervalxt/asv/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4975225.svg)](https://doi.org/10.5281/zenodo.4975225)
 
 ## Interval Exchange Transformations
 
@@ -139,6 +140,11 @@ conda activate intervalxt-test
 
 `make check` runs all tests and benchmarks. During development `make check TESTS=module`
 only runs the tests for `module`.
+
+## How to Cite This Project
+
+If you have used this project in the preparation of a publication, please cite
+it as described [on our zenodo site](https://doi.org/10.5281/zenodo.4015050).
 
 ## Maintainers
 
