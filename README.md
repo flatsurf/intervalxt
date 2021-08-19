@@ -1,25 +1,19 @@
 <p align="center">
-    <img alt="logo" src="https://github.com/saraedum/intervalxt/raw/zenodo/logo.svg?sanitize=true" width="500px">
+    <img alt="logo" src="https://github.com/flatsurf/intervalxt/raw/master/logo.svg?sanitize=true" width="500px">
 </p>
 
 <h1><p align="center">intervalxt</p></h1>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-LGPL_3.0_or_later-blue.svg" alt="License: LGPL 3.0 or later">
-  <a href="https://github.com/flatsurf/e-antic/actions/workflows/test.yml"><img src="https://github.com/flatsurf/e-antic/actions/workflows/test.yml/badge.svg" alt="Test"></a>
-  <a href="https://codecov.io/gh/flatsurf/e-antic"><img src="https://codecov.io/gh/flatsurf/e-antic/branch/master/graph/badge.svg" alt="Coverage"></a>
-  <a href="https://doi.org/10.5281/zenodo.5166953"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.5166953.svg" alt="DOI 10.5281/zenodo.5166953"></a>
+  <img src="https://img.shields.io/badge/License-GPL_3.0_or_later-blue.svg" alt="License: GPL 3.0 or later">
+  <a href="https://github.com/flatsurf/intervalxt/actions/workflows/test.yml"><img src="https://github.com/flatsurf/intervalxt/actions/workflows/test.yml/badge.svg" alt="Test"></a>
+  <a href="https://codecov.io/gh/flatsurf/intervalxt"><img src="https://codecov.io/gh/flatsurf/intervalxt/branch/master/graph/badge.svg" alt="Coverage"></a>
+  <a href="https://flatsurf.github.io/intervalxt/asv"><img src="https://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat" alt="ASV"></a>
+  <a href="https://doi.org/10.5281/zenodo.4015050"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.5166953.svg" alt="DOI 10.5281/zenodo.4015050"></a>
 </p>
 
-<p align="center">(Real Embedded) Algebraic Number Theory</p>
+<p align="center">Interval Exchange Transformations</p>
 <hr>
-
-![Test](https://github.com/flatsurf/intervalxt/workflows/Test/badge.svg)
-[![codecov](https://codecov.io/gh/flatsurf/intervalxt/branch/master/graph/badge.svg)](https://codecov.io/gh/flatsurf/intervalxt)
-[![asv](http://img.shields.io/badge/benchmarked%20by-asv-blue.svg?style=flat)](https://flatsurf.github.io/intervalxt/asv/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4975225.svg)](https://doi.org/10.5281/zenodo.4975225)
-
-## Interval Exchange Transformations
 
 This repository provides an implementation of *Boshernitzan algorithm* using
 interval exchange transformation. The aim is to compute the decomposition of a
