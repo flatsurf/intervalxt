@@ -9,8 +9,4 @@ dependencies:
   - libintervalxt>=3.0.0
   - notebook
   - pyintervalxt>=3.0.0
-  - libeantic
-  - pyeantic
-  - libexactreal
-  - pyexactreal
   - xeus-cling
