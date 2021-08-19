@@ -46,7 +46,7 @@ jobs:
           ./bootstrap
 
           echo "::group::configure"
-          export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3"
+          export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
           ./configure --prefix="$PREFIX" --without-benchmark
 
           echo "::group::make"
@@ -109,7 +109,7 @@ jobs:
           ./bootstrap
 
           echo "::group::configure"
-          export CXXFLAGS="$CXXFLAGS -UNDEBUG"
+          export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
           ./configure --prefix="$PREFIX" --without-benchmark
 
           echo "::group::make"

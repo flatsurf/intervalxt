@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,5 +33,25 @@
 #pragma cling load("libintervalxt")
 
 #endif  // __CLING__
+
+// Visibility Macros to separate API from non-API and inline template code.
+// See, https://gcc.gnu.org/wiki/Visibility.
+#if defined _WIN32 || defined __CYGWIN__
+#define LIBINTERVALXT_LIBRARY_IMPORT __declspec(dllimport)
+#define LIBINTERVALXT_LIBRARY_EXPORT __declspec(dllexport)
+#define LIBINTERVALXT_LIBRARY_HIDDEN
+#else
+#define LIBINTERVALXT_LIBRARY_IMPORT __attribute__((visibility("default")))
+#define LIBINTERVALXT_LIBRARY_EXPORT __attribute__((visibility("default")))
+#define LIBINTERVALXT_LIBRARY_HIDDEN __attribute__((visibility("hidden")))
+#endif
+
+#ifdef BUILD_LIBINTERVALXT
+#define LIBINTERVALXT_API LIBINTERVALXT_LIBRARY_EXPORT
+#define LIBINTERVALXT_LOCAL LIBINTERVALXT_LIBRARY_HIDDEN
+#else
+#define LIBINTERVALXT_API LIBINTERVALXT_LIBRARY_IMPORT
+#define LIBINTERVALXT_LOCAL
+#endif
 
 #endif

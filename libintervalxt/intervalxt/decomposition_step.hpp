@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 namespace intervalxt {
 
 // The result of a call to Component::decompositionStep.
-struct DecompositionStep {
+struct LIBINTERVALXT_API DecompositionStep {
   enum class Result {
     LIMIT_REACHED,
     CYLINDER,
@@ -45,7 +45,7 @@ struct DecompositionStep {
   std::optional<Component> additionalComponent = {};
 };
 
-std::ostream& operator<<(std::ostream&, const DecompositionStep&);
+LIBINTERVALXT_API std::ostream& operator<<(std::ostream&, const DecompositionStep&);
 
 }  // namespace intervalxt
 

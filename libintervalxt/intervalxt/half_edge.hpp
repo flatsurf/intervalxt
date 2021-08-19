@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 namespace intervalxt {
 
-class HalfEdge : boost::equality_comparable<HalfEdge> {
+class LIBINTERVALXT_API HalfEdge : boost::equality_comparable<HalfEdge> {
   // Half edges cannot be created directly but only taken from the contours of a Component.
   template <typename... Args>
   HalfEdge(PrivateConstructor, Args&&...);
@@ -68,7 +68,7 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
 
   bool operator==(const HalfEdge& rhs) const;
 
-  friend std::ostream& operator<<(std::ostream&, const HalfEdge&);
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const HalfEdge&);
 
  private:
   Copyable<HalfEdge> self;
@@ -81,7 +81,7 @@ class HalfEdge : boost::equality_comparable<HalfEdge> {
 namespace std {
 
 template <>
-struct hash<intervalxt::HalfEdge> { size_t operator()(const intervalxt::HalfEdge&) const; };
+struct LIBINTERVALXT_API hash<intervalxt::HalfEdge> { size_t operator()(const intervalxt::HalfEdge&) const; };
 
 }  // namespace std
 

@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2020 Julian Rüth
+ *        Copyright (C) 2020-2021 Julian Rüth
  *
  *  Flatsurf is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace intervalxt {
 // specialization possibilities to the more powerful partial specialization
 // that types provide.)
 template <typename T>
-class Serializable {
+class LIBINTERVALXT_API Serializable {
   template <bool Condition>
   using If = std::enable_if_t<Condition, bool>;
 

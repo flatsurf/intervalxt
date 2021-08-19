@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 namespace intervalxt {
 
 // The result of a call to IntervalExchangeTransformation::induce()
-struct InductionStep {
+struct LIBINTERVALXT_API InductionStep {
   enum class Result {
     LIMIT_REACHED,
     CYLINDER,
@@ -45,7 +45,7 @@ struct InductionStep {
   std::optional<IntervalExchangeTransformation> additionalIntervalExchangeTransformation = {};
 };
 
-std::ostream& operator<<(std::ostream&, const InductionStep&);
+LIBINTERVALXT_API std::ostream& operator<<(std::ostream&, const InductionStep&);
 
 }  // namespace intervalxt
 
