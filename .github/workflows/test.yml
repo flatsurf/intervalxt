@@ -17,6 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with: { submodules: recursive }
+      - name: build flags
+        id: flags
+        run: |
+          echo "::set-output name=configure::"`[[ ${{ runner.os }} == "Linux" ]] && echo "--with-version-script"`
       - uses: conda-incubator/setup-miniconda@v2
         with: { mamba-version: "*", channels: "flatsurf,conda-forge", channel-priority: true }
       - name: install valgrind
@@ -47,7 +51,7 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
-          ./configure --prefix="$PREFIX" --without-benchmark
+          ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
           make V=1
@@ -80,6 +84,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with: { submodules: recursive }
+      - name: build flags
+        id: flags
+        run: |
+          echo "::set-output name=configure::"`[[ ${{ runner.os }} == "Linux" ]] && echo "--with-version-script"`
       - uses: conda-incubator/setup-miniconda@v2
         with: { mamba-version: "*", channels: "flatsurf,conda-forge", python-version: "${{ matrix.python }}", channel-priority: true }
       - name: install valgrind
@@ -110,7 +118,7 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
-          ./configure --prefix="$PREFIX" --without-benchmark
+          ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
           make V=1
