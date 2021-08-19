@@ -108,8 +108,8 @@ conda activate intervalxt
 You can try out the projects in this repository in a very limited environment
 online by clicking the following links:
 
-* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/master?filepath=binder%2FSample.libintervalxt.ipynb) (might not work currently, due to [a bug in xeus-cling](https://github.com/jupyter-xeus/xeus-cling/issues/413))
-* **pyintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/master?filepath=binder%2FSample.pyintervalxt.ipynb)
+* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.1.4?filepath=binder%2FSample.libintervalxt.ipynb) (might not work currently, due to [a bug in xeus-cling](https://github.com/jupyter-xeus/xeus-cling/issues/413))
+* **pyintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.1.4?filepath=binder%2FSample.pyintervalxt.ipynb)
 
 ## Build with conda-forge Dependencies
 
