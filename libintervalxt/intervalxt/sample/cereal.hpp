@@ -25,6 +25,7 @@
 #include <cereal/types/vector.hpp>
 
 #include "lengths.hpp"
+#include "../cereal.hpp"
 
 namespace intervalxt {
 
