@@ -35,7 +35,7 @@ namespace intervalxt {
 // itself is just some random id, only the Lengths object knows a meaningful
 // name for this id which can be determined by calling Lengths::render().
 class LIBINTERVALXT_API Label : public boost::equality_comparable<Label>,
-              public Serializable<Label> {
+                                public Serializable<Label> {
  public:
   Label() noexcept;
   explicit Label(size_t id);

@@ -37,7 +37,7 @@
 namespace intervalxt {
 
 class LIBINTERVALXT_API IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation>,
-                                       Serializable<IntervalExchangeTransformation> {
+                                                         Serializable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
   IntervalExchangeTransformation(std::shared_ptr<Lengths>, const std::vector<Label> &top, const std::vector<Label> &bottom);

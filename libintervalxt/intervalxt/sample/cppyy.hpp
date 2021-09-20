@@ -38,6 +38,6 @@ struct Serialization<cppyy::Lengths<V>> {
   }
 };
 
-}
+}  // namespace intervalxt
 
 #endif

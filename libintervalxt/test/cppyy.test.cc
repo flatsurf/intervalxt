@@ -17,14 +17,12 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
+#include <cereal/archives/json.hpp>
 #include <e-antic/cereal.hpp>
 #include <exact-real/cereal.hpp>
 
-#include <cereal/archives/json.hpp>
-
 #include "../intervalxt/cppyy.hpp"
 #include "../intervalxt/sample/cppyy.hpp"
-
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 using cereal::JSONInputArchive;
