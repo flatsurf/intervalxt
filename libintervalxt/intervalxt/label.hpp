@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019-2020 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include <boost/operators.hpp>
 #include <functional>
 
-#include "forward.hpp"
 #include "serializable.hpp"
 
 namespace intervalxt {
@@ -35,7 +34,7 @@ namespace intervalxt {
 // Note that this class has no printing operator<< on purpose; the label
 // itself is just some random id, only the Lengths object knows a meaningful
 // name for this id which can be determined by calling Lengths::render().
-class Label : public boost::equality_comparable<Label>,
+class LIBINTERVALXT_API Label : public boost::equality_comparable<Label>,
               public Serializable<Label> {
  public:
   Label() noexcept;
@@ -56,7 +55,7 @@ class Label : public boost::equality_comparable<Label>,
 namespace std {
 
 template <>
-struct hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const; };
+struct LIBINTERVALXT_API hash<intervalxt::Label> { size_t operator()(const intervalxt::Label&) const; };
 
 }  // namespace std
 

@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2020 Julian Rüth
+ *        Copyright (C) 2020-2021 Julian Rüth
  *
  *  Flatsurf is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #ifndef LIBINTERVALXT_SERIALIZABLE_HPP
 #define LIBINTERVALXT_SERIALIZABLE_HPP
 
+#include <type_traits>
+
 #include "forward.hpp"
 
 namespace intervalxt {
@@ -31,7 +33,7 @@ namespace intervalxt {
 // specialization possibilities to the more powerful partial specialization
 // that types provide.)
 template <typename T>
-class Serializable {
+class LIBINTERVALXT_API Serializable {
   template <bool Condition>
   using If = std::enable_if_t<Condition, bool>;
 
@@ -39,14 +41,14 @@ class Serializable {
   static constexpr bool is_minimal = !std::is_same_v<void, decltype(std::declval<Serialization<T>>().save(std::declval<const Archive&>(), std::declval<const T&>()))>;
 
  public:
-  template <typename Archive, bool Enable = !is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<!is_minimal<Archive>> = true>
   friend void save(Archive& archive, const T& self) { Serialization<T>().save(archive, self); }
-  template <typename Archive, bool Enable = !is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<!is_minimal<Archive>> = true>
   friend void load(Archive& archive, T& self) { Serialization<T>().load(archive, self); }
 
-  template <typename Archive, bool Enable = is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<is_minimal<Archive>> = true>
   friend auto save_minimal(const Archive& archive, const T& self) { return Serialization<T>().save(archive, self); }
-  template <typename Archive, typename S, bool Enable = is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, typename S, If<is_minimal<Archive>> = true>
   friend void load_minimal(const Archive& archive, T& self, const S& value) { Serialization<T>().load(archive, self, value); }
 };
 

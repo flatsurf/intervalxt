@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
 
 namespace intervalxt {
 
-class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation>,
+class LIBINTERVALXT_API IntervalExchangeTransformation : boost::equality_comparable<IntervalExchangeTransformation>,
                                        Serializable<IntervalExchangeTransformation> {
  public:
   IntervalExchangeTransformation();
@@ -92,15 +92,13 @@ class IntervalExchangeTransformation : boost::equality_comparable<IntervalExchan
   // Return whether this interval exchange transformation and rhs have the same labels and the same lengths.
   bool operator==(const IntervalExchangeTransformation &rhs) const;
 
-  friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
+  LIBINTERVALXT_API friend std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
  private:
   Movable<IntervalExchangeTransformation> self;
 
   friend ImplementationOf<IntervalExchangeTransformation>;
 };
-
-std::ostream &operator<<(std::ostream &, const IntervalExchangeTransformation &);
 
 }  // namespace intervalxt
 

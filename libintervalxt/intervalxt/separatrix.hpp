@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
+ *        Copyright (C) 2019      Vincent Delecroix
  *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@
 
 namespace intervalxt {
 
-class Separatrix : boost::equality_comparable<Separatrix> {
+class LIBINTERVALXT_API Separatrix : boost::equality_comparable<Separatrix> {
   // Separatrices can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
   template <typename... Args>
@@ -49,7 +49,7 @@ class Separatrix : boost::equality_comparable<Separatrix> {
   // `Connection::operator==`, see the comment there.
   bool operator==(const Separatrix&) const;
 
-  friend std::ostream& operator<<(std::ostream&, const Separatrix&);
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const Separatrix&);
 
  private:
   Copyable<Separatrix> self;
@@ -63,7 +63,7 @@ class Separatrix : boost::equality_comparable<Separatrix> {
 namespace std {
 
 template <>
-struct hash<intervalxt::Separatrix> { size_t operator()(const intervalxt::Separatrix&) const; };
+struct LIBINTERVALXT_API hash<intervalxt::Separatrix> { size_t operator()(const intervalxt::Separatrix&) const; };
 
 }  // namespace std
 

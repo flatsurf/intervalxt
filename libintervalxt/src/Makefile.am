@@ -17,6 +17,12 @@ libintervalxt_la_SOURCES =                         \
 
 libintervalxt_la_LDFLAGS = -version-info $(libintervalxt_version_info)
 
+if HAVE_VERSION_SCRIPT
+libintervalxt_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libintervalxt.map
+
+EXTRA_libintervalxt_la_DEPENDENCIES = $(srcdir)/libintervalxt.map
+endif
+
 nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/cereal.hpp                                  \
 	../intervalxt/component.hpp                               \
@@ -45,6 +51,7 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/lengths.hpp                                 \
 	../intervalxt/movable.hpp                                 \
 	../intervalxt/sample/cereal.hpp                           \
+	../intervalxt/sample/cppyy.hpp                            \
 	../intervalxt/sample/coefficients.hpp                     \
 	../intervalxt/sample/detail/lengths.ipp                   \
 	../intervalxt/sample/element_coefficients.hpp             \

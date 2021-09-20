@@ -2,17 +2,18 @@ check_PROGRAMS = rational_linear_subspace label component separatrix connection
 
 if HAVE_EANTIC
 if HAVE_EXACTREAL
-check_PROGRAMS += interval_exchange_transformation dynamical_decomposition cereal coefficients
+check_PROGRAMS += interval_exchange_transformation dynamical_decomposition cereal coefficients cppyy
 endif
 endif
 
 TESTS = $(check_PROGRAMS)
 
-rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc
+rational_linear_subspace_SOURCES = rational_linear_subspace.test.cc main.cc ../src/rational_linear_subspace.cc
 label_SOURCES = label.test.cc main.cc
 interval_exchange_transformation_SOURCES = interval_exchange_transformation.test.cc main.cc
 dynamical_decomposition_SOURCES = dynamical_decomposition.test.cc main.cc
 cereal_SOURCES = cereal.test.cc main.cc
+cppyy_SOURCES = cppyy.test.cc main.cc
 coefficients_SOURCES = coefficients.test.cc main.cc
 component_SOURCES = component.test.cc main.cc
 separatrix_SOURCES = separatrix.test.cc main.cc

@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 
 namespace intervalxt {
 
-class Component : boost::equality_comparable<Component> {
+class LIBINTERVALXT_API Component : boost::equality_comparable<Component> {
   // Components can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
   template <typename... Args>
@@ -94,7 +94,7 @@ class Component : boost::equality_comparable<Component> {
 
   bool operator==(const Component& rhs) const;
 
-  friend std::ostream& operator<<(std::ostream&, const Component&);
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const Component&);
 
  private:
   Copyable<Component> self;
@@ -102,7 +102,7 @@ class Component : boost::equality_comparable<Component> {
   friend ImplementationOf<Component>;
 };
 
-std::ostream& operator<<(std::ostream&, const Side&);
+LIBINTERVALXT_API std::ostream& operator<<(std::ostream&, const Side&);
 
 }  // namespace intervalxt
 

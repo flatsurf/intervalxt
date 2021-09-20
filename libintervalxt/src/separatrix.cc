@@ -19,6 +19,8 @@
  *********************************************************************/
 
 #include <ostream>
+// Work around https://github.com/simonask/rx-ranges/pull/48
+#include <limits>
 
 #include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/decomposition_state.hpp"

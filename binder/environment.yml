@@ -10,3 +10,5 @@ dependencies:
   - notebook
   - pyintervalxt>=3.0.0
   - xeus-cling
+  - gmpxxyy
+  - pyexactreal>=2.0.0,<3

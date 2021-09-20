@@ -21,6 +21,8 @@
 #include "../intervalxt/half_edge.hpp"
 
 #include <ostream>
+// Work around https://github.com/simonask/rx-ranges/pull/48
+#include <limits>
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/separatrix.hpp"

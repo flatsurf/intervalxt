@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
+ *        Copyright (C) 2019      Vincent Delecroix
  *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 
 namespace intervalxt {
 
-class Connection : boost::equality_comparable<Connection> {
+class LIBINTERVALXT_API Connection : boost::equality_comparable<Connection> {
   // Connections can not be created directly (other than copying & moving them.)
   // They are created in the process of a DynamicalDecomposition.
   template <typename... Args>
@@ -53,7 +53,7 @@ class Connection : boost::equality_comparable<Connection> {
   Separatrix source() const;
   Separatrix target() const;
 
-  friend std::ostream& operator<<(std::ostream&, const Connection&);
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const Connection&);
 
  private:
   Copyable<Connection> self;
@@ -66,7 +66,7 @@ class Connection : boost::equality_comparable<Connection> {
 namespace std {
 
 template <>
-struct hash<intervalxt::Connection> { size_t operator()(const intervalxt::Connection&) const; };
+struct LIBINTERVALXT_API hash<intervalxt::Connection> { size_t operator()(const intervalxt::Connection&) const; };
 
 }  // namespace std
 

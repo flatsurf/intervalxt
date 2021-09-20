@@ -1,0 +1,19 @@
+{
+    "creators": [
+        {   
+            "orcid": "0000-0002-9608-782X",
+            "name": "Delecroix, Vincent",
+            "affiliation": "CNRS - Université de Bordeaux"
+        },
+        {   
+            "orcid": "0000-0002-3930-9107",
+            "name": "Rüth, Julian"
+        }
+    ],    
+
+    "license": "GPL-3.0-or-later",
+    "title": "intervalxt",
+    "description": "<p>intervalxt is a C++/Python library which implements algorithms on <a href='https://en.wikipedia.org/wiki/Interval_exchange_transformation'>Interval Exchange Transformations (IETs)</a>.</p> <p>In particular, we implement the <em>Boshernitzan Algorithm</em> and <em>Rauzy Induction</em> on IETs. Our principal application is the decomposition of a measured foliation into periodic and minimal components. We certify that a component is minimal with the Boshernitzan Algorithm or by certifying that the Rauzy Induction will be looping infinitely. Note that presently the algorithm is probably incomplete; in rare cases no further decomposition of a component seems to be possible, nevertheless, our criteria fail to certify minimality of the component.</p><p>Please visit our <a href='https://github.com/flatsurf/intervalxt'>homepage</a> for more information.</p>"
+}
+
+
