@@ -77,4 +77,4 @@ LIBINTERVALXT_3.1.4 {
       "intervalxt::operator<<(std::ostream&, intervalxt::InductionStep const&)";
     };
   local: *;
-}
+};
