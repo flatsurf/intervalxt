@@ -41,14 +41,14 @@ class LIBINTERVALXT_API Serializable {
   static constexpr bool is_minimal = !std::is_same_v<void, decltype(std::declval<Serialization<T>>().save(std::declval<const Archive&>(), std::declval<const T&>()))>;
 
  public:
-  template <typename Archive, bool Enable = !is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<!is_minimal<Archive>> = true>
   friend void save(Archive& archive, const T& self) { Serialization<T>().save(archive, self); }
-  template <typename Archive, bool Enable = !is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<!is_minimal<Archive>> = true>
   friend void load(Archive& archive, T& self) { Serialization<T>().load(archive, self); }
 
-  template <typename Archive, bool Enable = is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, If<is_minimal<Archive>> = true>
   friend auto save_minimal(const Archive& archive, const T& self) { return Serialization<T>().save(archive, self); }
-  template <typename Archive, typename S, bool Enable = is_minimal<Archive>, If<Enable> = true>
+  template <typename Archive, typename S, If<is_minimal<Archive>> = true>
   friend void load_minimal(const Archive& archive, T& self, const S& value) { Serialization<T>().load(archive, self, value); }
 };
 

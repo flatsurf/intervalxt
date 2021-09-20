@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2021 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #ifndef LIBINTERVALXT_CPPYY_HPP
 #define LIBINTERVALXT_CPPYY_HPP
 
-#include <iosfwd>
 #include <memory>
 #include <vector>
 
@@ -34,7 +33,7 @@ namespace intervalxt::cppyy {
 // https://bitbucket.org/wlav/cppyy/issues/268/segfault-with-types-in-unnamed-namespaces
 // by moving the Lengths type out of its unnamed namespace.
 template <typename V>
-class Lengths : public ::intervalxt::sample::Lengths<typename V::value_type> {
+class Lengths : public ::intervalxt::sample::Lengths<typename V::value_type>, public ::intervalxt::Serializable<Lengths<V>> {
  public:
   using T = typename V::value_type;
 

@@ -30,12 +30,15 @@ need larger entries, you might want to use mpz integers::
     >>> from gmpxxyy import mpz
     >>> iet = IntervalExchangeTransformation((mpz(str(2**128)), mpz(1)), (1, 0))
 
-Note however, that such IETs cannot be serialized yet::
+Note however, that such IETs cannot be serialized yet.
 
-    >>> loads(dumps(iet))
-    Traceback (most recent call last):
-    ...
-    cppyy.gbl.cereal.Exception: ...
+(Currently, the following crashes with "terminate called after throwing an
+instance of 'cereal::Exception'" see https://github.com/wlav/cppyy/issues/13)::
+
+    # >>> loads(dumps(iet))
+    # Traceback (most recent call last):
+    # ...
+    # cppyy.gbl.cereal.Exception: ...
 
 Rational numbers can be modeled with mpq fractions::
 
@@ -43,12 +46,15 @@ Rational numbers can be modeled with mpq fractions::
     >>> IntervalExchangeTransformation((mpq(13, 37), mpq(23, 32)), (1, 0))
     [a: 13/37] [b: 23/32] / [b] [a]
 
-Again, such IETs cannot be serialized yet::
+Again, such IETs cannot be serialized yet.
 
-    >>> loads(dumps(iet))
-    Traceback (most recent call last):
-    ...
-    cppyy.gbl.cereal.Exception: ...
+(Currently, the following crashes with "terminate called after throwing an
+instance of 'cereal::Exception'" see https://github.com/wlav/cppyy/issues/13)::
+
+    # >>> loads(dumps(iet))
+    # Traceback (most recent call last):
+    # ...
+    # cppyy.gbl.cereal.Exception: ...
 
 You can also use algebraic lengths with pyeantic::
 
@@ -76,13 +82,16 @@ These can also be serialized and deserialized::
 
 TESTS:
 
-Check that #85 has been resolved:
+Check that #85 has been resolved.
 
-    >>> lengths = [L.gen(), eantic.renf_elem(L, "-3*a^2 + 2*a - 1")]
-    >>> IntervalExchangeTransformation(lengths, [1, 0])
-    Traceback (most recent call last):
-    ...
-    TypeError: ...all lengths must be non-negative...
+(Currently, the following crashes with "terminate called after throwing an
+exception see https://github.com/wlav/cppyy/issues/13)::
+
+    # >>> lengths = [L.gen(), eantic.renf_elem(L, "-3*a^2 + 2*a - 1")]
+    # >>> IntervalExchangeTransformation(lengths, [1, 0])
+    # Traceback (most recent call last):
+    # ...
+    # TypeError: ...all lengths must be non-negative...
 
 Check that #33 has been resolved::
 
@@ -117,7 +126,7 @@ use `equivalent`::
 #  This file is part of intervalxt.
 #
 #        Copyright (C) 2019-2020 Vincent Delecroix
-#        Copyright (C) 2019-2020 Julian Rüth
+#        Copyright (C) 2019-2021 Julian Rüth
 #
 #  intervalxt is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

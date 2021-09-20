@@ -77,10 +77,9 @@ class LengthRegistrar:
 lengthsRegistrar = LengthRegistrar()
 
 def enable_cereal_(proxy, name):
-    headers = ["intervalxt/cereal.hpp", "intervalxt/sample/cereal.hpp", lengthsRegistrar]
+    headers = ["intervalxt/cereal.hpp", "intervalxt/sample/cereal.hpp", "intervalxt/sample/cppyy.hpp", lengthsRegistrar]
 
     enable_cereal(proxy, name, headers)
-
 
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::sample")
