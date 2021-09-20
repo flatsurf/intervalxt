@@ -37,4 +37,4 @@ class AutotoolsDist(Activity):
             popd
         return True
     
-$DAG['dist'] = AutotoolsDist()
+$DAG['autodist'] = AutotoolsDist()
