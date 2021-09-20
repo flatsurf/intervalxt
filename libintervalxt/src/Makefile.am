@@ -51,6 +51,7 @@ nobase_pkginclude_HEADERS =                                       \
 	../intervalxt/lengths.hpp                                 \
 	../intervalxt/movable.hpp                                 \
 	../intervalxt/sample/cereal.hpp                           \
+	../intervalxt/sample/cppyy.hpp                            \
 	../intervalxt/sample/coefficients.hpp                     \
 	../intervalxt/sample/detail/lengths.ipp                   \
 	../intervalxt/sample/element_coefficients.hpp             \
