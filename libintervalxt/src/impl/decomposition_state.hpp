@@ -24,6 +24,7 @@
 #include <boost/logic/tribool.hpp>
 #include <deque>
 #include <list>
+#include <unordered_map>
 
 #include "../../intervalxt/interval_exchange_transformation.hpp"
 
