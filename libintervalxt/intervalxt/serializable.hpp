@@ -20,6 +20,8 @@
 #ifndef LIBINTERVALXT_SERIALIZABLE_HPP
 #define LIBINTERVALXT_SERIALIZABLE_HPP
 
+#include <type_traits>
+
 #include "forward.hpp"
 
 namespace intervalxt {

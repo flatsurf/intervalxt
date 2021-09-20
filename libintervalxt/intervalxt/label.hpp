@@ -24,7 +24,6 @@
 #include <boost/operators.hpp>
 #include <functional>
 
-#include "forward.hpp"
 #include "serializable.hpp"
 
 namespace intervalxt {
