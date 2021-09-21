@@ -41,8 +41,8 @@ TEST_CASE("Separatrix in a Decomposition") {
   REQUIRE(component.left().size() == 1);
   REQUIRE(component.right().size() == 1);
 
-  const auto left = std::get<Connection>(component.left()[0]);
-  const auto right = std::get<Connection>(component.right()[0]);
+  const auto left = *std::get_if<Connection>(&component.left()[0]);
+  const auto right = *std::get_if<Connection>(&component.right()[0]);
 
   REQUIRE(left.source() == right.target());
   REQUIRE(left.source() != right.source());

@@ -37,7 +37,7 @@ TEST_CASE("Connection in a Decomposition") {
 
   const auto component = decomposition.components()[0];
 
-  REQUIRE(std::get<Connection>(component.left()[0]) == -std::get<Connection>(component.right()[0]));
+  REQUIRE(*std::get_if<Connection>(&component.left()[0]) == -*std::get_if<Connection>(&component.right()[0]));
 }
 
 TEST_CASE("Injected Connections in Decompositions") {

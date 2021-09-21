@@ -25,6 +25,7 @@
 #include <deque>
 #include <ostream>
 #include <vector>
+#include <unordered_map>
 
 #include "../intervalxt/component.hpp"
 #include "../intervalxt/connection.hpp"

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <list>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "../intervalxt/fmt.hpp"
 #include "../intervalxt/induction_step.hpp"
