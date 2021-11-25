@@ -14,6 +14,7 @@ jobs:
       matrix:
         include:
         - on: Ubuntu-20.04
+        - on: macos-10.15
         - on: Ubuntu-20.04
           environment: binder
         - on: Ubuntu-20.04
@@ -78,6 +79,12 @@ jobs:
         - on: ubuntu-20.04
           python: "3.8"
         - on: ubuntu-20.04
+          python: "3.9"
+        - on: macos-10.15
+          python: "3.7"
+        - on: macos-10.15
+          python: "3.8"
+        - on: macos-10.15
           python: "3.9"
         - on: ubuntu-20.04
           python: "3.7"
