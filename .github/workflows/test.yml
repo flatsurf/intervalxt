@@ -56,6 +56,10 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
+          # override std=c++14 in CXXFLAGS on macOS
+          export CXXFLAGS="$CXXFLAGS -std=c++17"
+          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
           ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
@@ -129,6 +133,10 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
+          # override std=c++14 in CXXFLAGS on macOS
+          export CXXFLAGS="$CXXFLAGS -std=c++17"
+          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
           ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
