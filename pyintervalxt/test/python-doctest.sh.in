@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 ######################################################################
 #  This file is part of intervalxt.
@@ -22,5 +22,9 @@
 
 set -ex
 
-TARGETS=`grep -l '>>>' @srcdir@/../src/pyintervalxt/*.py`
-pytest -vv --doctest-modules $TARGETS
+# We cannot run pytest directly since it would be invoked through its shebang
+# which makes macOS sanitize some environment variables. Instead, we go thorugh
+# our bin/python wrapper to set the necessary environment variables and invoke
+# the Python binary to run pytest which keeps our environment intact on macOS.
+
+python -m pytest -vv --doctest-modules $TARGETS
