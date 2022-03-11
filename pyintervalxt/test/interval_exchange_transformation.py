@@ -4,8 +4,8 @@
 ######################################################################
 #  This file is part of intervalxt.
 #
-#        Copyright (C) 2019 Vincent Delecroix
-#        Copyright (C) 2019 Julian Rüth
+#        Copyright (C) 2019      Vincent Delecroix
+#        Copyright (C) 2019-2022 Julian Rüth
 #
 #  intervalxt is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -26,11 +26,13 @@ import pytest
 
 from pyintervalxt import intervalxt, IntervalExchangeTransformation
 
+
 def test_IntervalExchangeTransformation():
     iet = IntervalExchangeTransformation((18, 3), (1, 0))
     assert repr(iet) == "[a: 18] [b: 3] / [b] [a]"
     iet.swap()
     assert repr(iet) == "[b: 3] [a: 18] / [a] [b]"
+
 
 def test_reduce():
     iet = IntervalExchangeTransformation((18, 3), (1, 0))
@@ -44,7 +46,7 @@ def test_reduce():
     assert repr(iet) == "[a: 18] / [a]"
     assert repr(iet2) == "[b: 3] / [b]"
 
-    iet = IntervalExchangeTransformation((4, 56, 23, 11, 21, 9, 65),(1, 0, 4, 3, 2, 6, 5))
+    iet = IntervalExchangeTransformation((4, 56, 23, 11, 21, 9, 65), (1, 0, 4, 3, 2, 6, 5))
     r = iet.reduce()
     assert r.has_value()
     iet2 = r.value()
@@ -55,6 +57,7 @@ def test_reduce():
     iet3 = r2.value()
     assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
     assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
+
 
 def iet_10_check(iet):
     assert iet.size() == 2
@@ -70,15 +73,18 @@ def iet_10_check(iet):
     assert cyls + nocyls == decomposition.components().size()
     assert mins + nomins == decomposition.components().size()
 
+
 def test_mpz():
     from gmpxxyy import mpz
     iet = IntervalExchangeTransformation((mpz(1), mpz(1)), [1, 0])
     iet_10_check(iet)
 
+
 def test_mpq():
     from gmpxxyy import mpq
     iet = IntervalExchangeTransformation((mpq(1, 3), mpq(2, 5)), [1, 0])
     iet_10_check(iet)
+
 
 def test_eantic():
     from pyeantic import eantic
@@ -89,4 +95,6 @@ def test_eantic():
     iet = IntervalExchangeTransformation(lengths, [1, 0])
     iet_10_check(iet)
 
-if __name__ == '__main__': sys.exit(pytest.main(sys.argv))
+
+if __name__ == '__main__':
+    sys.exit(pytest.main(sys.argv))

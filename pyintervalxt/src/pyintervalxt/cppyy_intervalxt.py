@@ -2,7 +2,7 @@
 #  This file is part of intervalxt.
 #
 #        Copyright (C) 2019-2020 Vincent Delecroix
-#        Copyright (C) 2019-2021 Julian Rüth
+#        Copyright (C) 2019-2022 Julian Rüth
 #
 #  intervalxt is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ import cppyy
 from cppyythonizations.pickling.cereal import enable_cereal
 from cppyythonizations.printing import enable_pretty_printing
 from cppyythonizations.util import filtered, wrap_method
+from cppyythonizations.boost.type_erasure import expose
 
 # Importing cysignals after cppyy gives us proper stack traces on segfaults
 # whereas cppyy otherwise only reports "segmentation violation" (which is
@@ -69,50 +70,62 @@ class LengthRegistrar:
                 for header in headers:
                     cppyy.include(header)
 
-                cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (%s));'%(length,))
+                cppyy.cppdef('LIBINTERVALXT_ERASED_REGISTER((::intervalxt::Lengths), (%s));' % (length,))
 
             LengthRegistrar.REGISTERED_LENGTHS.add(length)
 
 
 lengthsRegistrar = LengthRegistrar()
 
+
 def enable_cereal_(proxy, name):
     headers = ["intervalxt/cereal.hpp", "intervalxt/sample/cereal.hpp", "intervalxt/sample/cppyy.hpp", lengthsRegistrar]
 
     enable_cereal(proxy, name, headers)
+
 
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::sample")
 cppyy.py.add_pythonization(enable_cereal_, "intervalxt::cppyy")
 
 
-def name_label(labels, name):
+def name_labels(labels, name):
     r"""
     Helper function for Label.__str__ to attach a labels name upon creation.
     """
     labels = list(labels)
-    for l in labels:
-        l._name = name(l)
+    for label in labels:
+        label._name = name(label)
     return labels
 
 
 # Print label as "a", "b", "c" and not only as their memory address.
 # Labels do not have an intrinsic name. They only get a name in libintervalxt
 # once they are associated with a Lengths object.
-# To make them print nicely, we try to make sure that any code path tha creates
+# To make them print nicely, we try to make sure that any code path that creates
 # a label attaches its name to it.
-cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self, __str__: self._name if hasattr(self, "_name") else __str__())), "intervalxt")
+cppyy.py.add_pythonization(filtered("Label")(wrap_method("__str__")(lambda self, __str__: str(self._name) if hasattr(self, "_name") else __str__())), "intervalxt")
 
-
-# TODO: render is not available on C++ erased lengths...we probably need to unerase all the methods here.
-# This is horrible, but fixes it:
-# import cppyy
-# import pyintervalxt
-# iet.lengths = lambda: pyintervalxt.Lengths(list(tuple(cppyy.gbl.construction(iet))[0]))
-cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_label(top(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
-cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_label(bottom(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
-cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_label(labels(), self.render))), "intervalxt::cppyy")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("top")(lambda self, top: name_labels(top(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("bottom")(lambda self, bottom: name_labels(bottom(), self.lengths().render if hasattr(self, "lengths") else str))), "intervalxt")
+cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_labels(labels(), self.render))), "intervalxt::cppyy")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("render")(lambda self, render, label: str(render(label)))), "intervalxt::cppyy")
+
+# Expose methods on type-erased intervalxt::Lengths.
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("push")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("pop")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("subtract")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("subtractRepeated")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("coefficients")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("cmp")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("similar")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("get")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("render")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("only")), "boost::type_erasure")
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("forget")), "boost::type_erasure")
+
+# Expose printing on type-erased intervalxt::Length.
+cppyy.py.add_pythonization(filtered("any<intervalxt::LengthInterface,boost::type_erasure::_self>")(enable_pretty_printing), "boost::type_erasure")
 
 
 # Set EXTRA_CLING_ARGS="-I /usr/include" or wherever intervalxt/cppyy.hpp can
@@ -143,7 +156,7 @@ def Lengths(lengths, headers=None):
         elif type(lengths) in [cppyy.gbl.std.vector["exactreal::Element<exactreal::IntegerRing>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::RationalField>"], cppyy.gbl.std.vector["exactreal::Element<exactreal::NumberField>"]]:
             headers = ["intervalxt/sample/element_coefficients.hpp", "intervalxt/sample/element_floor_division.hpp", "exact-real/cereal.hpp"]
         else:
-            raise TypeError("unknown length type %s; you need to specify the headers that are needed to unpickle such lengths, i.e., the headers containing floor division and coefficients for that type"%(lengths))
+            raise TypeError("unknown length type %s; you need to specify the headers that are needed to unpickle such lengths, i.e., the headers containing floor division and coefficients for that type" % (lengths,))
 
     for header in headers:
         cppyy.include(header)
@@ -163,12 +176,12 @@ def IntervalExchangeTransformation(lengths, permutation):
 
     iet = intervalxt.cppyy.IntervalExchangeTransformation(lengths, permutation)
 
-    iet.lengths = lambda: lengths
-    # In a previous iteration of pyintervalxt, iet.lengths was a property and
-    # not a method (as it is in the C++ interface.) To keep backwards
-    # compatibility, we expose all of lengths() on lengths itself.
-    for attr in dir(lengths):
-        if not attr.startswith('__'): setattr(iet.lengths, attr, getattr(lengths, attr))
+    # iet.lengths = lambda: lengths
+    # # In a previous iteration of pyintervalxt, iet.lengths was a property and
+    # # not a method (as it is in the C++ interface.) To keep backwards
+    # # compatibility, we expose all of lengths() on lengths itself.
+    # for attr in dir(lengths):
+    #     if not attr.startswith('__'): setattr(iet.lengths, attr, getattr(lengths, attr))
 
     return iet
 
