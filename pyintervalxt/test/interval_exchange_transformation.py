@@ -63,7 +63,7 @@ def iet_10_check(iet):
     assert iet.size() == 2
     assert iet.top()[0] == iet.bottom()[1]
     assert iet.top()[1] == iet.bottom()[0]
-    saf = iet.safInvariant()
+    iet.safInvariant()
     decomposition = intervalxt.DynamicalDecomposition(iet)
     decomposition.decompose()
     cyls = sum(bool(component.cylinder() == True) for component in decomposition.components())
