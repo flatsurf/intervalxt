@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 ######################################################################
 #  This file is part of intervalxt.
@@ -20,9 +19,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
 #####################################################################
-
-import sys
-import pytest
 
 from pyintervalxt import intervalxt, IntervalExchangeTransformation
 
@@ -97,4 +93,6 @@ def test_eantic():
 
 
 if __name__ == '__main__':
+    import sys
+    import pytest
     sys.exit(pytest.main(sys.argv))

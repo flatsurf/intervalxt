@@ -78,3 +78,9 @@ LIBINTERVALXT_3.1.4 {
     };
   local: *;
 };
+LIBINTERVALXT_3.3.0 {
+  global:
+    extern "C++" {
+      "intervalxt::operator<<(std::ostream&, intervalxt::Label const&)";
+    };
+} LIBINTERVALXT_3.1.4;
