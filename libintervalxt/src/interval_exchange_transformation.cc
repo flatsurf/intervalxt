@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
     for (size_t d = 0; d < t.size(); d++)
       relations[d].push_back(t[d]);
 
-  const auto space = RationalLinearSubspace::fromEquations(relations);
+  const auto space = RationalLinearSubspace(relations, std::vector<mpq_class>(relations.size()));
   return not space.hasNonZeroNonNegativeVector();
 }
 

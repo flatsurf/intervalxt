@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019-2020 Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -55,10 +55,9 @@ struct SwapDimensions {
     return true;
   }
 };
-}  // namespace
 
-Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec) {
-  auto den = mpz_class(1);
+Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec, mpq_class& rhs) {
+  auto den = rhs.get_den();
   for (auto c : vec) {
     den = lcm(den, c.get_den());
   }
@@ -66,37 +65,45 @@ Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec) 
   Linear_Expression linear;
   for (size_t i = 0; i < vec.size(); i++) {
     mpq_class num = den * vec[i];
-    assert(num.get_den() == 1);
+    LIBINTERVALXT_ASSERT(num.get_den() == 1, "Normalization of vector should have turned each entry into an integer but " << vec[i] << " became " << num << " which is not an integer.");
     linear = linear + num.get_num() * Variable(i);
   }
 
+  rhs *= den;
+
+  LIBINTERVALXT_ASSERT(rhs.get_den() == 1, "Normalization of vector should have turned each entry into an integer but " << rhs << " is not an integer.");
+
   return linear;
 }
+}  // namespace
 
 namespace intervalxt {
 
 RationalLinearSubspace::RationalLinearSubspace() {}
 
-RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& vectors, bool equations) {
-  Generator_System generators;
+RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& generators) {
+  Generator_System gens;
+
+  gens.insert(point());
+  for (auto generator : generators) {
+    mpq_class _;
+    Linear_Expression linear = linearExpressionFromVector(generator, _);
+    if (!linear.is_zero()) gens.insert(line(linear));
+  }
+  subspace = NNC_Polyhedron(gens);
+}
+
+RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y) {
   Constraint_System constraints;
 
-  if (equations) {
-    // Initialize from equations
-    for (auto equation : vectors) {
-      Linear_Expression linear = linearExpressionFromVector(equation);
-      constraints.insert(linear == 0);
-    }
-    subspace = NNC_Polyhedron(constraints);
-  } else {
-    // Initialize from generators
-    generators.insert(point());
-    for (auto generator : vectors) {
-      Linear_Expression linear = linearExpressionFromVector(generator);
-      if (!linear.is_zero()) generators.insert(line(linear));
-    }
-    subspace = NNC_Polyhedron(generators);
+  LIBINTERVALXT_CHECK_ARGUMENT(equations.size() == y.size(), "Equations must match y vector but there are " << equations.size() << " equations and vector has " << y.size() << "entries.");
+
+  for (size_t i = 0; i < equations.size(); i++) {
+    mpq_class rhs = y[i];
+    Linear_Expression linear = linearExpressionFromVector(equations[i], rhs);
+    constraints.insert(linear == rhs.get_num());
   }
+  subspace = NNC_Polyhedron(constraints);
 }
 
 NNC_Polyhedron RationalLinearSubspace::positive() const {
@@ -115,14 +122,6 @@ NNC_Polyhedron RationalLinearSubspace::nonNegative() const {
     constraints.insert(Variable(i) >= 0);
 
   return NNC_Polyhedron(constraints);
-}
-
-RationalLinearSubspace RationalLinearSubspace::fromEquations(const std::vector<std::vector<mpq_class>>& equations) {
-  return RationalLinearSubspace(equations, true);
-}
-
-RationalLinearSubspace RationalLinearSubspace::fromGenerators(const std::vector<std::vector<mpq_class>>& generators) {
-  return RationalLinearSubspace(generators, false);
 }
 
 template <RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
