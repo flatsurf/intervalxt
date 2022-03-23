@@ -20,76 +20,132 @@
 #  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
 #####################################################################
 
+import pytest
+
 from pyintervalxt import intervalxt, IntervalExchangeTransformation
 
 
-def test_IntervalExchangeTransformation():
-    iet = IntervalExchangeTransformation((18, 3), (1, 0))
-    assert repr(iet) == "[a: 18] [b: 3] / [b] [a]"
-    iet.swap()
-    assert repr(iet) == "[b: 3] [a: 18] / [a] [b]"
+@pytest.fixture(params=["mpz", "mpq", "renf_elem"])
+def coefficients(request):
+    r"""
+    Iterates over the supported coefficient types.
+    """
+    return request.param
 
 
-def test_reduce():
-    iet = IntervalExchangeTransformation((18, 3), (1, 0))
-    r = iet.reduce()
-    assert not r.has_value()
+@pytest.fixture(params=[[1, 0], [0, 1], [1, 0, 4, 3, 2, 6, 5]])
+def permutation(request):
+    r"""
+    Iterates over a sample of permutations, i.e., given the top of an IET [0,
+    1, 2, …], this produces a corresponding bottom permutation.
+    """
+    return request.param
 
-    iet = IntervalExchangeTransformation((18, 3), (0, 1))
-    r = iet.reduce()
-    assert r.has_value()
-    iet2 = r.value()
-    assert repr(iet) == "[a: 18] / [a]"
-    assert repr(iet2) == "[b: 3] / [b]"
+     
+@pytest.fixture
+def lengths(coefficients, permutation):
+    r"""
+    Produces lengths for the given permutation in a ring represented by coefficients.
+    """
+    if len(permutation) == 2:
+        lengths = [18, 3]
+    elif len(permutation) == 7:
+        lengths = [4, 56, 23, 11, 21, 9, 65]
+    else:
+        lengths = [1] * len(permutation)
 
-    iet = IntervalExchangeTransformation((4, 56, 23, 11, 21, 9, 65), (1, 0, 4, 3, 2, 6, 5))
-    r = iet.reduce()
-    assert r.has_value()
-    iet2 = r.value()
-    assert repr(iet) == "[a: 4] [b: 56] / [b] [a]"
-    assert repr(iet2) == "[c: 23] [d: 11] [e: 21] [f: 9] [g: 65] / [e] [d] [c] [g] [f]"
-    r2 = iet2.reduce()
-    assert r2.has_value()
-    iet3 = r2.value()
-    assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
-    assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
+    if coefficients == "mpz":
+        from gmpxxyy import mpz
+        return [mpz(l) for l in lengths]
+    elif coefficients == "mpq":
+        from gmpxxyy import mpq
+        return [mpq(l) for l in lengths]
+    elif coefficients == "renf_elem":
+        from pyeantic import eantic
+        L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
+        return [eantic.renf_elem(L, l) for l in lengths]
+    else:
+        raise NotImplementedError(f"Cannot create lengths for {coefficients} yet.")
 
 
-def iet_10_check(iet):
-    assert iet.size() == 2
-    assert iet.top()[0] == iet.bottom()[1]
-    assert iet.top()[1] == iet.bottom()[0]
+@pytest.fixture
+def iet(lengths, permutation):
+    r"""
+    Iterates over several Interval Exchange Transformations.
+    """
+    return IntervalExchangeTransformation(lengths, permutation)
+
+
+def test_saf_invariant(iet):
+    r"""
+    Test that the SAF invariant can be computed from Python.
+    """
     iet.safInvariant()
+
+
+def test_IntervalExchangeTransformation(iet, coefficients, permutation):
+    r"""
+    Test that Interval Exchange Transformations can be printed.
+    """
+    if coefficients == "mpz" and permutation == [1, 0]:
+        assert repr(iet) == "[a: 18] [b: 3] / [b] [a]"
+        iet.swap()
+        assert repr(iet) == "[b: 3] [a: 18] / [a] [b]"
+
+    assert "0x" not in repr(iet)
+
+
+def test_reduce(iet, coefficients, permutation):
+    r"""
+    Test that reduction of Interval Exchange Transformation works when they have an evident Saddle Connection.
+    """
+    if permutation == [1, 0]:
+        assert not iet.reduce().has_value()
+    elif permutation == [0, 1]:
+        r = iet.reduce()
+        assert r.has_value()
+        iet2 = r.value()
+        if coefficients == "mpz":
+            assert repr(iet) == "[a: 18] / [a]"
+            assert repr(iet2) == "[b: 3] / [b]"
+    elif permutation == [1, 0, 4, 3, 2, 6, 5]:
+        r = iet.reduce()
+        assert r.has_value()
+        iet2 = r.value()
+        if coefficients == "mpz":
+            assert repr(iet) == "[a: 4] [b: 56] / [b] [a]"
+            assert repr(iet2) == "[c: 23] [d: 11] [e: 21] [f: 9] [g: 65] / [e] [d] [c] [g] [f]"
+        r2 = iet2.reduce()
+        assert r2.has_value()
+        iet3 = r2.value()
+        if coefficients == "mpz":
+            assert repr(iet2) == "[c: 23] [d: 11] [e: 21] / [e] [d] [c]"
+            assert repr(iet3) == "[f: 9] [g: 65] / [g] [f]"
+    else:
+        r = iet.reduce()
+        if r.has_value():
+            assert not r.value().reduce().has_value()
+
+
+def test_decompose(iet):
+    r"""
+    Test that IETs can be decomposed into cylinders and minimal components.
+    """
     decomposition = intervalxt.DynamicalDecomposition(iet)
     decomposition.decompose()
-    cyls = sum(bool(component.cylinder() == True) for component in decomposition.components())
-    nocyls = sum(bool(component.cylinder() == False) for component in decomposition.components())
-    mins = sum(bool(component.withoutPeriodicTrajectory() == True) for component in decomposition.components())
-    nomins = sum(bool(component.withoutPeriodicTrajectory() == False) for component in decomposition.components())
-    assert cyls + nocyls == decomposition.components().size()
-    assert mins + nomins == decomposition.components().size()
+
+    cyls = sum(bool(component.cylinder() == True) for component in decomposition.components())  # noqa, == True is the correct check here.
+    mins = sum(bool(component.withoutPeriodicTrajectory() == True) for component in decomposition.components())  # noqa, == True is the correct check here.
+
+    assert cyls + mins == decomposition.components().size()
 
 
-def test_mpz():
-    from gmpxxyy import mpz
-    iet = IntervalExchangeTransformation((mpz(1), mpz(1)), [1, 0])
-    iet_10_check(iet)
-
-
-def test_mpq():
-    from gmpxxyy import mpq
-    iet = IntervalExchangeTransformation((mpq(1, 3), mpq(2, 5)), [1, 0])
-    iet_10_check(iet)
-
-
-def test_eantic():
-    from pyeantic import eantic
-    L = eantic.renf("a^3 - a^2 - a - 1", "a", "[1.84 +/- 0.01]")
-    lengths = []
-    lengths.append(eantic.renf_elem(L, "a"))
-    lengths.append(eantic.renf_elem(L, "2*a^2 - 3"))
-    iet = IntervalExchangeTransformation(lengths, [1, 0])
-    iet_10_check(iet)
+def test_lengths(iet, lengths):
+    r"""
+    Test that the lengths underlying an IET can be accessed.
+    """
+    for label, length in zip(iet.top(), lengths):
+        assert iet.lengths().get(label) == length
 
 
 if __name__ == '__main__':
