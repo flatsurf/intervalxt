@@ -7,3 +7,5 @@
 **Fixed:**
 
 * Made all methods of `intervalxt::Length` and `intervalxt::Length` accessible from Python.
+
+* Removed libtool scripts from repository.
