@@ -28,7 +28,6 @@
     "ppl": [],
     "pyexactreal>=2.0.0,<3": [],
     "pytest": [],
-    "python": [],
     "setuptools": []
   },
   "conda_channels": ["flatsurf", "conda-forge", "default"],
