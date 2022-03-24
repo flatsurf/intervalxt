@@ -9,3 +9,5 @@
 * Made all methods of `intervalxt::Length` and `intervalxt::Length` accessible from Python.
 
 * Removed libtool scripts from repository.
+
+* Removed broken binder tests from CI. (We should instead build a conda package and run tests with that package installed.)
