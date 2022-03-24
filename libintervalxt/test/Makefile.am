@@ -31,12 +31,12 @@ EXTRA_DIST += external/catch2/single_include/catch2
 
 AM_CPPFLAGS = -I $(srcdir)/../ -I $(builddir)/../ -isystem $(srcdir)/external/cereal/include -isystem $(srcdir)/external/catch2/single_include/catch2/
 
-AM_LDFLAGS = $(builddir)/../src/libintervalxt.la
+LDADD = $(builddir)/../src/libintervalxt.la
 
 if HAVE_EANTIC
-AM_LDFLAGS += -leantic -leanticxx -lflint
+LDADD += -leantic -leanticxx -lflint
 endif
 
 if HAVE_EXACTREAL
-AM_LDFLAGS += -lexactreal
+LDADD += -lexactreal
 endif
