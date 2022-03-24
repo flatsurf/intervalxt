@@ -30,9 +30,7 @@ jobs:
       - name: create & post coverage report
         shell: bash -l {0}
         run: |
-          pushd libintervalxt/test
-          find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
-          popd
+          gcov-tool merge libintervalxt/test libintervalxt/src -o libintervalxt/src
           pushd libintervalxt/src
           find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
           popd
