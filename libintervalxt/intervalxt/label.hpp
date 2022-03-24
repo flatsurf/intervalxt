@@ -46,7 +46,7 @@ class LIBINTERVALXT_API Label : public boost::equality_comparable<Label>,
   // available.
   // Only the Lengths object knows a meaningful name for this id which can be
   // determined by calling Lengths::render().
-  friend std::ostream& operator<<(std::ostream&, const Label&);
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const Label&);
 
  private:
   size_t id;
