@@ -4,6 +4,10 @@
 
 * Added fallback printing of a `Label` in Python when the corresponding `Lengths` are not available.
 
+**Removed:**
+
+* Removed unused `length.ipp` header.
+
 **Fixed:**
 
 * Made all methods of `intervalxt::Length` and `intervalxt::Length` accessible from Python.
