@@ -26,11 +26,14 @@ jobs:
         run: |
           ./bootstrap
           ./configure --prefix="$PREFIX" CXXFLAGS="$CXXFLAGS --coverage -O0 -UNDEBUG" --without-benchmark
-          make check
+          make check TESTS=
+          make check -j1
       - name: create & post coverage report
         shell: bash -l {0}
         run: |
-          gcov-tool merge libintervalxt/test libintervalxt/src -o libintervalxt/src
+          pushd libintervalxt/test
+          find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
+          popd
           pushd libintervalxt/src
           find -type f -name '*.gcda' -exec gcov -pbs ../../../intervalxt '{}' ';'
           popd
