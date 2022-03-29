@@ -72,5 +72,7 @@ template <>
 struct fmt::formatter<::intervalxt::Side> : ::intervalxt::GenericFormatter<::intervalxt::Side> {};
 template <>
 struct fmt::formatter<::intervalxt::Length> : ::intervalxt::GenericFormatter<::intervalxt::Length> {};
+template <>
+struct fmt::formatter<::intervalxt::Label> : ::intervalxt::GenericFormatter<::intervalxt::Label> {};
 
 #endif

@@ -25,7 +25,7 @@ jobs:
         shell: bash -l {0}
         run: |
           ./bootstrap
-          ./configure --prefix="$PREFIX" CXXFLAGS="$CXXFLAGS --coverage -O0 -UNDEBUG" --without-benchmark
+          ./configure --prefix="$PREFIX" CXXFLAGS="$CXXFLAGS --coverage -O0 -fprofile-abs-path -UNDEBUG" --without-benchmark
           make check
       - name: create & post coverage report
         shell: bash -l {0}

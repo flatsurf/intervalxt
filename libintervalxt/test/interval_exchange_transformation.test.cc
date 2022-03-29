@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C)      2019 Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <e-antic/renfxx.h>
 
+#include <sstream>
 #include <valarray>
 #include <vector>
 
@@ -67,6 +68,15 @@ TEST_CASE("Basic Operations on an Interval Exchange Transformation", "[interval_
       REQUIRE(iet.bottom() == vector{d, a, b, c});
     }
   }
+}
+
+TEST_CASE("Interval Exchange Transformations can be Printed") {
+  auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
+  auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
+
+  std::stringstream stream;
+  stream << iet;
+  REQUIRE(stream.str() == "[a: 18] [b: 3] [c: 1] [d: 1] / [d] [a] [b] [c]");
 }
 
 TEST_CASE("Reduction of an Interval Exchange Transformation", "[interval_exchange_transformation][reduce]") {

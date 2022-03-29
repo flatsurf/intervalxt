@@ -9,7 +9,7 @@ channels:
   - defaults
 dependencies:
   - automake
-  - cppyythonizations
+  - cppyythonizations>=1.2.0,<2
   - gmpxxyy
   - libtool
   - make

@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019 Julian Rüth
+ *        Copyright (C) 2019      Vincent Delecroix
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "../intervalxt/label.hpp"
 
 #include <stdlib.h>
+#include <ostream>
 
 namespace intervalxt {
 
@@ -31,6 +32,10 @@ Label::Label(size_t id) :
   id(id) {}
 
 bool Label::operator==(const Label& rhs) const { return id == rhs.id; }
+
+std::ostream& operator<<(std::ostream& os, const Label& self) {
+  return os << "Label(" << self.id << ")";
+}
 
 }  // namespace intervalxt
 
