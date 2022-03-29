@@ -52,14 +52,14 @@ using Length = boost::type_erasure::any<LengthInterface>;
 // operations here but we want the implementation to rely on Lengths and not on
 // Length.
 struct LengthInterface : boost::mpl::vector<
-    boost::type_erasure::copy_constructible<>,
-    boost::type_erasure::equality_comparable<>,
-    boost::type_erasure::less_than_comparable<>,
-    boost::type_erasure::multipliable<>,
-    boost::type_erasure::ostreamable<>,
-    intervalxt::boolable<>,
-    boost::type_erasure::typeid_<>,
-    boost::type_erasure::relaxed> {
+                             boost::type_erasure::copy_constructible<>,
+                             boost::type_erasure::equality_comparable<>,
+                             boost::type_erasure::less_than_comparable<>,
+                             boost::type_erasure::multipliable<>,
+                             boost::type_erasure::ostreamable<>,
+                             intervalxt::boolable<>,
+                             boost::type_erasure::typeid_<>,
+                             boost::type_erasure::relaxed> {
 };
 
 }  // namespace intervalxt

@@ -21,6 +21,7 @@
 #include "../intervalxt/label.hpp"
 
 #include <stdlib.h>
+
 #include <ostream>
 
 namespace intervalxt {
