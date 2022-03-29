@@ -20,7 +20,7 @@
 #include <benchmark/benchmark.h>
 #include <gmpxx.h>
 
-#include "../src/impl/rational_linear_subspace.hpp"
+#include "../src/impl/rational_affine_subspace.hpp"
 
 using namespace intervalxt;
 

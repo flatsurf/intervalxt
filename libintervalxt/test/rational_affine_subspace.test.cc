@@ -20,14 +20,14 @@
 
 #include <vector>
 
-#include "../src/impl/rational_linear_subspace.hpp"
+#include "../src/impl/rational_affine_subspace.hpp"
 #include "external/catch2/single_include/catch2/catch.hpp"
 
 using std::vector;
 
 namespace intervalxt::test {
 
-TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]", (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>)) {
+TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_affine_subspace]", (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>), (std::integral_constant<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION, RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>)) {
   constexpr auto IMPLEMENTATION = TestType::value;
 
   SECTION("hasNonZeroNonNegativeVector()") {
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors"
   }
 }
 
-TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_linear_subspace]") {
+TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[rational_affine_subspace]") {
   SECTION("hasPositiveVector") {
     REQUIRE(!RationalLinearSubspace().hasPositiveVector());
     REQUIRE(!RationalLinearSubspace(vector<vector<mpq_class>>{}, vector<mpq_class>{}).hasPositiveVector());
@@ -64,7 +64,7 @@ TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors", "[ratio
   }
 }
 
-TEST_CASE("Transformations of Rational Linear Subspace", "[rational_linear_subspace]") {
+TEST_CASE("Transformations of Rational Linear Subspace", "[rational_affine_subspace]") {
   // The line B := x_1 = 0
   auto S = RationalLinearSubspace({{0, 1}}, {0});
   REQUIRE(!S.hasPositiveVector());

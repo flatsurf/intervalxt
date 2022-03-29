@@ -1,4 +1,4 @@
-check_PROGRAMS = rational_linear_subspace.test label.test component.test separatrix.test connection.test
+check_PROGRAMS = rational_affine_subspace.test label.test component.test separatrix.test connection.test
 
 if HAVE_EANTIC
 if HAVE_EXACTREAL
@@ -8,7 +8,7 @@ endif
 
 TESTS = $(check_PROGRAMS)
 
-rational_linear_subspace_test_SOURCES = rational_linear_subspace.test.cc main.cc ../src/rational_linear_subspace.cc
+rational_affine_subspace_test_SOURCES = rational_affine_subspace.test.cc main.cc ../src/rational_affine_subspace.cc
 label_test_SOURCES = label.test.cc main.cc
 interval_exchange_transformation_test_SOURCES = interval_exchange_transformation.test.cc main.cc
 dynamical_decomposition_test_SOURCES = dynamical_decomposition.test.cc main.cc

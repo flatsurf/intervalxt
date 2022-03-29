@@ -34,7 +34,7 @@
 #include "external/rx-ranges/include/rx/ranges.hpp"
 #include "impl/interval.hpp"
 #include "impl/interval_exchange_transformation.impl.hpp"
-#include "impl/rational_linear_subspace.hpp"
+#include "impl/rational_affine_subspace.hpp"
 #include "util/assert.ipp"
 
 using std::vector;

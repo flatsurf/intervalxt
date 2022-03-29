@@ -18,7 +18,7 @@
  *  along with intervalxt. If not, see <https://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#include "impl/rational_linear_subspace.hpp"
+#include "impl/rational_affine_subspace.hpp"
 
 #include <boost/numeric/conversion/cast.hpp>
 #include <ostream>
