@@ -56,7 +56,7 @@ void HasNonZeroNonNegativeVector(benchmark::State& state) {
       {-19424, -26592, -11168, -10272, -26016, -24768, -14176, -2560, -2464, -1664, -13152, -10592, -15040, -2720, -2080, -1472, -544, -4384, -4096, -928, -1600, -160, -1536, -13408, -6400, -15264, -6560, -3232, -3008, -1408, -2496, -1632, -2368, -3520, -3456, -4704, -4672, -864, -2784, -4736, -5920, -5504, -7328, -8704, -15488, -8768, -1888, -3488, -7168, -20224, -11104, -2784, -3168, -1920, -2720, -1888, -768, -3648, -320}};
 
   for (auto _ : state) {
-    RationalLinearSubspace(equations, std::vector<mpq_class>(equations.size())).hasNonZeroNonNegativeVector();
+    RationalAffineSubspace(equations, std::vector<mpq_class>(equations.size())).hasNonZeroNonNegativeVector();
   }
 }
 BENCHMARK(HasNonZeroNonNegativeVector);

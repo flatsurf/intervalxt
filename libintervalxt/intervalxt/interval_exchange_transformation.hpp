@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019      Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -61,7 +61,22 @@ class LIBINTERVALXT_API IntervalExchangeTransformation : boost::equality_compara
 
   // Return whether there is no periodic trajectory via Boshernitzan's
   // algorithm.
+  // Note that this uses a partial algorithm, i.e., `false` does not
+  // mean that there is a periodic trajectory but that we could
+  // not determine that there was none.
   bool boshernitzanNoPeriodicTrajectory() const;
+
+  // Return whether there is no connection via Boshernitzan's algorithm.
+  // Note that this uses a partial algorithm, i.e., `false` does not
+  // mean that there is a connection but that we could not determine that there
+  // is none.
+  bool boshernitzanNoSaddleConnection() const;
+
+  // Return whether there is no connection going from the right end of `bottom`
+  // to the right end of `top`.
+  // Note that this uses a partial algorithm, i.e., `false` does not mean that
+  // there is a connection but that we could not determine that there was none.
+  bool boshernitzanNoSaddleConnection(const Label& top, const Label& bottom) const;
 
   // Remove the first pair of intervals (assuming that it corresponds to a
   // cylinder, i.e., the leftmost singularity is a connection of length one).

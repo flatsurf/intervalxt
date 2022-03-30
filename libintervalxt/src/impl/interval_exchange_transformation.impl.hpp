@@ -42,8 +42,12 @@ class ImplementationOf<IntervalExchangeTransformation> {
   // used for the lengths of the iet.
   std::vector<std::vector<mpq_class>> translations() const;
 
+  std::vector<mpq_class> translation(const Label& top, const Label& bottom, const std::unordered_map<Label, std::vector<mpq_class>>& labelToCoefficients) const;
+
   // Return the coefficient vectors for the labels on top.
   std::vector<std::vector<mpq_class>> coefficients() const;
+
+  std::unordered_map<Label, std::vector<mpq_class>> labelToCoefficients() const;
 
   const std::vector<mpq_class>& saf() const;
   bool saf0() const;

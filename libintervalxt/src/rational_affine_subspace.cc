@@ -79,9 +79,9 @@ Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec, 
 
 namespace intervalxt {
 
-RationalLinearSubspace::RationalLinearSubspace() {}
+RationalAffineSubspace::RationalAffineSubspace() {}
 
-RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& generators) {
+RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& generators) {
   Generator_System gens;
 
   gens.insert(point());
@@ -93,10 +93,10 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
   subspace = NNC_Polyhedron(gens);
 }
 
-RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y) {
+RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y) {
   Constraint_System constraints;
 
-  LIBINTERVALXT_CHECK_ARGUMENT(equations.size() == y.size(), "Equations must match y vector but there are " << equations.size() << " equations and vector has " << y.size() << "entries.");
+  LIBINTERVALXT_CHECK_ARGUMENT(equations.size() == y.size(), "Equations must match y vector but there are " << equations.size() << " equations and vector has " << y.size() << " entries.");
 
   for (size_t i = 0; i < equations.size(); i++) {
     mpq_class rhs = y[i];
@@ -106,7 +106,7 @@ RationalLinearSubspace::RationalLinearSubspace(const std::vector<std::vector<mpq
   subspace = NNC_Polyhedron(constraints);
 }
 
-NNC_Polyhedron RationalLinearSubspace::positive() const {
+NNC_Polyhedron RationalAffineSubspace::positive() const {
   Constraint_System constraints;
 
   for (size_t i = 0; i < subspace.space_dimension(); i++)
@@ -115,7 +115,7 @@ NNC_Polyhedron RationalLinearSubspace::positive() const {
   return NNC_Polyhedron(constraints);
 }
 
-NNC_Polyhedron RationalLinearSubspace::nonNegative() const {
+NNC_Polyhedron RationalAffineSubspace::nonNegative() const {
   Constraint_System constraints;
 
   for (size_t i = 0; i < subspace.space_dimension(); i++)
@@ -124,8 +124,10 @@ NNC_Polyhedron RationalLinearSubspace::nonNegative() const {
   return NNC_Polyhedron(constraints);
 }
 
-template <RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
-bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
+template <RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
+bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
+  // TODO: Most of this is wrong when the RHS != 0.
+
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
     return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>();
 
@@ -188,7 +190,8 @@ bool RationalLinearSubspace::hasNonZeroNonNegativeVector() const {
   }
 }
 
-bool RationalLinearSubspace::hasPositiveVector() const {
+bool RationalAffineSubspace::hasPositiveVector() const {
+  // TODO: This is probably very slow in comparison to hasNonZeroNonNegativeVector().
   if (subspace.space_dimension() == 0) {
     return false;
   }
@@ -198,27 +201,27 @@ bool RationalLinearSubspace::hasPositiveVector() const {
   return !polyhedron.is_empty();
 }
 
-bool RationalLinearSubspace::operator==(const RationalLinearSubspace& rhs) const {
+bool RationalAffineSubspace::operator==(const RationalAffineSubspace& rhs) const {
   return subspace == rhs.subspace;
 }
 
-void RationalLinearSubspace::swap(int i, int j) {
+void RationalAffineSubspace::swap(int i, int j) {
   subspace.map_space_dimensions(SwapDimensions{subspace.space_dimension(), numeric_cast<size_t>(i), numeric_cast<size_t>(j)});
 }
 
-void RationalLinearSubspace::elementaryTransformation(int i, int j, mpq_class c) {
+void RationalAffineSubspace::elementaryTransformation(int i, int j, mpq_class c) {
   subspace.affine_image(Variable(numeric_cast<size_t>(i)), c.get_den() * Variable(numeric_cast<size_t>(i)) + c.get_num() * Variable(numeric_cast<size_t>(j)), c.get_den());
 }
 
-std::ostream& operator<<(std::ostream& os, const RationalLinearSubspace& self) {
+std::ostream& operator<<(std::ostream& os, const RationalAffineSubspace& self) {
   return Parma_Polyhedra_Library::IO_Operators::operator<<(os, self.subspace);
 }
 
 // Explicit instantiations so that implementations are generated for the linker.
 
-template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>() const;
-template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>() const;
-template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>() const;
-template bool RationalLinearSubspace::hasNonZeroNonNegativeVector<RationalLinearSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>() const;
+template bool RationalAffineSubspace::hasNonZeroNonNegativeVector<RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>() const;
+template bool RationalAffineSubspace::hasNonZeroNonNegativeVector<RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_POLYHEDRON>() const;
+template bool RationalAffineSubspace::hasNonZeroNonNegativeVector<RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_QUOTIENT>() const;
+template bool RationalAffineSubspace::hasNonZeroNonNegativeVector<RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>() const;
 
 }  // namespace intervalxt

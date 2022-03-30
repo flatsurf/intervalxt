@@ -82,5 +82,7 @@ LIBINTERVALXT_3.3.0 {
   global:
     extern "C++" {
       "intervalxt::operator<<(std::ostream&, intervalxt::Label const&)";
+      "intervalxt::IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const";
+      "intervalxt::IntervalExchangeTransformation::boshernitzanNoSaddleConnection(intervalxt::Label const&, intervalxt::Label const&) const";
     };
 } LIBINTERVALXT_3.1.4;
