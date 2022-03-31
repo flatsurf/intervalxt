@@ -78,6 +78,14 @@ class LIBINTERVALXT_API IntervalExchangeTransformation : boost::equality_compara
   // there is a connection but that we could not determine that there was none.
   bool boshernitzanNoSaddleConnection(const Label& top, const Label& bottom) const;
 
+  // Return the matrix of coefficients underlying the equations used in
+  // boshernitzanNoPeriodicTrajectory and boshernitzanNoSaddleConnection.
+  std::vector<std::vector<mpq_class>> boshernitzanEquations() const;
+
+  // Return the inhomogeneous part of the equations used to decide
+  // boshernitzanNoSaddleConnection.
+  std::vector<mpq_class> boshernitzanSaddleConnectionValues(const Label& top, const Label& bottom) const;
+
   // Remove the first pair of intervals (assuming that it corresponds to a
   // cylinder, i.e., the leftmost singularity is a connection of length one).
   // After such cylinder is removed the permutation could be reducible.

@@ -84,5 +84,7 @@ LIBINTERVALXT_3.3.0 {
       "intervalxt::operator<<(std::ostream&, intervalxt::Label const&)";
       "intervalxt::IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const";
       "intervalxt::IntervalExchangeTransformation::boshernitzanNoSaddleConnection(intervalxt::Label const&, intervalxt::Label const&) const";
+      "intervalxt::IntervalExchangeTransformation::boshernitzanEquations() const";
+      "intervalxt::IntervalExchangeTransformation::boshernitzanSaddleConnectionValues(intervalxt::Label const&, intervalxt::Label const&) const";
     };
 } LIBINTERVALXT_3.1.4;
