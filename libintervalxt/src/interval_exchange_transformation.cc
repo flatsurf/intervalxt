@@ -156,9 +156,6 @@ bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection(const Label&
   // Probably this wil always return false when SAF=0. But we are not entirely
   // sure that this is actually the case.
 
-  if (size() <= 1)
-    return false;
-
   const auto values = boshernitzanSaddleConnectionValues(top, bottom);
 
   if (values | rx::all_of([](const auto& t){ return t == 0; }))
