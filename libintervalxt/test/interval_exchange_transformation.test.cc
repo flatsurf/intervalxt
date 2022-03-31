@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C)      2019 Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <e-antic/renfxx.h>
 
+#include <sstream>
 #include <valarray>
 #include <vector>
 
@@ -67,6 +68,15 @@ TEST_CASE("Basic Operations on an Interval Exchange Transformation", "[interval_
       REQUIRE(iet.bottom() == vector{d, a, b, c});
     }
   }
+}
+
+TEST_CASE("Interval Exchange Transformations can be Printed") {
+  auto&& [lengths, a, b, c, d] = IntLengths::make(18, 3, 1, 1);
+  auto iet = IET(lengths, {a, b, c, d}, {d, a, b, c});
+
+  std::stringstream stream;
+  stream << iet;
+  REQUIRE(stream.str() == "[a: 18] [b: 3] [c: 1] [d: 1] / [d] [a] [b] [c]");
 }
 
 TEST_CASE("Reduction of an Interval Exchange Transformation", "[interval_exchange_transformation][reduce]") {
@@ -408,20 +418,94 @@ TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[inter
   using namespace eantic;
   using EAnticLengths = sample::Lengths<renf_elem_class>;
 
+  // Return iet.boshernitzanNoSaddleConnection() and check consistency with boshernitzanNoSaddleConnection(top, bottom).
+  auto boshernitzanNoSaddleConnection = [](const auto& iet) -> bool {
+    const bool noSaddleConnection = iet.boshernitzanNoSaddleConnection();
+
+    for (auto top : iet.top()) {
+      if (top == *iet.top().rbegin())
+        continue;
+
+      for (auto bottom : iet.bottom()) {
+        if (bottom == *iet.bottom().rbegin())
+          continue;
+
+        const bool noSaddleConnectionHere = iet.boshernitzanNoSaddleConnection(top, bottom);
+
+        if (noSaddleConnection)
+          REQUIRE(noSaddleConnectionHere);
+      }
+    }
+
+    return noSaddleConnection;
+  };
+
   SECTION("Over the Rationals, Boshernitzan Is Trivial") {
     auto&& [lengths, a, b, c] = IntLengths::make(451, 3221, 451);
     auto iet = IET(lengths, {a, b, c}, {c, b, a});
     REQUIRE(!iet.boshernitzanNoPeriodicTrajectory());
+    REQUIRE(!iet.boshernitzanNoSaddleConnection());
+    REQUIRE(!iet.boshernitzanNoSaddleConnection(a, c));
+    REQUIRE(!iet.boshernitzanNoSaddleConnection(a, b));
+    REQUIRE(!iet.boshernitzanNoSaddleConnection(b, c));
+    REQUIRE(!iet.boshernitzanNoSaddleConnection(b, b));
   }
 
   SECTION("Over the Field Q(√2)") {
     auto K = renf_class::make("a^2 - 2", "a", "1.41 +/- 0.01");
 
+    SECTION("A Cylinder") {
+      auto&& [lengths, a] = EAnticLengths::make(K->gen());
+
+      auto iet = IET(lengths, {a}, {a});
+      REQUIRE(!iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(!boshernitzanNoSaddleConnection(iet));
+    }
+
+    SECTION("Two Cylinders") {
+      auto&& [lengths, a, b] = EAnticLengths::make(K->gen(), K->one());
+
+      auto iet = IET(lengths, {a, b}, {a, b});
+      REQUIRE(!iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(!boshernitzanNoSaddleConnection(iet));
+    }
+
     SECTION("Examples Without Periodic Trajectories") {
       auto&& [lengths, a, b, c, d] = EAnticLengths::make(K->gen(), renf_elem_class(*K, 1), renf_elem_class(*K, 1), renf_elem_class(*K, 1));
 
-      REQUIRE(IET(lengths, {b, a}, {a, b}).boshernitzanNoPeriodicTrajectory());
-      REQUIRE(IET(lengths, {a, b, c, d}, {d, b, a, c}).boshernitzanNoPeriodicTrajectory());
+      {
+        // Consider the IET
+        //  1 √2
+        // √2  1
+        auto iet = IET(lengths, {b, a}, {a, b});
+        CAPTURE(iet);
+
+        // Boshernitzan's criterion is going to consider the translations (1, -√2).
+        // Since there is no non-trivial integer solution to a - b√2 = 0, we
+        // conclude that there is no periodic trajectory.
+        REQUIRE(iet.boshernitzanNoPeriodicTrajectory());
+
+        // To exclude the possibility of a saddle connection, we try to solve a - b√2 = 1 - √2
+        // with integer coefficients.
+        REQUIRE(boshernitzanNoSaddleConnection(iet));
+      }
+
+      {
+        auto iet = IET(lengths, {a, b, c, d}, {d, b, a, c});
+        CAPTURE(iet);
+
+        REQUIRE(iet.boshernitzanNoPeriodicTrajectory());
+        REQUIRE(!iet.boshernitzanNoSaddleConnection());
+        REQUIRE(iet.boshernitzanNoSaddleConnection(a, d));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(a, b));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(a, a));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(b, d));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(b, b));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(b, a));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(c, d));
+        REQUIRE(iet.boshernitzanNoSaddleConnection(c, b));
+        REQUIRE(!iet.boshernitzanNoSaddleConnection(c, a));
+      }
     }
 
     SECTION("Example With A Cylinder") {
@@ -431,7 +515,11 @@ TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[inter
       //   t2 = -10*a - 10
       // The space of relations is generated by (3,7,0) and (10,0,7).
       auto&& [lengths, a, b, c] = EAnticLengths::make(renf_elem_class(*K, "7*a + 8"), renf_elem_class(*K, "3*a + 2"), renf_elem_class(*K, "4*a + 5"));
-      REQUIRE(!IET(lengths, {a, b, c}, {c, b, a}).boshernitzanNoPeriodicTrajectory());
+      auto iet = IET(lengths, {a, b, c}, {c, b, a});
+      CAPTURE(iet);
+
+      REQUIRE(!iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(!boshernitzanNoSaddleConnection(iet));
     }
   }
 
@@ -439,8 +527,30 @@ TEST_CASE("Boshernitzan Algorithm on Interval Exchange Transformations", "[inter
     auto K = renf_class::make("a^3 - 2", "a", "1.25 +/- 0.01");
     auto&& [lengths, a, b, c] = EAnticLengths::make(K->gen() * K->gen(), K->gen(), renf_elem_class(*K, 1));
 
-    REQUIRE(IET(lengths, {a, b}, {b, a}).boshernitzanNoPeriodicTrajectory());
-    REQUIRE(IET(lengths, {a, b, c}, {c, b, a}).boshernitzanNoPeriodicTrajectory());
+    {
+      auto iet = IET(lengths, {a, b}, {b, a});
+      CAPTURE(iet);
+
+      REQUIRE(iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(boshernitzanNoSaddleConnection(iet));
+    }
+    {
+      auto iet = IET(lengths, {a, b, c}, {c, b, a});
+      CAPTURE(iet);
+
+      REQUIRE(iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(boshernitzanNoSaddleConnection(iet));
+    }
+    {
+      auto&& [lengths, a, b, c, d, e, f] = EAnticLengths::make(renf_elem_class(*K, 1), renf_elem_class(*K, 1), K->gen(), K->gen() * K->gen(), K->gen(), K->gen() * K->gen());
+
+      // TODO: Is this the right permutation? see zulip.
+      auto iet = IET(lengths, {a, b, c, d, e, f}, {e, c, f, d, b, a});
+      CAPTURE(iet);
+
+      REQUIRE(iet.boshernitzanNoPeriodicTrajectory());
+      REQUIRE(boshernitzanNoSaddleConnection(iet));
+    }
   }
 }
 

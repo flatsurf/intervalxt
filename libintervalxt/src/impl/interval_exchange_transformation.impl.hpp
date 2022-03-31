@@ -42,10 +42,24 @@ class ImplementationOf<IntervalExchangeTransformation> {
   // used for the lengths of the iet.
   std::vector<std::vector<mpq_class>> translations() const;
 
-  // Return the coefficient vectors for the labels on top.
+  // Return the translation τ going from ``top`` to ``bottom``, i.e., the
+  // negative sum of the lengths before ``top`` plus the sum of the legnths
+  // before ``bottom``.
+  std::vector<mpq_class> translation(const Label& top, const Label& bottom, const std::unordered_map<Label, std::vector<mpq_class>>& labelToCoefficients) const;
+
+  // Return the coefficient vectors for the labels on top, i.e., rewrite the
+  // lengths of each interval as a vector of rationals over some appropriate
+  // base, e.g., the power base of the number field.
   std::vector<std::vector<mpq_class>> coefficients() const;
 
+  // Return the coefficient vectors for all labels, i.e., rewrite the lengths
+  // of each interval as a vector of rationals over some appropriate base,
+  // e.g., the power base of the number field.
+  std::unordered_map<Label, std::vector<mpq_class>> labelToCoefficients() const;
+
   const std::vector<mpq_class>& saf() const;
+
+  // Return whether SAF=0.
   bool saf0() const;
 
   std::list<Interval> top;

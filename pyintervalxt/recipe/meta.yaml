@@ -1,4 +1,4 @@
-{% set version = '3.2.0' %}
+{% set version = '3.3.0' %}
 
 package:
   name: pyintervalxt
@@ -11,8 +11,6 @@ build:
   number: 0
   # libintervalxt is not available on Windows yet
   skip: True  # [win]
-  # libintervalxt is not available on macOS yet
-  skip: True  # [osx]
 
 requirements:
   build:
@@ -25,14 +23,13 @@ requirements:
     - setuptools
     - cppyythonizations
     - gmpxxyy
-    - pyeantic >=1.0.0,<2
-    - pyexactreal >=2.0.0,<3
     - libintervalxt
   run:
     - boost-cpp
     - python
     - cppyy
     - cppyythonizations
+    - gmpxxyy
 
 test:
   imports:

@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019-2020 Vincent Delecroix
- *        Copyright (C) 2019-2021 Julian Rüth
+ *        Copyright (C) 2019-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <boost/operators.hpp>
 #include <functional>
+#include <iosfwd>
 
 #include "serializable.hpp"
 
@@ -31,9 +32,6 @@ namespace intervalxt {
 // A label identifying a pair of intervals in an interval exchange
 // transformation. The label itself carries no information about the length of
 // the interval, the Lengths object knows about this and other metadata.
-// Note that this class has no printing operator<< on purpose; the label
-// itself is just some random id, only the Lengths object knows a meaningful
-// name for this id which can be determined by calling Lengths::render().
 class LIBINTERVALXT_API Label : public boost::equality_comparable<Label>,
                                 public Serializable<Label> {
  public:
@@ -41,6 +39,14 @@ class LIBINTERVALXT_API Label : public boost::equality_comparable<Label>,
   explicit Label(size_t id);
 
   bool operator==(const Label&) const;
+
+  // Write the internal id of this label to the output stream.
+  // Note that this prints just some random id that is meant as a fallback to
+  // just print something when the corresponding Lengths object is not
+  // available.
+  // Only the Lengths object knows a meaningful name for this id which can be
+  // determined by calling Lengths::render().
+  LIBINTERVALXT_API friend std::ostream& operator<<(std::ostream&, const Label&);
 
  private:
   size_t id;

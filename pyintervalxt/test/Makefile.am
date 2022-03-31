@@ -1,9 +1,10 @@
-TESTS = interval_exchange_transformation.py python-doctest.sh
+TESTS = interval_exchange_transformation.py label.py python-doctest.sh
 EXTRA_DIST = $(TESTS)
 
 AM_TESTS_ENVIRONMENT = . $(builddir)/test-env.sh;
 
 interval_exchange_transformation.py: test-env.sh bin/python
+label.py: test-env.sh bin/python
 python-doctest.sh: test-env.sh bin/python
 
 @VALGRIND_CHECK_RULES@

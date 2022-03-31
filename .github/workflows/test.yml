@@ -16,8 +16,6 @@ jobs:
         - on: Ubuntu-20.04
         - on: macos-10.15
         - on: Ubuntu-20.04
-          environment: binder
-        - on: Ubuntu-20.04
           sanitizer: valgrind
     steps:
       - uses: actions/checkout@v2
@@ -37,16 +35,6 @@ jobs:
         run: |
           mamba env update --quiet -n test -f libintervalxt/environment.yml
           conda list
-        if: ${{ matrix.environment != 'binder' }}
-      - name: Create binder environment
-        shell: bash -l {0}
-        run: |
-          wget -O repo2docker.yml https://github.com/jupyterhub/repo2docker/raw/main/repo2docker/buildpacks/conda/environment.yml
-          mamba install -n test --quiet -y pytest pytest-xdist byexample
-          mamba env update -n test --quiet -f repo2docker.yml
-          mamba env update -n test --quiet -f binder/environment.yml
-          conda list
-        if: ${{ matrix.environment == 'binder' }}
       - name: configure & build & test
         shell: bash -l {0}
         run: |
@@ -91,9 +79,6 @@ jobs:
         - on: macos-10.15
           python: "3.9"
         - on: ubuntu-20.04
-          python: "3.7"
-          environment: binder
-        - on: ubuntu-20.04
           python: "3.9"
           sanitizer: valgrind
     steps:
@@ -115,16 +100,6 @@ jobs:
           mamba env update --quiet -n test -f libintervalxt/environment.yml
           mamba env update --quiet -n test -f pyintervalxt/environment.yml
           conda list
-        if: ${{ matrix.environment != 'binder' }}
-      - name: Create binder environment
-        shell: bash -l {0}
-        run: |
-          wget -O repo2docker.yml https://github.com/jupyterhub/repo2docker/raw/main/repo2docker/buildpacks/conda/environment.yml
-          mamba install -n test --quiet -y pytest pytest-xdist byexample
-          mamba env update -n test --quiet -f repo2docker.yml
-          mamba env update -n test --quiet -f binder/environment.yml
-          conda list
-        if: ${{ matrix.environment == 'binder' }}
       - name: configure & make & test
         shell: bash -l {0}
         run: |

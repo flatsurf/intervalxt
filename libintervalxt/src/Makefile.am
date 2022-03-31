@@ -11,7 +11,7 @@ libintervalxt_la_SOURCES =                         \
 	interval_exchange_transformation.cc        \
 	label.cc                                   \
 	lengths_with_connections.cc                \
-	rational_linear_subspace.cc                \
+	rational_affine_subspace.cc                \
 	similarity_tracker.cc                      \
 	separatrix.cc
 
@@ -82,7 +82,7 @@ noinst_HEADERS =                                                  \
 	impl/interval.hpp                                         \
 	impl/interval_exchange_transformation.impl.hpp            \
 	impl/lengths_with_connections.hpp                         \
-	impl/rational_linear_subspace.hpp                         \
+	impl/rational_affine_subspace.hpp                         \
 	impl/separatrix.impl.hpp                                  \
 	impl/similarity_tracker.hpp                               \
 	util/assert.ipp
