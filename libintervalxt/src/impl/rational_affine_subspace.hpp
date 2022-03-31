@@ -69,6 +69,10 @@ class RationalAffineSubspace : boost::equality_comparable<RationalAffineSubspace
  private:
   Parma_Polyhedra_Library::NNC_Polyhedron subspace;
 
+  // Whether the right hand side was 0 when creating this subspace, i.e.,
+  // whether it is an actual linear subspace or just an affine subspace.
+  bool homogeneous;
+
   Parma_Polyhedra_Library::NNC_Polyhedron positive() const;
   Parma_Polyhedra_Library::NNC_Polyhedron nonNegative() const;
 };

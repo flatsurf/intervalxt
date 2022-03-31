@@ -79,9 +79,9 @@ Linear_Expression linearExpressionFromVector(const std::vector<mpq_class>& vec, 
 
 namespace intervalxt {
 
-RationalAffineSubspace::RationalAffineSubspace() {}
+RationalAffineSubspace::RationalAffineSubspace(): homogeneous(true) {}
 
-RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& generators) {
+RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& generators): homogeneous(true) {
   Generator_System gens;
 
   gens.insert(point());
@@ -93,7 +93,7 @@ RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq
   subspace = NNC_Polyhedron(gens);
 }
 
-RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y) {
+RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y): homogeneous(y | rx::all_of([](const auto& y){ return not y; })) {
   Constraint_System constraints;
 
   LIBINTERVALXT_CHECK_ARGUMENT(equations.size() == y.size(), "Equations must match y vector but there are " << equations.size() << " equations and vector has " << y.size() << " entries.");
@@ -126,7 +126,8 @@ NNC_Polyhedron RationalAffineSubspace::nonNegative() const {
 
 template <RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
 bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
-  // TODO: Most of this is wrong when the RHS != 0.
+  if (!homogeneous)
+    throw std::logic_error("not implemented: cannot decide whether an affine subspace has a non-negative element yet.");
 
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
     return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>();
@@ -191,7 +192,6 @@ bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
 }
 
 bool RationalAffineSubspace::hasPositiveVector() const {
-  // TODO: This is probably very slow in comparison to hasNonZeroNonNegativeVector().
   if (subspace.space_dimension() == 0) {
     return false;
   }
