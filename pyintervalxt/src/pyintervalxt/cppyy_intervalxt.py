@@ -122,7 +122,7 @@ def from_vector_mpq(v):
 
 def from_vector_vector_mpq(v):
     r"""
-    Return `v`, a std::vector<std::vector<mpq_class>, as something that Python
+    Return `v`, a std::vector<std::vector<mpq_class>>, as something that Python
     can more easily work with, namely a list of list of mpq_class.
     """
     import gmpxxyy
