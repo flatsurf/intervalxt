@@ -93,7 +93,7 @@ RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq
   subspace = NNC_Polyhedron(gens);
 }
 
-RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y): homogeneous(y | rx::all_of([](const auto& y){ return not y; })) {
+RationalAffineSubspace::RationalAffineSubspace(const std::vector<std::vector<mpq_class>>& equations, const std::vector<mpq_class>& y): homogeneous(y | rx::all_of([](const auto& y){ return y == 0; })) {
   Constraint_System constraints;
 
   LIBINTERVALXT_CHECK_ARGUMENT(equations.size() == y.size(), "Equations must match y vector but there are " << equations.size() << " equations and vector has " << y.size() << " entries.");
