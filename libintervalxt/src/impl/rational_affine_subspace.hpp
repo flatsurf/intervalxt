@@ -32,7 +32,7 @@
 
 namespace intervalxt {
 
-// A affine rational subspace of ℚ^d.
+// An affine rational subspace of ℚ^d.
 class RationalAffineSubspace : boost::equality_comparable<RationalAffineSubspace> {
  public:
   // The space ℚ^0.
