@@ -127,6 +127,32 @@ def test_reduce(iet, coefficients, permutation):
             assert not r.value().reduce().has_value()
 
 
+def test_boshernitzan_equations(iet):
+    r"""
+    Test that boshernitzanEquations() can be called from Python.
+    """
+    equations = iet.boshernitzanEquations()
+
+    if permutation == [1, 0]:
+        assert equations == [3, -18]
+
+
+def test_boshernitzan_saddle_connection_values(iet):
+    r"""
+    Test that boshernitzanSaddleConnectionValues() can be called from Python.
+    """
+    for top in iet.top()[:-1]:
+        for bottom in iet.bottom()[:-1]:
+            assert len(iet.boshernitzanSaddleConnectionValues(top, bottom)) == len(iet.boshernitzanEquations())
+
+    # Cannot be tested due to https://github.com/wlav/cppyy/issues/32
+    # with pytest.raises(Exception):
+    #     iet.boshernitzanSaddleConnectionValues(iet.top()[-1], iet.bottom()[0])
+
+    # with pytest.raises(Exception):
+    #     iet.boshernitzanSaddleConnectionValues(iet.top()[0], iet.bottom()[-1])
+
+
 def test_decompose(iet):
     r"""
     Test that IETs can be decomposed into cylinders and minimal components.

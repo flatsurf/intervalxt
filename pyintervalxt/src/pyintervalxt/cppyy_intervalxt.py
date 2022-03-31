@@ -111,6 +111,26 @@ cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_metho
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("labels")(lambda self, labels: name_labels(labels(), self.render))), "intervalxt::cppyy")
 cppyy.py.add_pythonization(filtered(re.compile("Lengths<.*>"))(wrap_method("render")(lambda self, render, label: str(render(label)))), "intervalxt::cppyy")
 
+
+def from_vector_mpq(v):
+    r"""
+    Return `v`, a std::vector<mpq_class>, as something that Python can more
+    easily work with, namely a list of mpq_class.
+    """
+    import gmpxxyy
+    return list(v)
+
+def from_vector_vector_mpq(v):
+    r"""
+    Return `v`, a std::vector<std::vector<mpq_class>>, as something that Python
+    can more easily work with, namely a list of list of mpq_class.
+    """
+    import gmpxxyy
+    return list(list(w) for w in v)
+
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("boshernitzanEquations")(lambda self, equations: from_vector_vector_mpq(equations()))), "intervalxt")
+cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("boshernitzanSaddleConnectionValues")(lambda self, values, top, bottom: from_vector_mpq(values(top, bottom)))), "intervalxt")
+
 # Expose methods on type-erased intervalxt::Lengths.
 cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("push")), "boost::type_erasure")
 cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("pop")), "boost::type_erasure")
