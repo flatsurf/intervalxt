@@ -60,6 +60,7 @@ class RationalAffineSubspace : boost::equality_comparable<RationalAffineSubspace
 
   template <HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION algorithm = HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT>
   bool hasNonZeroNonNegativeVector() const;
+  bool hasNonNegativeVector() const;
   bool hasPositiveVector() const;
 
   bool operator==(const RationalAffineSubspace&) const;

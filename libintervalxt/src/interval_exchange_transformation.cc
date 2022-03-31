@@ -145,7 +145,9 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const {
-  // TODO: Can we return false when SAF0?
+  // Probably this wil always return false when SAF=0. But we are not entirely
+  // sure that this is actually the case.
+
   if (self->top.size() <= 1)
     return false;
 
@@ -158,7 +160,8 @@ bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const {
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection(const Label& top, const Label& bottom) const {
-  // TODO: Can we return false when SAF0?
+  // Probably this wil always return false when SAF=0. But we are not entirely
+  // sure that this is actually the case.
 
   const auto translations = self->translations();
 
@@ -186,7 +189,7 @@ bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection(const Label&
     return false;
 
   const auto space = RationalAffineSubspace(relations, values);
-  return not space.hasPositiveVector();
+  return not space.hasNonNegativeVector();
 }
 
 InductionStep IntervalExchangeTransformation::induce(int limit) {

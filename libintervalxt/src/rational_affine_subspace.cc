@@ -191,6 +191,12 @@ bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
   }
 }
 
+bool RationalAffineSubspace::hasNonNegativeVector() const {
+  auto polyhedron = NNC_Polyhedron(subspace);
+  polyhedron.intersection_assign(nonNegative());
+  return !polyhedron.is_empty();
+}
+
 bool RationalAffineSubspace::hasPositiveVector() const {
   if (subspace.space_dimension() == 0) {
     return false;

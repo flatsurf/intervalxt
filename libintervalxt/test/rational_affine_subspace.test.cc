@@ -97,6 +97,12 @@ TEST_CASE("Inhomogeneous Affine Linear Subspace", "[rational_affine_subspace]") 
     REQUIRE(RationalAffineSubspace({{1}}, {1}).hasPositiveVector());
     REQUIRE(!RationalAffineSubspace({{1}}, {-1}).hasPositiveVector());
   }
+
+  SECTION("hasNonNegativeVector") {
+    REQUIRE(RationalAffineSubspace({{1}}, {1}).hasNonNegativeVector());
+    REQUIRE(!RationalAffineSubspace({{1}}, {-1}).hasNonNegativeVector());
+    REQUIRE(RationalAffineSubspace({{1}}, {0}).hasNonNegativeVector());
+  }
 }
 
 }  // namespace intervalxt::test
