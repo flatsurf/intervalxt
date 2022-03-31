@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE("Rational Linear Subspace Correctly Detects Signs of Vectors"
   SECTION("hasNonZeroNonNegativeVector()") {
     REQUIRE(!RationalAffineSubspace().hasNonZeroNonNegativeVector<IMPLEMENTATION>());
     REQUIRE(!RationalAffineSubspace(vector<vector<mpq_class>>{}, vector<mpq_class>{}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
-    REQUIRE(!RationalAffineSubspace(vector<vector<mpq_class>>{{}}, vector<mpq_class>{0}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
+    REQUIRE(!RationalAffineSubspace(vector<vector<mpq_class>>{{}}, {0}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
     REQUIRE(RationalAffineSubspace({{1, 0}}, {0}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
     REQUIRE(!RationalAffineSubspace({{1, 0}, {0, 1}}, {0, 0}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
     REQUIRE(RationalAffineSubspace({{1, -1}}, {0}).hasNonZeroNonNegativeVector<IMPLEMENTATION>());
