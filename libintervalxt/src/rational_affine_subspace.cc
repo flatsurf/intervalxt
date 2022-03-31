@@ -127,7 +127,7 @@ NNC_Polyhedron RationalAffineSubspace::nonNegative() const {
 template <RationalAffineSubspace::HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION implementation>
 bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
   if (!homogeneous)
-    throw std::logic_error("not implemented: cannot decide whether an affine subspace has a non-negative element yet.");
+    throw std::logic_error("not implemented: cannot decide whether an affine subspace has a non-zero non-negative element yet.");
 
   if (implementation == HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::DEFAULT)
     return hasNonZeroNonNegativeVector<HAS_NON_ZERO_NON_NEGATIVE_VECTOR_IMPLEMENTATION::PPL_MIP>();
