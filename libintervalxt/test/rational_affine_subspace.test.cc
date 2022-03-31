@@ -87,4 +87,16 @@ TEST_CASE("Transformations of Rational Linear Subspace", "[rational_affine_subsp
   REQUIRE(S == RationalAffineSubspace({{1, 0}}, {0}));
 }
 
+TEST_CASE("Inhomogeneous Affine Linear Subspace", "[rational_affine_subspace]") {
+  SECTION("hasNonZeroNonNegativeVector") {
+    auto space = RationalAffineSubspace({{1}}, {1});
+    REQUIRE_THROWS(space.hasNonZeroNonNegativeVector());
+  }
+
+  SECTION("hasPositiveVector") {
+    REQUIRE(RationalAffineSubspace({{1}}, {1}).hasPositiveVector());
+    REQUIRE(!RationalAffineSubspace({{1}}, {-1}).hasPositiveVector());
+  }
+}
+
 }  // namespace intervalxt::test
