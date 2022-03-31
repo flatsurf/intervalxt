@@ -142,7 +142,7 @@ def test_boshernitzan_saddle_connection_values(iet):
     Test that boshernitzanSaddleConnectionValues() can be called from Python.
     """
     for top in iet.top()[:-1]:
-        for bottom in iet.top()[:-1]:
+        for bottom in iet.bottom()[:-1]:
             assert len(iet.boshernitzanSaddleConnectionValues(top, bottom)) == len(iet.boshernitzanEquations())
 
     # Cannot be tested due to https://github.com/wlav/cppyy/issues/32
