@@ -2,8 +2,8 @@
 # pyexactreal/libexactreal installed. It is used for our demo binders.
 name: binder
 channels:
-  - flatsurf
   - conda-forge
+  - defaults
 dependencies:
   - boost-cpp
   - libintervalxt>=3.0.0

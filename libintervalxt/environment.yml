@@ -3,7 +3,6 @@
 # conda env create -f environment.yml
 name: libintervalxt-build
 channels:
-  - flatsurf
   - conda-forge
   - defaults
 dependencies:
@@ -14,7 +13,7 @@ dependencies:
   - cxx-compiler
   - e-antic>=1.0.0,<2
   - libflint
-  - fmt
+  - fmt=9
   - gmp
   - gmpxxll
   - libexactreal>=2.0.0,<3
