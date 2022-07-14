@@ -1,7 +1,7 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2020 Julian Rüth
+ *        Copyright (C) 2020-2022 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ struct GenericFormatter {
   constexpr auto parse(fmt::format_parse_context& ctx) { return ctx.begin(); }
 
   template <typename FormatContext>
-  auto format(const T& value, FormatContext& ctx) {
+  auto format(const T& value, FormatContext& ctx) const {
     std::ostringstream ss;
     ss << value;
     return fmt::format_to(ctx.out(), "{}", ss.str());
