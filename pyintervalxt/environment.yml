@@ -1,8 +1,8 @@
-# This file lists the dependencies needed to build and test all of pyflatsurf.
+# This file lists the dependencies needed to build and test all of pyintervalxt.
 # Create a conda environment with these dependencies preinstalled with:
 # conda env create -f environment.yml
-# conda env update -n pyflatsurf-build -f environment.yml
-name: pyflatsurf-build
+# conda env update -n pyintervalxt-build -f environment.yml
+name: pyintervalxt-build
 channels:
   - conda-forge
   - defaults
