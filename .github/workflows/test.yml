@@ -60,15 +60,15 @@ jobs:
       matrix:
         include:
         - on: ubuntu-20.04
-          python: "3.6"
-        - on: ubuntu-20.04
           python: "3.7"
         - on: ubuntu-20.04
           python: "3.8"
         - on: ubuntu-20.04
           python: "3.9"
         - on: ubuntu-20.04
-          python: "3.9"
+          python: "3.10"
+        - on: ubuntu-20.04
+          python: "3.10"
           sanitizer: valgrind
     steps:
       - uses: actions/checkout@v2
