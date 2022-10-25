@@ -10,8 +10,8 @@
 # alive.
 
 # Resolve #include <intervalxt/*.hpp> relative to libintervalxt in the source tree and
-# resolve #include "local.hpp" relative to libintervalxt/e-antic in the build tree.
-export EXTRA_CLING_ARGS="-I@abs_srcdir@/../../libintervalxt -I@abs_builddir@/../../libintervalxt/e-antic $EXTRA_CLING_ARGS"
+# resolve #include "local.hpp" relative to libintervalxt/intervalxt in the build tree.
+export EXTRA_CLING_ARGS="-I@abs_srcdir@/../../libintervalxt -I@abs_builddir@/../../libintervalxt/intervalxt $EXTRA_CLING_ARGS"
 
 # Load libintervalxt.so and libintervalxtxx.so from our build tree.
 export LD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:@abs_builddir@/../../libintervalxt/srcxx/.libs/:$LD_LIBRARY_PATH"
