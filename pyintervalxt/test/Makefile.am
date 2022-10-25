@@ -10,7 +10,7 @@ python-doctest.sh: test-env.sh bin/python
 @VALGRIND_CHECK_RULES@
 
 BUILT_SOURCES = test-env.sh bin/python python-doctest.sh
-EXTRA_DIST += test-env.sh.in bin/python python-doctest.sh.in
+EXTRA_DIST += test-env.sh.in bin/python.in python-doctest.sh.in
 CLEANFILES = test-env.sh bin/python python-doctest.sh
 
 $(builddir)/test-env.sh: $(srcdir)/test-env.sh.in Makefile
