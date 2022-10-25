@@ -27,4 +27,4 @@ set -ex
 # our bin/python wrapper to set the necessary environment variables and invoke
 # the Python binary to run pytest which keeps our environment intact on macOS.
 
-python -m pytest -vv --doctest-modules $TARGETS
+python -m pytest -vv --doctest-modules $@
