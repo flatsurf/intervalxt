@@ -22,5 +22,5 @@ $(builddir)/bin/python: $(srcdir)/bin/python.in Makefile
 	chmod +x $@
 
 $(builddir)/python-doctest.sh: $(srcdir)/python-doctest.sh.in Makefile
-	sed -e 's,[@]srcdir[@],$(srcdir),g' < $< > $@
+	sed -e 's,[@]abs_srcdir[@],$(abs_srcdir),g' < $< > $@
 	chmod +x $@
