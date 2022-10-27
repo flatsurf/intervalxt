@@ -14,6 +14,7 @@ jobs:
       matrix:
         include:
         - on: Ubuntu-20.04
+        - on: macos-10.15
         - on: Ubuntu-20.04
           sanitizer: valgrind
     steps:
@@ -43,6 +44,10 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
+          # override std=c++14 in CXXFLAGS on macOS
+          export CXXFLAGS="$CXXFLAGS -std=c++17"
+          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
           ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
@@ -64,6 +69,12 @@ jobs:
         - on: ubuntu-20.04
           python: "3.8"
         - on: ubuntu-20.04
+          python: "3.9"
+        - on: macos-10.15
+          python: "3.7"
+        - on: macos-10.15
+          python: "3.8"
+        - on: macos-10.15
           python: "3.9"
         - on: ubuntu-20.04
           python: "3.10"
@@ -97,6 +108,10 @@ jobs:
 
           echo "::group::configure"
           export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
+          # override std=c++14 in CXXFLAGS on macOS
+          export CXXFLAGS="$CXXFLAGS -std=c++17"
+          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
           ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
 
           echo "::group::make"
