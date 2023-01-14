@@ -24,6 +24,8 @@
 #include <exact-real/element.hpp>
 #include <exact-real/module.hpp>
 
+#include <boost/hana.hpp>
+
 #include "coefficients.hpp"
 
 namespace intervalxt::sample {
@@ -42,9 +44,15 @@ struct Coefficients<exactreal::Element<Ring>> {
     for (auto& x : elements)
       parent = exactreal::Module<Ring>::span(parent, x.module());
 
+    // Detect whether the underlying exact-real is >=3.0.0
+    static auto hasRationalCoefficients = boost::hana::is_valid([](auto&& element) -> decltype(element.rationalCoefficients()) { });
+
     std::vector<std::vector<mpq_class>> ret;
     for (auto x : elements)
-      ret.push_back(x.promote(parent).template coefficients<mpq_class>());
+      if constexpr (hasRationalCoefficients(x))
+        ret.push_back(x.promote(parent).rationalCoefficients());
+      else
+        ret.push_back(x.promote(parent).template coefficients<mpq_class>());
 
     return ret;
   }

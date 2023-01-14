@@ -16,7 +16,7 @@ dependencies:
   - fmt=9
   - gmp
   - gmpxxll
-  - libexactreal>=2.0.0,<3
+  - libexactreal>=3,<4
   - libtool
   - make
   - ppl
