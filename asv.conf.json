@@ -30,7 +30,7 @@
     "pytest": [],
     "setuptools": []
   },
-  "conda_channels": ["flatsurf", "conda-forge", "default"],
+  "conda_channels": ["conda-forge", "default"],
   "repo_subdir": "libintervalxt",
   "build_command": [
     "autoreconf -ivf",
