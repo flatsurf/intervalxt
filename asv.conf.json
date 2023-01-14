@@ -12,7 +12,7 @@
     "boost-cpp": [],
     "ccache": [],
     "coreutils": [],
-    "cppasv": [],
+    "flatsurf::cppasv": [],
     "cppyy": [],
     "cppyythonizations": [],
     "cxx-compiler": [],
