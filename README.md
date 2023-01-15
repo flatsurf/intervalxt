@@ -108,7 +108,7 @@ conda activate intervalxt
 You can try out the projects in this repository in a very limited environment
 online by clicking the following links:
 
-* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.3.1?filepath=binder%2FSample.libintervalxt.ipynb)
+* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.3.2?filepath=binder%2FSample.libintervalxt.ipynb)
 * **pyintervalxtc** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.2.0?filepath=binder%2FSample.pyintervalxt.ipynb)
 
 ## Build with conda-forge Dependencies
