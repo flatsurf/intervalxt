@@ -13,9 +13,9 @@ jobs:
     strategy:
       matrix:
         include:
-        - on: Ubuntu-20.04
-        - on: macos-10.15
-        - on: Ubuntu-20.04
+        - on: Ubuntu-22.04
+        - on: macos-11
+        - on: Ubuntu-22.04
           sanitizer: valgrind
     steps:
       - uses: actions/checkout@v2
@@ -64,22 +64,24 @@ jobs:
     strategy:
       matrix:
         include:
-        - on: ubuntu-20.04
+        - on: ubuntu-22.04
           python: "3.7"
-        - on: ubuntu-20.04
+        - on: ubuntu-22.04
           python: "3.8"
-        - on: ubuntu-20.04
+        - on: ubuntu-22.04
           python: "3.9"
-        - on: macos-10.15
+        - on: macos-11
           python: "3.7"
-        - on: macos-10.15
+        - on: macos-11
           python: "3.8"
-        - on: macos-10.15
+        - on: macos-11
           python: "3.9"
-        - on: ubuntu-20.04
+        - on: ubuntu-22.04
           python: "3.10"
-        - on: ubuntu-20.04
-          python: "3.10"
+        - on: ubuntu-22.04
+          python: "3.11"
+        - on: ubuntu-22.04
+          python: "3.11"
           sanitizer: valgrind
     steps:
       - uses: actions/checkout@v2
@@ -125,7 +127,7 @@ jobs:
         run: for log in `find . -name '*.log'`; do echo "::group::$log"; cat $log; echo "::endgroup"; done
         if: ${{ always() }}
   distcheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
         with: { submodules: recursive }
