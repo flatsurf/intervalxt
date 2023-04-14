@@ -138,7 +138,7 @@ bool IntervalExchangeTransformation::boshernitzanNoPeriodicTrajectory() const {
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const {
-  // Probably this wil always return false when SAF=0. But we are not entirely
+  // Probably this will always return false when SAF=0. But we are not entirely
   // sure that this is actually the case.
 
   if (self->top.size() <= 1)
@@ -153,7 +153,7 @@ bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection() const {
 }
 
 bool IntervalExchangeTransformation::boshernitzanNoSaddleConnection(const Label& top, const Label& bottom) const {
-  // Probably this wil always return false when SAF=0. But we are not entirely
+  // Probably this will always return false when SAF=0. But we are not entirely
   // sure that this is actually the case.
 
   const auto values = boshernitzanSaddleConnectionValues(top, bottom);
