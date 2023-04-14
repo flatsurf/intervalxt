@@ -39,7 +39,7 @@ Separatrix Connection::target() const {
 
 bool Connection::operator==(const Connection& rhs) const {
   // Note that we identify separatrices on different decompositions. This seems
-  // wrong. However, it is currently, necessary because Lenghts are not shared
+  // wrong. However, it is currently, necessary because Lengths are not shared
   // in libflatsurf between IETs, see #72.
   return ImplementationOf<Separatrix>::make(self->decomposition, self->connection.source) == ImplementationOf<Separatrix>::make(rhs.self->decomposition, rhs.self->connection.source) && ImplementationOf<Separatrix>::make(self->decomposition, self->connection.target) == ImplementationOf<Separatrix>::make(rhs.self->decomposition, rhs.self->connection.target);
 }

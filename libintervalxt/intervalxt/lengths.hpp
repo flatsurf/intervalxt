@@ -71,7 +71,7 @@ struct LengthsInterface : boost::mpl::vector<
                               // Return Lengths without any additional tracking of structure such as
                               // keeping track of detected/injected connections.
                               has_member_forget<Lengths() const>,
-                              // Return whether for this Lenghts and labels a, b the quotient of
+                              // Return whether for this Lengths and labels a, b the quotient of
                               // length(a)/length(b) is the same as the quotient of lengths(aa)/lengths(bb)
                               // for the other Lengths.
                               has_member_similar<bool(Label, Label, const Lengths&, Label, Label) const>,

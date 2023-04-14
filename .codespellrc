@@ -1,0 +1,3 @@
+[codespell]
+skip = libintervalxt/src/external/**/*,libintervalxt/test/external/**/*
+ignore-words-list = rever
