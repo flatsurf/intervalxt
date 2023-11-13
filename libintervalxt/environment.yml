@@ -13,7 +13,7 @@ dependencies:
   - cxx-compiler
   - libeantic>=1,<2
   - libflint
-  - fmt=9
+  - fmt=10
   - gmp
   - gmpxxll
   - libexactreal>=3,<4
