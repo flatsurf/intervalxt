@@ -326,7 +326,7 @@ TEST_CASE("Computation of SAF Invariant", "[interval_exchange_transformation][sa
       auto iet = IET(lengths, {a, b, c, d}, {d, c, b, a});
       CAPTURE(iet);
 
-      // Check that SAF invariant can be computed in an initiallly swapped IET.
+      // Check that SAF invariant can be computed in an initially swapped IET.
       iet.swap();
       iet.safInvariant();
       iet.swap();
