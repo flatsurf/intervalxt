@@ -57,8 +57,6 @@ class LengthRegistrar:
     def __call__(self):
         for length, headers in self.known_lengths:
             if length not in LengthRegistrar.REGISTERED_LENGTHS:
-                intervalxt::cppyy::Lengths<std::vector<__gmp_expr<__mpz_struct[1],__mpz_struct[1]>>>));
-
                 if length.replace(' ', '') == "intervalxt::cppyy::Lengths<std::vector<__gmp_expr<__mpz_struct[1],__mpz_struct[1]>>>":
                     import logging
                     logging.warning("GMP does not provide a cereal interface yet. Therefore serialization of mpz lengths is not supported yet.")
