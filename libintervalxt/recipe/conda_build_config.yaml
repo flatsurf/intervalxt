@@ -5,4 +5,4 @@ boost_cpp:
 gmp:
   - '6'
 fmt:
-  - '9'
+  - '10'
