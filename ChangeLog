@@ -4,6 +4,16 @@ intervalxt Change Log
 
 .. current developments
 
+v3.3.3
+====================
+
+**Fixed:**
+
+* Fixed typos in documentation.
+* Fixed building libintervalxt with fmt version 10.
+
+
+
 v3.3.2
 ====================
 
