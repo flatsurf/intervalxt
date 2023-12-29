@@ -4,7 +4,6 @@
         "name": "HasNonZeroNonNegativeVector.track_time",
         "param_names": [],
         "params": [],
-        "timeout": 60.0,
         "type": "track",
         "unit": "ns",
         "version": "0"
@@ -21,7 +20,6 @@
                 "'34'"
             ]
         ],
-        "timeout": 60.0,
         "type": "track",
         "unit": "ns",
         "version": "0"
