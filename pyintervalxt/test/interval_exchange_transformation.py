@@ -165,6 +165,14 @@ def test_decompose(iet):
 
     assert cyls + mins == decomposition.components().size()
 
+    # Test that all sides of cylinders are glued somewhere
+    connections = []
+    for component in decomposition.components():
+        connections.extend(component.left())
+        connections.extend(component.right())
+
+    assert all(-connection in connections for connection in connections)
+
 
 def test_lengths(iet, lengths):
     r"""
