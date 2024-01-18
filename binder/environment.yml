@@ -3,7 +3,6 @@
 name: binder
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - boost-cpp
   - libintervalxt>=3.0.0

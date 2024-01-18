@@ -21,7 +21,6 @@ jobs:
     - uses: flatsurf/actions/conda-forge-build@main
       with:
         recipe: pyintervalxt/recipe
-        channels: flatsurf
     - uses: actions/upload-artifact@v2
       with:
         name: conda-packages
