@@ -4,7 +4,6 @@
 name: libintervalxt-build
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - automake
   - benchmark

@@ -2,7 +2,7 @@
 #  This file is part of intervalxt.
 #
 #        Copyright (C) 2019-2020 Vincent Delecroix
-#        Copyright (C) 2019-2022 Julian Rüth
+#        Copyright (C) 2019-2024 Julian Rüth
 #
 #  intervalxt is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -130,6 +130,16 @@ def from_vector_vector_mpq(v):
 
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("boshernitzanEquations")(lambda self, equations: from_vector_vector_mpq(equations()))), "intervalxt")
 cppyy.py.add_pythonization(filtered("IntervalExchangeTransformation")(wrap_method("boshernitzanSaddleConnectionValues")(lambda self, values, top, bottom: from_vector_mpq(values(top, bottom)))), "intervalxt")
+
+# Make left & right of components functional.
+def connections(variants):
+    connections = [cppyy.gbl.std.get[0](c) for c in variants]
+    for variant, c in zip(variants, connections):
+        c._variant = variant
+    return connections
+
+cppyy.py.add_pythonization(filtered("Component")(wrap_method("left")(lambda self, left: connections(left()))), "intervalxt")
+cppyy.py.add_pythonization(filtered("Component")(wrap_method("right")(lambda self, right: connections(right()))), "intervalxt")
 
 # Expose methods on type-erased intervalxt::Lengths.
 cppyy.py.add_pythonization(filtered("any<intervalxt::LengthsInterface,boost::type_erasure::_self>")(expose("push")), "boost::type_erasure")

@@ -5,7 +5,6 @@
 name: pyintervalxt-build
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - automake
   - cppyythonizations>=1.2.0,<2
