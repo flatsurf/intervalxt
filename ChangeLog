@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.3.4
+====================
+
+**Fixed:**
+
+* Fixed access to `left()` and `right()` of a component from Python.
+
+
+
 v3.3.3
 ====================
 
