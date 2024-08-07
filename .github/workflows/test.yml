@@ -14,7 +14,7 @@ jobs:
       matrix:
         include:
         - on: Ubuntu-22.04
-        - on: macos-11
+        - on: macos-13
         - on: Ubuntu-22.04
           sanitizer: valgrind
     steps:
@@ -70,11 +70,11 @@ jobs:
           python: "3.8"
         - on: ubuntu-22.04
           python: "3.9"
-        - on: macos-11
+        - on: macos-13
           python: "3.7"
-        - on: macos-11
+        - on: macos-13
           python: "3.8"
-        - on: macos-11
+        - on: macos-13
           python: "3.9"
         - on: ubuntu-22.04
           python: "3.10"
