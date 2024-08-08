@@ -20,7 +20,6 @@ requirements:
     - make
     - coreutils
     - {{ compiler('cxx') }}
-    - {{ stdlib('c') }}
   host:
     - libboost-headers
     - fmt {{ fmt }}
