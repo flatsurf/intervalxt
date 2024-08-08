@@ -20,8 +20,9 @@ requirements:
     - make
     - coreutils
     - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
   host:
-    - boost-cpp {{ boost_cpp }}
+    - libboost-headers
     - fmt {{ fmt }}
     - gmp {{ gmp }}
     - ppl
