@@ -10,12 +10,12 @@ dependencies:
   - boost-cpp
   - coreutils
   - cxx-compiler
-  - libeantic>=1,<2
+  - libeantic>=2,<3
   - libflint
-  - fmt=10
+  - fmt=11
   - gmp
   - gmpxxll
-  - libexactreal>=3,<4
+  - libexactreal>=4,<5
   - libtool
   - make
   - ppl

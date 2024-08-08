@@ -11,7 +11,7 @@ dependencies:
   - gmpxxyy
   - libtool
   - make
-  - pyexactreal>=3,<4
+  - pyexactreal>=4,<5
   - pytest
   - python
   - setuptools
