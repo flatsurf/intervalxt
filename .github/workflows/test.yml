@@ -102,6 +102,11 @@ jobs:
           mamba env update --quiet -n test -f libintervalxt/environment.yml
           mamba env update --quiet -n test -f pyintervalxt/environment.yml
           conda list
+      # Work around https://github.com/conda-forge/cppyy-feedstock/issues/78
+      - name: Fix cppyy dependencies on macOS
+        run: |
+          mamba install -n test -y libcxx=16
+        if: ${{ matrix.on == 'macos-13' }}
       - name: configure & make & test
         shell: bash -l {0}
         run: |
