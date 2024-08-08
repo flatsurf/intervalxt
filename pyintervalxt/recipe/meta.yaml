@@ -19,6 +19,7 @@ requirements:
     - make
     - coreutils
     - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
   host:
     - python
     - setuptools

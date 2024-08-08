@@ -6,3 +6,16 @@ python:
   - 3.10.* *_cpython
   - 3.11.* *_cpython
   - 3.12.* *_cpython
+c_compiler:
+  - gcc                        # [linux]
+  - clang                      # [osx]
+  - vs2019                     # [win and x86_64]
+  - vs2022                     # [win and arm64]
+c_compiler_version:            # [unix]
+  - 12                         # [linux]
+  - 16                         # [osx]
+  - 11                         # [os.environ.get("CF_CUDA_ENABLED", "False") == "True" and linux]
+c_stdlib:
+  - sysroot                    # [linux]
+  - macosx_deployment_target   # [osx]
+  - vs                         # [win]
