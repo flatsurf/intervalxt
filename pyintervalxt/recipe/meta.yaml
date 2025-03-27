@@ -19,6 +19,7 @@ requirements:
     - make
     - coreutils
     - {{ compiler('cxx') }}
+    - {{ stdlib('c') }}
   host:
     - python
     - setuptools
@@ -26,7 +27,7 @@ requirements:
     - gmpxxyy
     - libintervalxt
   run:
-    - boost-cpp
+    - libboost-headers
     - python
     - cppyy
     - cppyythonizations

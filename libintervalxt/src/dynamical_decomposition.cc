@@ -21,6 +21,7 @@
 #include "../intervalxt/dynamical_decomposition.hpp"
 
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include <deque>
 #include <ostream>

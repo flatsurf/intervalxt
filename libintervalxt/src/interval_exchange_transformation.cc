@@ -21,6 +21,7 @@
 #include "../intervalxt/interval_exchange_transformation.hpp"
 
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 #include <gmpxx.h>
 
 #include <algorithm>

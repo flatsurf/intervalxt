@@ -38,5 +38,5 @@ LDADD += -leantic -leanticxx -lflint
 endif
 
 if HAVE_EXACTREAL
-LDADD += -lexactreal -larb
+LDADD += -lexactreal
 endif
