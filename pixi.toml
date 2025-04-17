@@ -1,0 +1,237 @@
+# This file describes the [pixi](https://pixi.sh) interface to intervalxt, see
+# the README for how to use pixi with intervalxt.
+
+[project]
+channels = ["conda-forge"]
+description = "Interval Exchange Transformations"
+name = "intervalxt"
+platforms = ["linux-64", "osx-64"]
+
+[environments]
+libintervalxt = ["libintervalxt"]
+pyintervalxt-python39 = ["libintervalxt", "pyintervalxt", "python39"]
+pyintervalxt-python310 = ["libintervalxt", "pyintervalxt", "python310"]
+pyintervalxt-python311 = ["libintervalxt", "pyintervalxt", "python311"]
+pyintervalxt-python312 = ["libintervalxt", "pyintervalxt", "python312"]
+dev = ["dev", "libintervalxt", "pyintervalxt"]
+env-coverage = ["coverage", "libintervalxt", "pyintervalxt"]
+
+##############
+# ACTIVATION #
+##############
+[activation.env]
+MAKEFLAGS = "-j$(nproc)"
+CFLAGS = "-g3"
+CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden"
+
+[target.osx-64.activation.env]
+# Cppyy still uses clang-17 symbols so we need to build libintervalxt with such
+# symbols so cppyy can find templates that contain enable_if.
+CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden -fclang-abi-compat=17"
+
+[feature.coverage.activation.env]
+CFLAGS = "-coverage -O0 -UNDEBUG"
+CXXFLAGS = "-coverage -O0 -UNDEBUG"
+
+#########
+# TASKS #
+#########
+[tasks.bootstrap]
+cmd = "./bootstrap"
+inputs = ["configure.ac", "{libintervalxt,pyintervalxt}/configure.ac", "Makefile.am", "{libintervalxt,pyintervalxt}/**/Makefile.am"]
+outputs = ["configure", "{libintervalxt,pyintervalxt}/configure", "Makefile.in", "{libintervalxt,pyintervalxt}/**/*.in"]
+
+[feature.libintervalxt.tasks.configure-libintervalxt]
+cmd = './configure --prefix="$CONDA_PREFIX"'
+cwd = "libintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["libintervalxt/configure", "libintervalxt/**/*.in"]
+
+[feature.libintervalxt.target.linux.tasks.configure-libintervalxt]
+cmd = './configure --prefix="$CONDA_PREFIX" --with-version-script'
+cwd = "libintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["libintervalxt/configure", "libintervalxt/**/*.in"]
+
+[feature.libintervalxt.tasks.build-libintervalxt]
+cmd = "make check TESTS="
+cwd = "libintervalxt"
+depends-on = ["configure-libintervalxt"]
+
+[feature.libintervalxt.tasks.test-libintervalxt]
+cmd = "make check"
+cwd = "libintervalxt"
+depends-on = ["build-libintervalxt"]
+
+[feature.pyintervalxt.tasks.test-libintervalxt-valgrind]
+cmd = "make check-valgrind"
+cwd = "libintervalxt"
+depends-on = ["build-libintervalxt"]
+
+[feature.pyintervalxt.tasks.configure-pyintervalxt]
+cmd = './configure --prefix="$CONDA_PREFIX"'
+cwd = "pyintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["pyintervalxt/configure", "pyintervalxt/**/*.in"]
+
+[feature.pyintervalxt.tasks.build-pyintervalxt]
+cmd = "make"
+cwd = "pyintervalxt"
+depends-on = ["configure-pyintervalxt"]
+
+[feature.pyintervalxt.tasks.test-pyintervalxt]
+cmd = "make check"
+cwd = "pyintervalxt"
+depends-on = ["build-pyintervalxt", "build-libintervalxt"]
+
+[feature.pyintervalxt.tasks.test-pyintervalxt-valgrind]
+cmd = "make check-valgrind"
+cwd = "pyintervalxt"
+depends-on = ["build-pyintervalxt", "build-libintervalxt"]
+
+[feature.dev.tasks]
+codespell = { cmd = "codespell $(git ls-files)" }
+
+# "build" is a shortcut that should (together with its dependencies) run in the "dev" environment.
+# To achieve this, we need to split it into two tasks like this (otherwise,
+# pixi is going to ask which environment the dependencies should run in.)
+build = { cmd = "pixi run dev-build" }
+dev-build = { depends-on = ["build-libintervalxt", "build-pyintervalxt"] }
+
+# "test" is a shortcut that should (together with its dependencies) run in the "dev" environment.
+# To achieve this, we need to split it into two tasks like this (otherwise,
+# pixi is going to ask which environment the dependencies should run in.)
+test = { cmd = "pixi run dev-test" }
+dev-test = { depends-on = ["test-libintervalxt", "test-pyintervalxt"] }
+
+# "clean" is a shortcut that should (together with its dependencies) run in the "dev" environment.
+# To achieve this, we need to split it into two tasks like this (otherwise,
+# pixi is going to ask which environment the dependencies should run in.)
+clean = { cmd = "pixi run dev-clean" }
+dev-clean = { cmd = "make clean", depends-on = ["configure"] }
+
+# "compile-commands" is a shortcut that generates a compile_commands.json that many
+# IDEs expect to make sense of C/C++ code.
+# This shortcut should run with its dependencies in the "dev" environment.
+# To achieve this, we need to split it into two tasks like this (otherwise,
+# pixi is going to ask which environment the dependencies should run in.)
+compile-commands = { cmd = "pixi run dev-compile-commands" }
+dev-compile-commands = { cwd = "libintervalxt", cmd = "compiledb make -n check TESTS=", depends-on = ["build-libintervalxt"] }
+
+[feature.dev.tasks.configure]
+cmd = './configure --prefix="$CONDA_PREFIX"'
+inputs = ["configure", "{libintervalxt,pyintervalxt}/configure", "Makefile.in", "{libintervalxt,pyintervalxt}/**/*.in"]
+outputs = ["Makefile", "{libintervalxt,pyintervalxt}/**/Makefile"]
+depends-on = ["bootstrap"]
+
+[feature.dev.tasks.distcheck]
+cmd = "make distcheck"
+depends-on = ["configure"]
+
+[feature.dev.target.linux-64.tasks.compiler-warnings-clang]
+# The env hack is necessary to work around https://github.com/prefix-dev/pixi/issues/3287
+# We disable -Wdeprecated-declarations because we use our own deprecated API, e.g., for testing.
+cmd = """
+/usr/bin/env -u '?' sh -c '
+make clean &&
+make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CFLAGS=\"$CFLAGS -Werror -Wall -Wextra\" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -UNDEBUG\" &&
+make clean &&
+make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CFLAGS=\"$CFLAGS -Werror -Wall -Wextra\" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -fclang-abi-compat=17 -DNDEBUG\"
+'
+"""
+cwd = "libintervalxt"
+depends-on = "configure-libintervalxt"
+
+[feature.dev.target.linux-64.tasks.compiler-warnings-gcc]
+# The env hack is necessary to work around https://github.com/prefix-dev/pixi/issues/3287
+# We disable -Wsign-compare because .size() in C++ is well-known to be broken.
+# We disable -Wdeprecated-declarations because we use our own deprecated API, e.g., for testing.
+# We disable -Wdangling-reference because our tests rely on GENERATE_REF that does actually create a dangling reference.
+cmd = """
+/usr/bin/env -u '?' sh -c '
+make clean &&
+make check TESTS= CFLAGS=\"$CXFLAGS -Werror -Wall -Wextra" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -UNDEBUG\" &&
+make clean &&
+make check TESTS= CFLAGS=\"$CXFLAGS -Werror -Wall -Wextra" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -DNDEBUG\"
+'
+"""
+cwd = "libintervalxt"
+depends-on = "configure-libintervalxt"
+
+[feature.dev.tasks.configure-libintervalxt]
+cmd = './configure --prefix="$CONDA_PREFIX" --with-benchmark'
+cwd = "libintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["libintervalxt/configure", "libintervalxt/**/*.in"]
+
+[feature.dev.target.linux.tasks.configure-libintervalxt]
+cmd = './configure --prefix="$CONDA_PREFIX" --with-benchmark --with-version-script'
+cwd = "libintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["libintervalxt/configure", "libintervalxt/**/*.in"]
+
+[feature.coverage.tasks.configure-libintervalxt]
+# The gcov build has visibility issues when the version script is enabled.
+cmd = './configure --prefix="$CONDA_PREFIX"'
+cwd = "libintervalxt"
+depends-on = ["bootstrap"]
+inputs = ["libintervalxt/configure", "libintervalxt/**/*.in"]
+
+################
+# DEPENDENCIES #
+################
+[dependencies]
+automake = "*"
+make = "*"
+libtool = "*"
+coreutils = "*"
+
+[feature.libintervalxt.dependencies]
+cxx-compiler = "*"
+gmp = "*"
+libflint = "*"
+boost-cpp = "*"
+libeantic = "*"
+benchmark = "*"
+fmt = "10.*"
+gmpxxll = "*"
+libexactreal = "*"
+ppl = "*"
+
+[feature.pyintervalxt.dependencies]
+cppyy = "*"
+cppyythonizations = "*"
+gmpxxyy = "*"
+pyexactreal = "*"
+pytest = "*"
+python = "*"
+setuptools = "*"
+
+[feature.pyintervalxt.pypi-dependencies]
+pyintervalxt = { path = "pyintervalxt/src", editable = true }
+
+[feature.dev.dependencies]
+codespell = "*"
+clangdev = "*"
+compiledb = "*"
+asv = ">=0.6.4,<0.7"
+rever = "*"
+
+[feature.dev.pypi-dependencies]
+cppasv = { git = "https://github.com/flatsurf/cppasv.git" }
+
+[feature.dev.target.linux.dependencies]
+# A recent functioning valgrind is only available on conda-forge linux builds.
+valgrind = "*"
+
+[feature.python39.dependencies]
+python = "3.9.*"
+
+[feature.python310.dependencies]
+python = "3.10.*"
+
+[feature.python311.dependencies]
+python = "3.11.*"
+
+[feature.python312.dependencies]
+python = "3.12.*"
