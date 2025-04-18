@@ -1,8 +1,8 @@
 /**********************************************************************
  *  This file is part of intervalxt.
  *
- *        Copyright (C) 2020 Vincent Delecroix
- *        Copyright (C) 2020 Julian Rüth
+ *        Copyright (C)      2020 Vincent Delecroix
+ *        Copyright (C) 2020-2025 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class Coefficients {
  public:
   using T = S;
 
-  std::vector<std::vector<mpq_class>> operator()(const std::vector<T>& elements) {
+  std::vector<std::vector<mpq_class>> operator()(const std::vector<T>&) {
     static_assert(false_t<T>, "operator() returning rational coefficients of this element not implemented; did you include the appropriate coefficients header?");
     throw std::logic_error("not implemented: Coefficients::operator(); did you include the appropriate coefficients header?");
   }

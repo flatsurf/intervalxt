@@ -131,12 +131,13 @@ depends-on = ["configure"]
 [feature.dev.target.linux-64.tasks.compiler-warnings-clang]
 # The env hack is necessary to work around https://github.com/prefix-dev/pixi/issues/3287
 # We disable -Wdeprecated-declarations because we use our own deprecated API, e.g., for testing.
+# We disable -Wsign-compare because .size() in C++ is well-known to be broken.
 cmd = """
 /usr/bin/env -u '?' sh -c '
 make clean &&
-make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CFLAGS=\"$CFLAGS -Werror -Wall -Wextra\" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -UNDEBUG\" &&
+make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -Wno-sign-compare -UNDEBUG\" &&
 make clean &&
-make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CFLAGS=\"$CFLAGS -Werror -Wall -Wextra\" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -fclang-abi-compat=17 -DNDEBUG\"
+make check TESTS= CPP=clang-cpp CC=clang CXX=clang++ CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-deprecated-declarations -Wno-sign-compare -fclang-abi-compat=17 -DNDEBUG\"
 '
 """
 cwd = "libintervalxt"
@@ -150,9 +151,9 @@ depends-on = "configure-libintervalxt"
 cmd = """
 /usr/bin/env -u '?' sh -c '
 make clean &&
-make check TESTS= CFLAGS=\"$CXFLAGS -Werror -Wall -Wextra" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -UNDEBUG\" &&
+make check TESTS= CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -UNDEBUG\" &&
 make clean &&
-make check TESTS= CFLAGS=\"$CXFLAGS -Werror -Wall -Wextra" CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -DNDEBUG\"
+make check TESTS= CXXFLAGS=\"$CXXFLAGS -Werror -Wall -Wextra -Wno-sign-compare -Wno-deprecated-declarations -Wno-dangling-reference -DNDEBUG\"
 '
 """
 cwd = "libintervalxt"
