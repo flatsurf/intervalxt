@@ -27,7 +27,8 @@ CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden"
 [target.osx-64.activation.env]
 # Cppyy still uses clang-17 symbols so we need to build libintervalxt with such
 # symbols so cppyy can find templates that contain enable_if.
-CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden -fclang-abi-compat=17"
+# Re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden -fclang-abi-compat=17 -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
 
 [feature.coverage.activation.env]
 CFLAGS = "-coverage -O0 -UNDEBUG"
