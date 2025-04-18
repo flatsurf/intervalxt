@@ -103,14 +103,6 @@ mamba create -n intervalxt libintervalxt pyintervalxt
 conda activate intervalxt
 ```
 
-## Run with binder in the Cloud
-
-You can try out the projects in this repository in a very limited environment
-online by clicking the following links:
-
-* **libintervalxt** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.3.4?filepath=binder%2FSample.libintervalxt.ipynb)
-* **pyintervalxtc** [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/flatsurf/intervalxt/3.2.0?filepath=binder%2FSample.pyintervalxt.ipynb)
-
 ## Build with conda-forge Dependencies
 
 To build all of intervalxt, you need a fairly recent C++ compiler and probably
