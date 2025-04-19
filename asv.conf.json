@@ -6,38 +6,10 @@
   "show_commit_url": "https://github.com/flatsurf/intervalxt/commit/",
   "repo": ".",
   "environment_type": "conda",
-  "matrix": {
-    "automake": [],
-    "benchmark==1.5.0": [],
-    "boost-cpp": [],
-    "ccache": [],
-    "coreutils": [],
-    "flatsurf::cppasv": [],
-    "cppyy": [],
-    "cppyythonizations": [],
-    "cxx-compiler": [],
-    "fmt": [],
-    "gmp": [],
-    "gmpxxll": [],
-    "gmpxxyy": [],
-    "libeantic": [],
-    "libexactreal": [],
-    "libflint": [],
-    "libtool": [],
-    "make": [],
-    "ppl": [],
-    "pyeantic": [],
-    "pyexactreal>=3,<4": [],
-    "pytest": [],
-    "setuptools": []
-  },
-  "conda_channels": ["conda-forge", "default"],
+  "matrix": {},
+  "conda_channels": ["conda-forge"],
   "repo_subdir": "libintervalxt",
-  "build_command": [
-    "autoreconf -ivf",
-    "/bin/sh configure CXX='ccache c++'",
-    "make"
-  ],
+  "build_command": [],
   "install_command": [],
   "uninstall_command": [],
   "benchmark_dir": "tools/asv",
@@ -45,5 +17,3 @@
   "results_dir": ".asv/results",
   "html_dir": ".asv/html"
 }
-
-
