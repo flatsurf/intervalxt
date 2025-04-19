@@ -201,7 +201,7 @@ libexactreal = "*"
 ppl = "*"
 
 [feature.pyintervalxt.dependencies]
-cppyy = "*"
+cppyy = ">=3.1"
 cppyythonizations = "*"
 gmpxxyy = "*"
 pyexactreal = "*"
