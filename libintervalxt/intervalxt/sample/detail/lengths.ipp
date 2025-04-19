@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019 Vincent Delecroix
- *        Copyright (C) 2019-2020 Julian Rüth
+ *        Copyright (C) 2019-2025 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ namespace {
 template <typename T, std::size_t... Indices>
 auto toTuple(T&& container, std::index_sequence<Indices...>) { return std::make_tuple(container.at(Indices)...); }
 
+template <typename T>
 size_t index(Label label) {
   return std::hash<Label>()(label);
 }
@@ -89,12 +90,12 @@ T Lengths<T, FloorDivision, Coefficients>::get(Label label) const {
 
 template <typename T, typename FloorDivision, typename Coefficients>
 const T& Lengths<T, FloorDivision, Coefficients>::at(Label label) const {
-  return lengths.at(index(label));
+  return lengths.at(index<T>(label));
 }
 
 template <typename T, typename FloorDivision, typename Coefficients>
 T& Lengths<T, FloorDivision, Coefficients>::at(Label label) {
-  return lengths.at(index(label));
+  return lengths.at(index<T>(label));
 }
 
 template <typename T, typename FloorDivision, typename Coefficients>
@@ -170,7 +171,7 @@ std::vector<std::vector<mpq_class>> Lengths<T, FloorDivision, Coefficients>::coe
 template <typename T, typename FloorDivision, typename Coefficients>
 std::string Lengths<T, FloorDivision, Coefficients>::render(Label label) const {
   std::string ret;
-  size_t current = index(label);
+  size_t current = index<T>(label);
   while (current || ret.size() == 0) {
     size_t offset = current % (2u * 26u);
     if (offset < 26) {
