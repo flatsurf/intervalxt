@@ -48,7 +48,7 @@ section](#build-from-the-source-code-repository-or-a-tarball). Otherwise, we
 strongly recommend that you install [pixi](https://pixi.sh) and then use the
 following commands:
 
-* `pixi run test` build intervalxt and run the libexactreal and pyexactreal test suites
+* `pixi run test` build intervalxt and run the libintervalxt and pyintervalxt test suites
 * `pixi run compile-commands` to generate a `compile_commands.json` that your IDE might be able to use to make sense of this project
 
 <details>
@@ -100,13 +100,13 @@ figure out how everything works in detail.
 
 More experienced developers may not want to use these tasks. You can also just
 use the curated list of dependencies that pixi provides and drop into a shell
-with these dependencies installed. For example, to run the libexactreal test suite
+with these dependencies installed. For example, to run the libintervalxt test suite
 directly, you could do:
 
 ```sh
 pixi shell -e dev
 ./bootstrap
-cd libexactreal
+cd libintervalxt
 ./configure
 make check
 ```
