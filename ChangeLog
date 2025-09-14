@@ -4,6 +4,20 @@ intervalxt Change Log
 
 .. current developments
 
+v3.3.5
+====================
+
+**Changed:**
+
+* Changed the recommended setup for developers to use pixi instead of conda/mamba.
+
+**Fixed:**
+
+* Fixed compatibility with fmt library version 11.
+* Fixed usage of LDADD and LDFLAGS in automake setup.
+
+
+
 v3.3.4
 ====================
 
