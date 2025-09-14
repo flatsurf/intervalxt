@@ -21,6 +21,7 @@
 #include "../intervalxt/component.hpp"
 
 #include <fmt/format.h>
+#include <fmt/ranges.h>
 
 #include <boost/logic/tribool.hpp>
 #include <ostream>
