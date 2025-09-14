@@ -8,152 +8,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-libintervalxt:
+  test:
     runs-on: ${{ matrix.on }}
     strategy:
       matrix:
         include:
-        - on: Ubuntu-22.04
-        - on: macos-13
-        - on: Ubuntu-22.04
-          sanitizer: valgrind
+        - { task: "test-libintervalxt", environment: "libintervalxt", on: "ubuntu-24.04" }
+        - { task: "test-libintervalxt", environment: "libintervalxt", on: "macos-13" }
+        - { task: "test-libintervalxt-valgrind", environment: "dev", on: "ubuntu-24.04" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python39", on: "ubuntu-24.04" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python39", on: "macos-13" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python310", on: "ubuntu-24.04" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python310", on: "macos-13" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python311", on: "ubuntu-24.04" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python311", on: "macos-13" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python312", on: "ubuntu-24.04" }
+        - { task: "test-pyintervalxt", environment: "pyintervalxt-python312", on: "macos-13" }
+        - { task: "test-pyintervalxt-valgrind", environment: "dev", on: "ubuntu-24.04" }
+        - { task: "distcheck", environment: "dev", on: "ubuntu-24.04" }
+        - { task: "distcheck", environment: "dev", on: "macos-13" }
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with: { submodules: recursive }
-      - name: build flags
-        id: flags
+      - uses: prefix-dev/setup-pixi@v0.9.0
+        with: { pixi-version: v0.42.1 }
+      - name: install valgrind dependencies
         run: |
-          echo "::set-output name=configure::"`[[ ${{ runner.os }} == "Linux" ]] && echo "--with-version-script"`
-      - uses: conda-incubator/setup-miniconda@v2
-        with: { miniforge-variant: "Mambaforge", miniforge-version: "latest" }
-      - name: install valgrind
-        run: |
-          mamba install valgrind
-        if: ${{ matrix.sanitizer == 'valgrind' }}
-      - name: install dependencies
-        shell: bash -l {0}
-        run: |
-          mamba env update --quiet -n test -f libintervalxt/environment.yml
-          conda list
-      - name: configure & build & test
-        shell: bash -l {0}
-        run: |
-          echo "::group::bootstrap"
-          cd libintervalxt
-          ./bootstrap
-
-          echo "::group::configure"
-          export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
-          # override std=c++14 in CXXFLAGS on macOS
-          export CXXFLAGS="$CXXFLAGS -std=c++17"
-          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
-          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
-          ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
-
-          echo "::group::make"
-          make V=1
-
-          echo "::group::test"
-          make V=1 `[[ "${{ matrix.sanitizer }}" == "valgrind" ]] && echo check-valgrind || echo check`
-      - name: show logs
-        shell: bash -l {0}
-        run: for log in `find . -name '*.log'`; do echo "::group::$log"; cat $log; echo "::endgroup"; done
+          sudo apt update
+          sudo apt install -y libc6-dbg
+        if: endsWith(matrix.task || '', 'valgrind')
+      - name: run ${{ matrix.task }}
+        run: pixi run -e ${{ matrix.environment }} ${{ matrix.task }}
+      - uses: flatsurf/actions/show-logs@main
         if: ${{ always() }}
-  test-pyintervalxt:
-    runs-on: ${{ matrix.on }}
-    strategy:
-      matrix:
-        include:
-        - on: ubuntu-22.04
-          python: "3.7"
-        - on: ubuntu-22.04
-          python: "3.8"
-        - on: ubuntu-22.04
-          python: "3.9"
-        - on: macos-13
-          python: "3.7"
-        - on: macos-13
-          python: "3.8"
-        - on: macos-13
-          python: "3.9"
-        - on: ubuntu-22.04
-          python: "3.10"
-        - on: ubuntu-22.04
-          python: "3.11"
-        - on: ubuntu-22.04
-          python: "3.11"
-          sanitizer: valgrind
-    steps:
-      - uses: actions/checkout@v2
-        with: { submodules: recursive }
-      - name: build flags
-        id: flags
-        run: |
-          echo "::set-output name=configure::"`[[ ${{ runner.os }} == "Linux" ]] && echo "--with-version-script"`
-      - uses: conda-incubator/setup-miniconda@v2
-        with: { miniforge-variant: "Mambaforge", miniforge-version: "latest", python-version: "${{ matrix.python }}" }
-      - name: install valgrind
-        run: |
-          mamba install valgrind
-        if: ${{ matrix.sanitizer == 'valgrind' }}
-      - name: install dependencies
-        shell: bash -l {0}
-        run: |
-          mamba env update --quiet -n test -f libintervalxt/environment.yml
-          mamba env update --quiet -n test -f pyintervalxt/environment.yml
-          conda list
-      # Work around https://github.com/conda-forge/cppyy-feedstock/issues/78
-      - name: Fix cppyy dependencies on macOS
-        run: |
-          mamba install -n test -y libcxx=16
-        if: ${{ matrix.on == 'macos-13' }}
-      - name: configure & make & test
-        shell: bash -l {0}
-        run: |
-          echo "::group::bootstrap"
-          ./bootstrap
-
-          echo "::group::configure"
-          export CXXFLAGS="$CXXFLAGS -UNDEBUG -g3 -fvisibility=hidden -fvisibility-inlines-hidden"
-          # override std=c++14 in CXXFLAGS on macOS
-          export CXXFLAGS="$CXXFLAGS -std=c++17"
-          # re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
-          CXXFLAGS="$CXXFLAGS -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
-          ./configure --prefix="$PREFIX" --without-benchmark ${{ steps.flags.outputs.configure }}
-
-          echo "::group::make"
-          make V=1
-
-          echo "::group::test"
-          cd pyintervalxt
-          make V=1 `[[ "${{ matrix.sanitizer }}" == "valgrind" ]] && echo check-valgrind || echo check`
-      - name: show logs
-        shell: bash -l {0}
-        run: for log in `find . -name '*.log'`; do echo "::group::$log"; cat $log; echo "::endgroup"; done
-        if: ${{ always() }}
-  distcheck:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v2
-        with: { submodules: recursive }
-      - uses: conda-incubator/setup-miniconda@v2
-        with: { miniforge-variant: "Mambaforge", miniforge-version: "latest" }
-      - name: install dependencies
-        shell: bash -l {0}
-        run: |
-          mamba env update --quiet -n test -f libintervalxt/environment.yml
-          mamba env update --quiet -n test -f pyintervalxt/environment.yml
-          conda list
-      - name: make distcheck
-        shell: bash -l {0}
-        run: |
-          ./bootstrap
-          ./configure --prefix="$PREFIX"
-          make distcheck
-      - name: show logs
-        shell: bash -l {0}
-        run: for log in `find . -name '*.log'`; do echo "::group::$log"; cat $log; echo "::endgroup"; done
-        if: ${{ always() }}
-
-env:
-  MAKEFLAGS: -j2

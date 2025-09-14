@@ -2,7 +2,7 @@
  *  This file is part of intervalxt.
  *
  *        Copyright (C) 2019-2020 Vincent Delecroix
- *        Copyright (C) 2019-2022 Julian Rüth
+ *        Copyright (C) 2019-2025 Julian Rüth
  *
  *  intervalxt is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -151,9 +151,9 @@ bool RationalAffineSubspace::hasNonZeroNonNegativeVector() const {
 
     auto generators = Generator_System();
     generators.insert(point(static_cast<Linear_Expression>(0)));
-    for (int i = 0; i < subspace.space_dimension(); i++) {
+    for (size_t i = 0; i < subspace.space_dimension(); i++) {
       Linear_Expression linear = static_cast<Linear_Expression>(0);
-      int j = 0;
+      size_t j = 0;
       for (auto equation : equations)
         linear += equation.coefficient(Variable(i)) * Variable(j++);
 

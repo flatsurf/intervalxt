@@ -1,18 +1,15 @@
 all-local:
-	$(PYTHON) setup.py build --verbose
+	mkdir -p $(builddir)/build
+	cd $(srcdir) && $(PYTHON) $(abs_srcdir)/setup.py build --verbose --build-base $(abs_builddir)/build
 
 install-exec-local:
-	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) --single-version-externally-managed --record $(DESTDIR)$(pythondir)/pyintervalxt/install_files.txt --verbose
+	$(PYTHON) $(abs_srcdir)/setup.py install --prefix $(DESTDIR)$(prefix) --single-version-externally-managed --record $(DESTDIR)$(pythondir)/pyintervalxt/install_files.txt --verbose
 
 uninstall-local:
 	cat $(DESTDIR)$(pythondir)/pyintervalxt/install_files.txt | xargs rm -rf
 	rm -rf $(DESTDIR)$(pythondir)/pyintervalxt
 
 clean-local:
-	-rm -rf pyintervalxt/__pycache__ pyintervalxt.egg-info build
+	-rm -rf pyintervalxt/__pycache__ pyintervalxt.egg-info build .pytest_cache
 
-BUILT_SOURCES = setup.py
-EXTRA_DIST = setup.py.in
-CLEANFILES = setup.py
-$(builddir)/setup.py: $(srcdir)/setup.py.in Makefile
-	sed -e 's,[@]top_srcdir[@],$(top_srcdir),g' -e 's,[@]PACKAGE_VERSION[@],$(PACKAGE_VERSION),g' < $< > $@
+EXTRA_DIST = setup.py

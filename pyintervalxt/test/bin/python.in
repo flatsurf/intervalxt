@@ -13,23 +13,23 @@
 # resolve #include "local.hpp" relative to libintervalxt/intervalxt in the build tree.
 export EXTRA_CLING_ARGS="-I@abs_srcdir@/../../libintervalxt -I@abs_builddir@/../../libintervalxt/intervalxt $EXTRA_CLING_ARGS"
 
-# Load libintervalxt.so and libintervalxtxx.so from our build tree.
-export LD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:@abs_builddir@/../../libintervalxt/srcxx/.libs/:$LD_LIBRARY_PATH"
+# Load libintervalxt.so from our build tree.
+export LD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:$LD_LIBRARY_PATH"
 
-# Load libintervalxt.dylib and libintervalxtxx.dylib from our build tree.
-export DYLD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:@abs_builddir@/../../libintervalxt/srcxx/.libs/:$DYLD_LIBRARY_PATH"
+# Load libintervalxt.dylib from our build tree.
+export DYLD_LIBRARY_PATH="@abs_builddir@/../../libintervalxt/src/.libs/:$DYLD_LIBRARY_PATH"
 
 # Load pyintervalxt from our source tree.
 export PYTHONPATH="@abs_srcdir@/../src/:@pythondir@:$PYTHONPATH"
 
 # Support libasan loading when our library has been built with -fsanitize=address.
-if [ ! -z "$EANTIC_LD_PRELOAD" ]; then
-  export LD_PRELOAD="$EANTIC_LD_PRELOAD:$LD_PRELOAD"
+if [ ! -z "$INTERVALXT_LD_PRELOAD" ]; then
+  export LD_PRELOAD="$INTERVALXT_LD_PRELOAD:$LD_PRELOAD"
 fi
 
 # Support libasan loading on macOS when our library has been built with -fsanitize=address.
-if [ ! -z "$EANTIC_DYLD_INSERT_LIBRARIES" ]; then
-  export DYLD_INSERT_LIBRARIES="$EANTIC_DYLD_INSERT_LIBRARIES:$DYLD_INSERT_LIBRARIES"
+if [ ! -z "$INTERVALXT_DYLD_INSERT_LIBRARIES" ]; then
+  export DYLD_INSERT_LIBRARIES="$INTERVALXT_DYLD_INSERT_LIBRARIES:$DYLD_INSERT_LIBRARIES"
 fi
 
-exec python3 $@
+exec python3 "$@"
