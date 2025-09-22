@@ -19,10 +19,15 @@
 
 import sys
 
+from rever.activity import activity
+from rever.activities.command import command
+
 try:
   input("Are you sure you are on the master branch which is identical to origin/master and the only pending changes are a version bump in the configure.ac of the library? [ENTER]")
 except KeyboardInterrupt:
   sys.exit(1)
+
+command('pixi', 'pixi install --manifest-path "$PWD/pyproject.toml" -e dev')
 
 sys.path.insert(0, 'tools/rever')
 
@@ -32,6 +37,7 @@ $PROJECT = 'intervalxt'
 
 $ACTIVITIES = [
     'version_bump',
+    'pixi',
     'changelog',
     'autodist',
     'tag',
