@@ -4479,8 +4479,8 @@ packages:
   timestamp: 1736243563082
 - pypi: ./pyintervalxt/src
   name: pyintervalxt
-  version: 3.3.4
-  sha256: a715a07c94b234033033cb50d2f19572d032d077a58af1baa8e95c6b71440a75
+  version: 3.3.5
+  sha256: 2034ecda98ae35be4113b5e2358457badb453ac9eb4996bc6361096ba88f7343
   requires_dist:
   - cppyy
   - cppyythonizations
