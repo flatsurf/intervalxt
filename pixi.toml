@@ -5,11 +5,10 @@
 channels = ["conda-forge"]
 description = "Interval Exchange Transformations"
 name = "intervalxt"
-platforms = ["linux-64", "osx-64"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
 
 [environments]
 libintervalxt = ["libintervalxt"]
-pyintervalxt-python39 = ["libintervalxt", "pyintervalxt", "python39"]
 pyintervalxt-python310 = ["libintervalxt", "pyintervalxt", "python310"]
 pyintervalxt-python311 = ["libintervalxt", "pyintervalxt", "python311"]
 pyintervalxt-python312 = ["libintervalxt", "pyintervalxt", "python312"]
@@ -25,6 +24,12 @@ CFLAGS = "-g3"
 CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden"
 
 [target.osx-64.activation.env]
+# Cppyy still uses clang-17 symbols so we need to build libintervalxt with such
+# symbols so cppyy can find templates that contain enable_if.
+# Re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
+CXXFLAGS = "-g3 -fvisibility=hidden -fvisibility-inlines-hidden -fclang-abi-compat=17 -D_LIBCPP_ENABLE_CXX17_REMOVED_BINDERS"
+
+[target.osx-arm64.activation.env]
 # Cppyy still uses clang-17 symbols so we need to build libintervalxt with such
 # symbols so cppyy can find templates that contain enable_if.
 # Re-enable mem_fun_ref in macOS when building with C++17 (used by dependency PPL.)
@@ -192,7 +197,7 @@ coreutils = "*"
 cxx-compiler = "*"
 gmp = "*"
 libflint = "*"
-boost-cpp = "*"
+libboost-headers = "*"
 libeantic = "*"
 benchmark = "*"
 fmt = "11.*"
@@ -214,7 +219,6 @@ pyintervalxt = { path = "pyintervalxt/src", editable = true }
 
 [feature.dev.dependencies]
 codespell = "*"
-clangdev = "*"
 compiledb = "*"
 asv = ">=0.6.4,<0.7"
 rever = "*"
@@ -225,9 +229,6 @@ cppasv = { git = "https://github.com/flatsurf/cppasv.git" }
 [feature.dev.target.linux.dependencies]
 # A recent functioning valgrind is only available on conda-forge linux builds.
 valgrind = "*"
-
-[feature.python39.dependencies]
-python = "3.9.*"
 
 [feature.python310.dependencies]
 python = "3.10.*"
