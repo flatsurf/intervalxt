@@ -219,7 +219,6 @@ pyintervalxt = { path = "pyintervalxt/src", editable = true }
 
 [feature.dev.dependencies]
 codespell = "*"
-clangdev = "*"
 compiledb = "*"
 asv = ">=0.6.4,<0.7"
 rever = "*"
