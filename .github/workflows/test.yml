@@ -14,6 +14,7 @@ jobs:
       matrix:
         include:
         - { task: "test-libintervalxt", environment: "libintervalxt", on: "ubuntu-24.04" }
+        - { task: "test-libintervalxt", environment: "libintervalxt", on: "macos-15-intel" }
         - { task: "test-libintervalxt", environment: "libintervalxt", on: "macos-15" }
         - { task: "test-libintervalxt-valgrind", environment: "dev", on: "ubuntu-24.04" }
         - { task: "test-pyintervalxt", environment: "pyintervalxt-python310", on: "ubuntu-24.04" }
@@ -26,7 +27,6 @@ jobs:
         # There is no runner available on GitHub anymore that supports a sufficiently old xcode.
         # - { task: "test-pyintervalxt", environment: "pyintervalxt-python311", on: "macos-15-intel" }
         - { task: "test-pyintervalxt", environment: "pyintervalxt-python311", on: "macos-14" }
-        - { task: "test-pyintervalxt", environment: "pyintervalxt-python311", on: "macos-13" }
         - { task: "test-pyintervalxt", environment: "pyintervalxt-python312", on: "ubuntu-24.04" }
         # The latest build of cppyy-cling is not compatible with the xcode that comes with macos 15 yet.
         # There is no runner available on GitHub anymore that supports a sufficiently old xcode.
