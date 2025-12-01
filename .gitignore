@@ -253,3 +253,6 @@ dmypy.json
 
 # Rever
 /rever
+
+# pixi
+/.pixi
