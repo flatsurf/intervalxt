@@ -4,6 +4,15 @@ intervalxt Change Log
 
 .. current developments
 
+v3.3.6
+====================
+
+**Fixed:**
+
+* Fixed compatibility with fmt version 12.
+
+
+
 v3.3.5
 ====================
 
