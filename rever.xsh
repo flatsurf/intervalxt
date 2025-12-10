@@ -27,11 +27,23 @@ try:
 except KeyboardInterrupt:
   sys.exit(1)
 
-command('pixi', 'pixi install --manifest-path "$PWD/pyproject.toml" -e dev')
+command('pixi', 'pixi lock')
 
-sys.path.insert(0, 'tools/rever')
-
-import autodist
+@activity
+def dist():
+    r"""
+    Run make dist and collect the resulting tarball.
+    """
+    from tempfile import TemporaryDirectory
+    from xonsh.dirstack import DIRSTACK
+    with TemporaryDirectory() as tmp:
+        ./bootstrap
+        pushd @(tmp)
+        @(DIRSTACK[-1])/configure
+        make dist
+        mv *.tar.gz @(DIRSTACK[-1])
+        popd
+    return True
 
 $PROJECT = 'intervalxt'
 
@@ -39,7 +51,7 @@ $ACTIVITIES = [
     'version_bump',
     'pixi',
     'changelog',
-    'autodist',
+    'dist',
     'tag',
     'push_tag',
     'ghrelease',
@@ -49,7 +61,7 @@ $VERSION_BUMP_PATTERNS = [
     ('configure.ac', r'AC_INIT', r'AC_INIT([intervalxt], [$VERSION], [julian.rueth@fsfe.org])'),
     ('libintervalxt/configure.ac', r'AC_INIT', r'AC_INIT([libintervalxt], [$VERSION], [julian.rueth@fsfe.org])'),
     ('pyintervalxt/configure.ac', r'AC_INIT', r'AC_INIT([pyintervalxt], [$VERSION], [julian.rueth@fsfe.org])'),
-    ('pyintervalxt/src/setup.py', r'version = ', r"    version = '$VERSION',"),
+    ('pyintervalxt/src/setup.py', r'version = ', r"version = '$VERSION',"),
 ]
 
 $CHANGELOG_FILENAME = 'ChangeLog'

@@ -24,7 +24,7 @@ class vpath_egg_info(egg_info):
 
 setup(
     name = 'pyintervalxt',
-        version = '3.3.5',
+    version = '3.3.6',
     packages = ['pyintervalxt',],
     license = 'GPL 3.0+',
     install_requires=[
